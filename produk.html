@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/assets/images/logo.png" />
+  <title>Produk - Deoksi Beauty Clinic Malang</title>
+  <meta name="description" content="Produk Deoksi Clinic: Sabun, Serum, dan Sunscreen dengan badge BPOM dan rating." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    .navbar .brand-dark,
+    .navbar .brand-subtitle,
+    .navbar .nav-link:not([href="/konsultasi.html"]) {
+      color: var(--dark);
+    }
+
+    .products-page {
+      padding: 100px 0;
+      background: var(--white);
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 48px;
+    }
+
+    .filter-btn {
+      border: 1px solid rgba(233, 122, 43, 0.12);
+      background: var(--white);
+      color: #2D1E17;
+      border-radius: 999px;
+      padding: 12px 24px;
+      min-height: 48px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      transition: all 0.3s var(--ease-out);
+      box-shadow: 0 4px 12px rgba(62, 42, 34, 0.04);
+      cursor: pointer;
+    }
+
+    .filter-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 20px rgba(233, 122, 43, 0.12);
+    }
+
+    .filter-btn.is-active {
+      background: var(--gradient-mixed);
+      color: var(--white);
+      border-color: transparent;
+      box-shadow: 0 12px 28px rgba(233, 122, 43, 0.25);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 32px;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: 32px;
+      border: 1px solid rgba(233, 122, 43, 0.08);
+      box-shadow: 0 10px 30px rgba(62, 42, 34, 0.04);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s var(--ease-out);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(62, 42, 34, 0.1);
+      border-color: rgba(233, 122, 43, 0.2);
+    }
+
+    .product-image {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background: var(--cream-dark);
+      border-radius: 20px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(233, 122, 43, 0.05);
+      position: relative;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s var(--ease-out);
+    }
+
+    .product-card:hover .product-image img {
+      transform: scale(1.1);
+    }
+
+    .product-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 60%, rgba(62, 42, 34, 0.05));
+      pointer-events: none;
+    }
+
+    .product-image-placeholder {
+      font-size: 2.5rem;
+      opacity: 0.2;
+    }
+
+    .product-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .product-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--dark);
+      font-size: 1.35rem;
+      line-height: 1.25;
+    }
+
+    .bpom-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,158,181,0.18);
+      color: var(--dark);
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,158,181,0.35);
+      white-space: nowrap;
+    }
+
+    .bpom-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--secondary-dark);
+      display: inline-block;
+    }
+
+    .product-price {
+      position: relative;
+      z-index: 1;
+      color: var(--primary-dark);
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: 0.2px;
+    }
+
+    .rating-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-light);
+      font-size: 0.86rem;
+    }
+
+    .stars {
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+      color: var(--primary);
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+    }
+
+    .product-card.is-hidden {
+      display: none;
+    }
+
+    @media (max-width: 992px) {
+      .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 600px) {
+      .products-grid { grid-template-columns: 1fr; }
+      .product-card { padding: 18px; }
+      .product-top { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER (template) -->
+  <nav class="navbar" data-navbar>
+    <div class="container nav-container">
+      <a href="/" class="brand-logo" data-nav-logo>
+        <div class="brand-title">
+          <span class="brand-orange">DEOKSI</span><span class="brand-dark">Clinic</span>
+        </div>
+        <div class="brand-subtitle">BEAUTY CENTER</div>
+      </a>
+
+      <button class="nav-toggle" data-nav-toggle aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-menu" data-nav-menu>
+        <li><a href="/" class="nav-link">Beranda</a></li>
+        <li><a href="/layanan.html" class="nav-link">Layanan</a></li>
+        <li><a href="/produk.html" class="nav-link active">Produk</a></li>
+        <li><a href="/berita.html" class="nav-link">Berita</a></li>
+        <li><a href="/galeri.html" class="nav-link">Galeri</a></li>
+        <li><a href="/tentang.html" class="nav-link">Tentang</a></li>
+        <li><a href="/lokasi.html" class="nav-link">Lokasi</a></li>
+        <li><a href="/konsultasi.html" class="nav-link">Konsultasi</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero kecil -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-tag animate-on-scroll">Skincare Series</span>
+      <h1 class="section-title animate-on-scroll">Produk Kami</h1>
+      <p class="animate-on-scroll">Pilih produk sesuai kebutuhan kulit. Untuk mendapatkan rekomendasi yang paling tepat, konsultasikan terlebih dahulu.</p>
+
+      <div class="filter-row animate-on-scroll" data-filter-row>
+        <button type="button" class="filter-btn is-active" data-filter="all">Semua</button>
+        <button type="button" class="filter-btn" data-filter="sabun">Sabun</button>
+        <button type="button" class="filter-btn" data-filter="serum">Serum</button>
+        <button type="button" class="filter-btn" data-filter="sunscreen">Sunscreen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main News Content -->
+  <section class="news-section" style="padding-top: 100px;">
+    <div class="container">
+      <div class="products-grid" data-products-grid>
+        <!-- Product 1 -->
+        <article class="product-card animate-on-scroll" data-category="sabun">
+          <div class="product-image">
+            <img src="/assets/images/service_products.png" alt="Deoksi Facial Wash" loading="lazy">
+          </div>
+          <div class="product-top">
+            <h3 class="product-name">Deoksi Facial Wash</h3>
+            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+          </div>
+          <div class="product-price">Rp 85.000</div>
+          <div class="rating-row" aria-label="Rating 4.8 dari 5">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span>4.8</span>
+          </div>
+        </article>
+
+        <!-- Product 2 -->
+        <article class="product-card animate-on-scroll" data-category="sabun">
+          <div class="product-image">
+            <img src="/assets/images/service_products.png" alt="Deoksi Gentle Cleanser" loading="lazy">
+          </div>
+          <div class="product-top">
+            <h3 class="product-name">Deoksi Gentle Cleanser</h3>
+            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+          </div>
+          <div class="product-price">Rp 95.000</div>
+          <div class="rating-row" aria-label="Rating 4.7 dari 5">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span>4.7</span>
+          </div>
+        </article>
+
+        <!-- Product 3 -->
+        <article class="product-card animate-on-scroll" data-category="serum">
+          <div class="product-image">
+            <img src="/assets/images/service_products.png" alt="Deoksi Glow Serum" loading="lazy">
+          </div>
+          <div class="product-top">
+            <h3 class="product-name">Deoksi Glow Serum</h3>
+            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+          </div>
+          <div class="product-price">Rp 150.000</div>
+          <div class="rating-row" aria-label="Rating 4.9 dari 5">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span>4.9</span>
+          </div>
+        </article>
+
+        <!-- Product 4 -->
+        <article class="product-card animate-on-scroll" data-category="serum">
+          <div class="product-image">
+            <img src="/assets/images/service_products.png" alt="Deoksi Barrier Serum" loading="lazy">
+          </div>
+          <div class="product-top">
+            <h3 class="product-name">Deoksi Barrier Serum</h3>
+            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+          </div>
+          <div class="product-price">Rp 165.000</div>
+          <div class="rating-row" aria-label="Rating 4.8 dari 5">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span>4.8</span>
+          </div>
+        </article>
+
+        <!-- Product 5 -->
+        <article class="product-card animate-on-scroll" data-category="sunscreen">
+          <div class="product-image">
+            <img src="/assets/images/service_products.png" alt="Deoksi Sun Shield SPF 50" loading="lazy">
+          </div>
+          <div class="product-top">
+            <h3 class="product-name">Deoksi Sun Shield SPF 50</h3>
+            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+          </div>
+          <div class="product-price">Rp 95.000</div>
+          <div class="rating-row" aria-label="Rating 4.8 dari 5">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span>4.8</span>
+          </div>
+        </article>
+
+        <!-- Product 6 -->
+        <article class="product-card animate-on-scroll" data-category="sunscreen">
+          <div class="product-image">
+            <img src="/assets/images/service_products.png" alt="Deoksi UV Daily Defense" loading="lazy">
+          </div>
+          <div class="product-top">
+            <h3 class="product-name">Deoksi UV Daily Defense</h3>
+            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+          </div>
+          <div class="product-price">Rp 110.000</div>
+          <div class="rating-row" aria-label="Rating 4.7 dari 5">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span>4.7</span>
+          </div>
+        </article>
+
+        <!-- Product 7 -->
+        <article class="product-card animate-on-scroll" data-category="serum">
+          <div class="product-image">
+            <div class="product-image-placeholder">🧴</div>
+          </div>
+          <div class="product-top">
+            <h3 class="product-name">Deoksi Age Defy</h3>
+            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+          </div>
+          <div class="product-price">Rp 175.000</div>
+          <div class="rating-row" aria-label="Rating 4.9 dari 5">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span>4.9</span>
+          </div>
+        </article>
+
+        <!-- Product 8 -->
+        <article class="product-card animate-on-scroll" data-category="sabun">
+          <div class="product-image">
+            <div class="product-image-placeholder">🧴</div>
+          </div>
+          <div class="product-top">
+            <h3 class="product-name">Deoksi Deep Cleanser</h3>
+            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+          </div>
+          <div class="product-price">Rp 88.000</div>
+          <div class="rating-row" aria-label="Rating 4.8 dari 5">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span>4.8</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER (template) -->
+  <footer class="footer" data-footer></footer>
+
+  <script>
+    // Toggle mobile menu tanpa ID milik beranda
+    const navToggle = document.querySelector('[data-nav-toggle]');
+    const navMenu = document.querySelector('[data-nav-menu]');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        navMenu.classList.toggle('open');
+        document.body.style.overflow = navMenu.classList.contains('open') ? 'hidden' : '';
+      });
+    }
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (!navToggle || !navMenu) return;
+        navToggle.classList.remove('active');
+        navMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // Filter produk
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const productCards = document.querySelectorAll('[data-category]');
+
+    const applyFilter = (category) => {
+      productCards.forEach(card => {
+        const cardCategory = card.getAttribute('data-category');
+        const show = category === 'all' || cardCategory === category;
+        card.classList.toggle('is-hidden', !show);
+      });
+    };
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        applyFilter(btn.getAttribute('data-filter'));
+      });
+    });
+  </script>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

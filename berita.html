@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Berita & Edukasi | Deoksi Beauty Clinic Malang</title>
+  <meta name="description" content="Dapatkan tips kecantikan terbaru, edukasi slow aging, dan kabar terbaru dari Deoksi Beauty Clinic Malang.">
+  
+  <!-- Canonical and Social Meta -->
+  <link rel="canonical" href="https://deoksibeautyclinic.id/berita.html">
+  <link rel="stylesheet" href="/src/css/style.css">
+
+  <!-- Inter Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-dark" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="brand-logo">
+        <div class="brand-title">
+          <span class="brand-orange">DEOKSI</span><span class="brand-dark">Clinic</span>
+        </div>
+        <div class="brand-subtitle">BEAUTY CENTER</div>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="/" class="nav-link">Beranda</a></li>
+        <li><a href="/layanan.html" class="nav-link">Layanan</a></li>
+        <li><a href="/produk.html" class="nav-link">Produk</a></li>
+        <li><a href="/berita.html" class="nav-link active">Berita</a></li>
+        <li><a href="/galeri.html" class="nav-link">Galeri</a></li>
+        <li><a href="/tentang.html" class="nav-link">Tentang</a></li>
+        <li><a href="/lokasi.html" class="nav-link">Lokasi</a></li>
+        <li><a href="/konsultasi.html" class="nav-link">Konsultasi</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-tag animate-on-scroll">Kabar & Tips Edukasi</span>
+      <h1 class="section-title animate-on-scroll">Berita Deoksi Clinic</h1>
+      <p class="animate-on-scroll">Temukan berbagai informasi terbaru mengenai tren kecantikan, tips perawatan kulit (skincare), dan aktivitas terkini dari para ahli kami.</p>
+    </div>
+  </section>
+
+  <!-- Main News Content -->
+  <section class="news-section" style="padding: 100px 0;">
+    <div class="container">
+      
+      <!-- Filter / Category Tabs -->
+      <div style="display: flex; gap: 16px; margin-bottom: 56px; justify-content: center; flex-wrap: wrap;" class="animate-on-scroll">
+        <button class="filter-btn active">Semua</button>
+        <button class="filter-btn">Edukasi</button>
+        <button class="filter-btn">Tips Skincare</button>
+        <button class="filter-btn">Promo & Event</button>
+      </div>
+
+      <style>
+        .filter-btn {
+          border: 1px solid rgba(233, 122, 43, 0.12);
+          background: var(--white);
+          color: #2D1E17;
+          border-radius: 999px;
+          padding: 12px 24px;
+          min-height: 48px;
+          font-weight: 700;
+          letter-spacing: 0.2px;
+          font-size: 0.85rem;
+          text-transform: uppercase;
+          transition: all 0.3s var(--ease-out);
+          box-shadow: 0 4px 12px rgba(62, 42, 34, 0.04);
+          cursor: pointer;
+        }
+        .filter-btn:hover {
+          transform: translateY(-2px);
+          border-color: var(--primary);
+          box-shadow: 0 8px 20px rgba(233, 122, 43, 0.12);
+        }
+        .filter-btn.active {
+          background: var(--gradient-mixed);
+          color: var(--white);
+          border-color: transparent;
+          box-shadow: 0 12px 28px rgba(233, 122, 43, 0.25);
+        }
+        .news-grid {
+          gap: 32px !important;
+        }
+      </style>
+
+      <div class="news-grid">
+        <!-- Berita akan dimuat secara dinamis dari API -->
+      </div>
+
+      <div class="news-footer animate-on-scroll" style="display: none; margin-top: 60px;" id="news-pagination">
+        <p style="color: #888;" id="news-showing">Menampilkan 0 dari 0 Berita</p>
+        <div style="display: flex; gap: 8px; justify-content: center; margin-top: 20px;">
+          <button class="btn btn-outline active" style="min-width: 44px; height: 44px; padding:0; border-radius: 12px;">1</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Simple CTA -->
+  <section style="padding: 80px 0; background: var(--white); text-align: center;">
+    <div class="container animate-on-scroll">
+      <h2 class="section-title">Punya Pertanyaan Spesifik?</h2>
+      <p style="margin-bottom: 30px; color: var(--text-secondary);">Konsultasikan kebutuhan kulit Anda langsung dengan dokter kami via WhatsApp.</p>
+      <a href="https://wa.me/6282333344919" class="btn btn-primary" style="padding: 14px 40px;">Tanya Dokter Sekarang</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="brand-logo footer-logo-override">
+            <div class="brand-title">
+              <span class="brand-orange">DEOKSI</span><span class="brand-dark">Clinic</span>
+            </div>
+            <div class="brand-subtitle">BEAUTY CENTER</div>
+          </a>
+          <p class="footer-desc">Deoksi Beauty Clinic Malang menghadirkan perawatan slow aging dan antioxidative care berbasis sains.</p>
+          <div class="footer-socials">
+            <a href="https://www.instagram.com/deoksi_clinic" class="social-link" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" /></svg>
+            </a>
+            <a href="https://www.tiktok.com/@deoksi_clinic" class="social-link" aria-label="TikTok">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88A2.89 2.89 0 0 1 9.49 12.4a2.86 2.86 0 0 1 .89.14V9.05a6.33 6.33 0 0 0-1-.05A6.34 6.34 0 0 0 3 15.29a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.76a8.32 8.32 0 0 0 4.87 1.57V6.86a4.94 4.94 0 0 1-.96-.17z" /></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Menu</h4>
+          <ul>
+            <li><a href="/">Beranda</a></li>
+            <li><a href="/layanan.html">Layanan</a></li>
+            <li><a href="/produk.html">Produk</a></li>
+            <li><a href="/berita.html">Berita</a></li>
+            <li><a href="/galeri.html">Galeri</a></li>
+            <li><a href="/tentang.html">Tentang</a></li>
+            <li><a href="/lokasi.html">Lokasi</a></li>
+            <li><a href="/konsultasi.html">Konsultasi</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Kontak</h4>
+          <ul>
+            <li>Jl. Puncak Borobudur Kav. 6, Kota Malang</li>
+            <li><a href="tel:+6282333344919">+6282 3333 44919 (WA)</a></li>
+            <li>Senin - Sabtu, 09.00 - 20.00</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Deoksi Beauty Clinic. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/js/main.js"></script>
+  <script type="module" src="/src/js/news.js"></script>
+</body>
+
+</html>

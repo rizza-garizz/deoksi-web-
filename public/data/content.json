@@ -1,0 +1,190 @@
+{
+  "hero": {
+    "badge": "Rating 4.9/5",
+    "title": "Perawatan Wajah dan Kulit<br><em>Berbasis Sains</em>",
+    "subtitle": "Konsultasikan kebutuhan kulit Anda bersama dokter berpengalaman untuk mendapatkan rekomendasi perawatan yang aman, nyaman, dan sesuai kondisi kulit.",
+    "buttonText": "Konsultasi dengan Dokter",
+    "whatsappLink": "https://wa.me/6282333344919?text=Halo%20saya%20mau%20tanya",
+    "backgroundImage": "/assets/images/hero_clinic.png",
+    "backgroundVideo": "https://res.cloudinary.com/dwarsapox/video/upload/f_auto,q_auto/v1776465403/4264880-uhd_3840_2160_30fps_f3bhai.mp4"
+  },
+  "sections": {
+    "promo": {
+      "isFlyer": true,
+      "items": [
+        {
+          "title": "Welcome Promo",
+          "subtitle": "Diskon 20% Member Baru",
+          "image": "/assets/images/service_aging.png",
+          "color": "#F7903E",
+          "link": "https://wa.me/6282333344919?text=Halo%20saya%20mau%20klaim%20promo%20member%20baru"
+        },
+        {
+          "title": "Glowing Package",
+          "subtitle": "Perawatan Mulai 199 Ribu",
+          "image": "/assets/images/service_products.png",
+          "color": "#DE7A23",
+          "link": "https://wa.me/6282333344919?text=Halo%20saya%20mau%20tanya%20 Glowing%20Package"
+        },
+        {
+          "title": "Ramadan Care",
+          "subtitle": "Beli 2 Gratis 1 Produk",
+          "image": "/assets/images/service_consult.png",
+          "color": "#F9A45B",
+          "link": "https://wa.me/6282333344919?text=Halo%20saya%20mau%20tanya%20Ramadan%20Care"
+        }
+      ]
+    },
+    "services": {
+      "tag": "Solusi Perawatan",
+      "title": "Layanan yang Disesuaikan dengan Kebutuhan Kulit Anda",
+      "items": [
+        {
+          "id": "slow-aging",
+          "title": "Perawatan Slow Aging",
+          "description": "Perawatan untuk membantu menjaga elastisitas, kelembapan, dan tampilan kulit agar tetap segar serta terawat seiring waktu.",
+          "image": "/assets/images/service_aging.png",
+          "video": "https://res.cloudinary.com/dwarsapox/video/upload/f_auto,q_auto/v1776465403/4264880-uhd_3840_2160_30fps_f3bhai.mp4",
+          "link": "https://wa.me/6282333344919?text=Halo%20saya%20mau%20tanya%20tentang%20Slow%20Aging%20Treatment"
+        },
+        {
+          "id": "produk",
+          "title": "Rangkaian Produk Deoksi",
+          "description": "Produk perawatan kulit pilihan untuk membantu menjaga kesehatan kulit harian dengan formula yang aman dan nyaman digunakan.",
+          "image": "/assets/images/service_products.png",
+          "video": "https://cdn.pixabay.com/video/2022/10/30/137122-765701203_large.mp4",
+          "link": "https://wa.me/6282333344919?text=Halo%20saya%20mau%20tanya%20tentang%20Produk%20Deoksi"
+        },
+        {
+          "id": "konsultasi",
+          "title": "Konsultasi",
+          "description": "Sesi konsultasi bersama dokter untuk memahami kondisi kulit Anda dan menentukan rekomendasi perawatan yang paling sesuai.",
+          "image": "/assets/images/service_consult.png",
+          "video": "https://cdn.pixabay.com/video/2023/03/13/154449-807823521_large.mp4",
+          "link": "https://wa.me/6282333344919?text=Halo%20saya%20mau%20konsultasi"
+        }
+      ]
+    },
+    "gallery": {
+      "tag": "Suasana Klinik",
+      "title": "Ruang Perawatan yang Nyaman dan Profesional",
+      "description": "Lihat suasana Deoksi Clinic yang dirancang untuk memberikan kenyamanan, kebersihan, dan pengalaman perawatan yang lebih tenang bagi setiap pelanggan.",
+      "items": [
+        {
+          "image": "/assets/images/gallery_one.png",
+          "label": "Ruang Tunggu Premium",
+          "large": true
+        },
+        {
+          "image": "/assets/images/gallery_two.png",
+          "label": "Ruang Treatment"
+        },
+        {
+          "image": "/assets/images/hero_clinic.png",
+          "label": "Interior Klinik"
+        },
+        {
+          "image": "/assets/images/service_aging.png",
+          "label": "Perawatan Wajah"
+        }
+      ],
+      "note": "Kami menghadirkan lingkungan klinik yang rapi, nyaman, dan terawat untuk mendukung pengalaman perawatan yang lebih menyenangkan."
+    },
+    "about": {
+      "tag": "Mengapa Memilih Kami",
+      "title": "Perawatan yang Dirancang untuk Kebutuhan Kulit Anda",
+      "description1": "Deoksi Beauty Clinic menghadirkan perawatan wajah dan kulit berbasis sains untuk membantu menjaga kulit tetap sehat, segar, dan terawat.",
+      "description2": "Dengan dukungan dokter berpengalaman, teknologi yang tepat, dan pendekatan yang terarah, kami membantu Anda mendapatkan rekomendasi perawatan yang sesuai dengan kondisi kulit Anda.",
+      "image": "/assets/images/service_products.png",
+      "stats": [
+        {
+          "number": 150,
+          "label": "Testimoni Nyata"
+        },
+        {
+          "number": 20,
+          "label": "Ulasan Positif"
+        }
+      ],
+      "features": [
+        "Teknologi Terkini",
+        "Bahan Berkualitas Tinggi",
+        "Dokter Profesional",
+        "Hasil Terbukti Efektif"
+      ],
+      "buttonText": "Konsultasi Awal dengan Dokter",
+      "whatsappLink": "https://wa.me/6282333344919?text=Halo%20saya%20mau%20tanya"
+    },
+    "reviews": {
+      "tag": "Dipercaya Pelanggan",
+      "title": "Pengalaman Pelanggan Deoksi Clinic",
+      "googleMapsLink": "",
+      "items": [
+        {
+          "name": "Sarah Amalia",
+          "text": "Kliniknya nyaman dan terasa profesional sejak pertama datang. Setelah menjalani perawatan slow aging, kulit saya tampak lebih segar dan terasa lebih terawat.",
+          "rating": 5,
+          "treatment": "Perawatan Slow Aging",
+          "date": "1 minggu yang lalu"
+        },
+        {
+          "name": "Budi Santoso",
+          "text": "Dokternya komunikatif dan menjelaskan pilihan treatment dengan sangat jelas. Saya merasa lebih yakin karena rekomendasinya benar-benar disesuaikan dengan kondisi kulit saya.",
+          "rating": 5,
+          "treatment": "Konsultasi Ahli",
+          "date": "2 minggu yang lalu"
+        },
+        {
+          "name": "Indah Permata",
+          "text": "Rangkaian Produk Deoksi terasa nyaman dipakai di kulit sensitif saya. Dalam waktu singkat, kulit terasa lebih lembap, tenang, dan tampak lebih cerah.",
+          "rating": 5,
+          "treatment": "Rangkaian Produk Deoksi",
+          "date": "1 bulan yang lalu"
+        },
+        {
+          "name": "Rina Wijaya",
+          "text": "Pelayanannya ramah dari awal hingga akhir. Prosedurnya terasa higienis, rapi, dan membuat saya nyaman selama menjalani perawatan di klinik.",
+          "rating": 5,
+          "treatment": "Facial Treatment",
+          "date": "3 hari yang lalu"
+        }
+      ]
+    },
+    "location": {
+      "tag": "Lokasi Klinik",
+      "title": "Lokasi Strategis dan Nyaman Dikunjungi",
+      "description": "Deoksi Beauty Clinic berada di lokasi yang mudah dijangkau di Kota Malang, dengan lingkungan yang nyaman untuk konsultasi maupun perawatan secara langsung.",
+      "mapEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.272!2d112.613!3d-7.953!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwNTcnMTAuOCJTIDExMsKwMzYnNDYuOCJF!5e0!3m2!1sid!2sid!4v1234567890",
+      "info": [
+        {
+          "type": "address",
+          "label": "Alamat",
+          "value": "Jl. Puncak Borobudur Kav. 6, Kota Malang"
+        },
+        {
+          "type": "hours",
+          "label": "Jam Pelayanan Klinik",
+          "value": "Senin - Sabtu : 09.00 - 20.00"
+        },
+        {
+          "type": "phone",
+          "label": "Telepon",
+          "value": "+6282 3333 44919 (WA)"
+        },
+        {
+          "type": "email",
+          "label": "Email",
+          "value": "customercare@deoksibeauty.com"
+        }
+      ]
+    }
+  },
+  "footer": {
+    "description": "Deoksi Beauty Clinic Malang menghadirkan perawatan wajah dan kulit berbasis sains dengan pendekatan yang aman, nyaman, dan profesional.",
+    "socials": {
+      "instagram": "https://www.instagram.com/deoksi_clinic",
+      "tiktok": "https://www.tiktok.com/@deoksi_clinic",
+      "whatsapp": "https://wa.me/6282333344919"
+    }
+  }
+}

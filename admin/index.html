@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Deoksi Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-brand-title">
+          <span class="orange">DEOKSI</span><span class="white">Admin</span>
+        </div>
+        <div class="login-brand-sub">Dashboard Panel</div>
+      </div>
+
+      <div class="login-error" id="login-error"></div>
+
+      <form id="login-form">
+        <div class="login-field">
+          <label class="login-label">Username</label>
+          <input type="text" class="login-input" id="username" placeholder="Masukkan username" required autocomplete="username">
+        </div>
+        <div class="login-field">
+          <label class="login-label">Password</label>
+          <input type="password" class="login-input" id="password" placeholder="Masukkan password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-admin btn-admin--primary" style="width:100%; justify-content:center; padding: 14px; font-size: 1rem; margin-top: 8px;" id="login-btn">
+          Masuk ke Dashboard
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/admin/js/admin.js"></script>
+  <script type="module">
+    // Redirect jika sudah login
+    if (getToken()) {
+      window.location.href = '/admin/dashboard.html';
+    }
+
+    const form = document.getElementById('login-form');
+    const errorEl = document.getElementById('login-error');
+    const loginBtn = document.getElementById('login-btn');
+    const flashMessage = consumeSessionMessage();
+
+    if (flashMessage) {
+      errorEl.textContent = flashMessage;
+      errorEl.classList.add('is-visible');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.classList.remove('is-visible');
+      loginBtn.textContent = 'Memproses...';
+      loginBtn.disabled = true;
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Login gagal');
+        }
+
+        saveAuth(data.token, data.user);
+        window.location.href = '/admin/dashboard.html';
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.add('is-visible');
+        loginBtn.textContent = 'Masuk ke Dashboard';
+        loginBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

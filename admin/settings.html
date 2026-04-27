@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pengaturan | Deoksi Admin</title>
+  <link rel="stylesheet" href="./css/admin.css" />
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+  <main class="admin-main">
+    <header class="admin-header">
+      <div class="header-title">
+        <h1>Pengaturan Sistem</h1>
+        <p>Konfigurasi admin dan akun.</p>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      <div class="card" style="padding: 40px; text-align: center; color: var(--admin-text-muted);">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 16px; opacity: 0.5;">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <h3>Halaman Pengaturan (Segera Hadir)</h3>
+        <p>Fitur untuk mengubah profil admin, password, dan pengaturan sistem akan diletakkan di sini.</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="./js/admin.js"></script>
+  <script>
+    if (!requireLogin()) throw new Error('redirect');
+    renderSidebar('settings');
+  </script>
+</body>
+</html>

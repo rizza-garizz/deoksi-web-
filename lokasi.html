@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/assets/images/logo.png" />
+  <title>Lokasi - Deoksi Beauty Clinic Malang</title>
+  <meta name="description" content="Lokasi & kontak Deoksi Clinic: alamat, jam operasional, WhatsApp, telepon, dan Google Maps." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    .navbar .brand-dark,
+    .navbar .brand-subtitle,
+    .navbar .nav-link:not([href="/konsultasi.html"]) {
+      color: var(--dark);
+    }
+
+    .location-page {
+      padding: 40px 0 95px;
+      background: var(--gradient-cream);
+    }
+
+    .location-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 18px;
+      margin-top: 26px;
+      align-items: start;
+    }
+
+    .contact-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(247,144,62,0.10);
+      box-shadow: var(--shadow-sm);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 0%, rgba(247,144,62,0.10), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.35s var(--ease-out);
+      pointer-events: none;
+    }
+
+    .contact-card:hover::before {
+      opacity: 1;
+    }
+
+    .contact-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--dark);
+      font-size: 1.35rem;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-list {
+      display: grid;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-item {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 12px 12px;
+      border-radius: 14px;
+      background: rgba(247,144,62,0.06);
+      border: 1px solid rgba(247,144,62,0.08);
+    }
+
+    .contact-icon {
+      width: 22px;
+      height: 22px;
+      color: var(--primary);
+      margin-top: 2px;
+    }
+
+    .contact-label {
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 4px;
+      letter-spacing: 0.2px;
+      font-size: 0.92rem;
+    }
+
+    .contact-value {
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 0.92rem;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+      letter-spacing: 0.3px;
+      border: 1px solid rgba(247,144,62,0.18);
+      background: var(--white);
+      color: var(--dark);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), border-color 0.25s var(--ease-out), filter 0.25s var(--ease-out);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(247,144,62,0.32);
+    }
+
+    .cta-btn--primary {
+      background: var(--gradient-primary);
+      border-color: rgba(247,144,62,0.38);
+      color: var(--white);
+      box-shadow: 0 12px 28px rgba(247,144,62,0.20);
+    }
+
+    .cta-btn--primary:hover {
+      filter: brightness(0.98);
+    }
+
+    .map-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(247,144,62,0.10);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      min-height: 420px;
+    }
+
+    .map-card iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+      border: 0;
+      display: block;
+    }
+
+    @media (max-width: 992px) {
+      .location-grid { grid-template-columns: 1fr; }
+      .map-card { min-height: 380px; }
+      .map-card iframe { min-height: 380px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER (template) -->
+  <nav class="navbar" data-navbar>
+    <div class="container nav-container">
+      <a href="/" class="brand-logo" data-nav-logo>
+        <div class="brand-title">
+          <span class="brand-orange">DEOKSI</span><span class="brand-dark">Clinic</span>
+        </div>
+        <div class="brand-subtitle">BEAUTY CENTER</div>
+      </a>
+
+      <button class="nav-toggle" data-nav-toggle aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-menu" data-nav-menu>
+        <li><a href="/" class="nav-link">Beranda</a></li>
+        <li><a href="/layanan.html" class="nav-link">Layanan</a></li>
+        <li><a href="/produk.html" class="nav-link">Produk</a></li>
+        <li><a href="/berita.html" class="nav-link">Berita</a></li>
+        <li><a href="/galeri.html" class="nav-link">Galeri</a></li>
+        <li><a href="/tentang.html" class="nav-link">Tentang</a></li>
+        <li><a href="/lokasi.html" class="nav-link active">Lokasi</a></li>
+        <li><a href="/konsultasi.html" class="nav-link">Konsultasi</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero kecil -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-tag animate-on-scroll">Temukan Kami</span>
+      <h1 class="section-title animate-on-scroll">Lokasi & Kontak</h1>
+      <p class="animate-on-scroll">Datang langsung ke klinik atau hubungi kami untuk mendapatkan jadwal konsultasi dan informasi layanan.</p>
+    </div>
+  </section>
+
+  <section class="location-page">
+    <div class="container">
+      <div class="location-grid">
+        <article class="contact-card animate-on-scroll">
+          <h2 class="contact-title">Informasi Kontak</h2>
+
+          <div class="contact-list">
+            <div class="contact-item">
+              <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <div>
+                <div class="contact-label">Alamat</div>
+                <div class="contact-value" id="lokasi-address">Deoksi Beauty Clinic, Jl. Puncak Borobudur Kav. 6, Kota Malang, Jawa Timur.</div>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+              <div>
+                <div class="contact-label">Jam Operasional</div>
+                <div class="contact-value" id="lokasi-hours">
+                  Senin–Sabtu: 09.00–20.00<br>
+                  Minggu: Tutup
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cta-row">
+            <a class="cta-btn cta-btn--primary" id="lokasi-wa-btn" href="https://wa.me/6282333344919?text=Halo%20Deoksi%20Clinic%2C%20saya%20ingin%20tanya%20lokasi%20dan%20jadwal." target="_blank" rel="noopener">
+              WhatsApp
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a class="cta-btn" href="tel:+6282333344919">
+              <span id="lokasi-phone">Telepon: +6282 3333 44919 (WA)</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </a>
+          </div>
+        </article>
+
+        <aside class="map-card animate-on-scroll" aria-label="Peta lokasi Deoksi Clinic">
+          <iframe
+            id="lokasi-map-iframe"
+            title="Lokasi Deoksi Beauty Clinic di Google Maps"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+            src="https://www.google.com/maps?q=Deoksi+Clinic,+-7.9364532,112.6259121&z=17&output=embed">
+          </iframe>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER (template) -->
+  <footer class="footer" data-footer></footer>
+
+  <script>
+    // Toggle mobile menu tanpa ID milik beranda
+    const navToggle = document.querySelector('[data-nav-toggle]');
+    const navMenu = document.querySelector('[data-nav-menu]');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        navMenu.classList.toggle('open');
+        document.body.style.overflow = navMenu.classList.contains('open') ? 'hidden' : '';
+      });
+    }
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (!navToggle || !navMenu) return;
+        navToggle.classList.remove('active');
+        navMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+  </script>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

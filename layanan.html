@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/assets/images/logo.png" />
+  <title>Layanan - Deoksi Beauty Clinic Malang</title>
+  <meta name="description" content="Layanan klinik kecantikan Deoksi Clinic: Facial, Laser, Injeksi, dan Acne Care." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    .services-page {
+      padding: 100px 0;
+      background: linear-gradient(180deg, #FFFFFF 0%, #FFF9F6 100%);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 40px;
+      margin-top: 0;
+    }
+
+    .service-card {
+      background: #FFFFFF;
+      border-radius: 40px;
+      border: 1px solid rgba(233, 122, 43, 0.05);
+      box-shadow: 0 10px 40px rgba(62, 42, 34, 0.03);
+      padding: 40px;
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(233, 122, 43, 0.03) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    .service-card:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 30px 70px rgba(62, 42, 34, 0.12);
+      border-color: rgba(233, 122, 43, 0.15);
+    }
+
+    .service-card:hover::before {
+      opacity: 1;
+    }
+
+    .service-title {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: #2D1E17;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .service-desc {
+      font-size: 1.05rem;
+      color: #7D6B62;
+      line-height: 1.8;
+      margin-bottom: 0;
+      flex-grow: 1;
+    }
+
+    /* Service Image Frame Styles */
+    .service-image-frame {
+      width: 100%;
+      height: 280px;
+      background: linear-gradient(135deg, #FFF4EC 0%, #FDF0F4 50%, #F5E6E0 100%);
+      border-radius: 30px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid rgba(233, 122, 43, 0.05);
+      position: relative;
+    }
+
+    .service-image-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 60%, rgba(255,255,255,0.4));
+    }
+
+    .service-image-placeholder {
+      font-size: 4.5rem;
+      opacity: 0.9;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.08));
+      z-index: 1;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .service-card:hover .service-image-placeholder {
+      transform: scale(1.15) rotate(5deg);
+    }
+
+    .service-image-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .service-card:hover .service-image-frame img {
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 992px) {
+      .services-grid { gap: 24px; }
+      .service-card { padding: 32px; }
+      .service-image-frame { height: 240px; }
+    }
+
+    @media (max-width: 768px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .services-page { padding: 60px 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <nav class="navbar navbar-dark" data-navbar>
+    <div class="container nav-container">
+      <a href="/" class="brand-logo" data-nav-logo>
+        <div class="brand-title">
+          <span class="brand-orange">DEOKSI</span><span class="brand-dark">Clinic</span>
+        </div>
+        <div class="brand-subtitle">BEAUTY CENTER</div>
+      </a>
+
+      <button class="nav-toggle" data-nav-toggle aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-menu" data-nav-menu>
+        <li><a href="/" class="nav-link">Beranda</a></li>
+        <li><a href="/layanan.html" class="nav-link active">Layanan</a></li>
+        <li><a href="/produk.html" class="nav-link">Produk</a></li>
+        <li><a href="/berita.html" class="nav-link">Berita</a></li>
+        <li><a href="/galeri.html" class="nav-link">Galeri</a></li>
+        <li><a href="/tentang.html" class="nav-link">Tentang</a></li>
+        <li><a href="/lokasi.html" class="nav-link">Lokasi</a></li>
+        <li><a href="/konsultasi.html" class="nav-link">Konsultasi</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero kecil -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-tag animate-on-scroll">Solusi Perawatan</span>
+      <h1 class="section-title animate-on-scroll">Layanan yang Disesuaikan dengan Kebutuhan Kulit Anda</h1>
+      <p class="animate-on-scroll">Setiap kondisi kulit memerlukan pendekatan yang berbeda. Kami membantu Anda memilih perawatan yang tepat melalui konsultasi yang aman dan terarah.</p>
+    </div>
+  </section>
+
+  <!-- Konten utama -->
+  <section class="services-page">
+    <div class="container">
+      <div class="services-grid">
+        <article class="service-card animate-on-scroll">
+          <div class="service-image-frame">
+            <img src="/assets/layanan/facial.png" alt="Facial Treatment" loading="lazy">
+          </div>
+          <h3 class="service-title">Facial</h3>
+          <p class="service-desc">Perawatan wajah untuk membantu membersihkan, menutrisi, dan menjaga kulit tetap segar, sehat, dan terawat.</p>
+        </article>
+
+        <article class="service-card animate-on-scroll">
+          <div class="service-image-frame">
+            <img src="/assets/layanan/laser.png" alt="Laser Treatment" loading="lazy">
+          </div>
+          <h3 class="service-title">Laser</h3>
+          <p class="service-desc">Teknologi laser untuk membantu peremajaan kulit, meratakan warna kulit, dan menangani kebutuhan kulit tertentu secara lebih terarah.</p>
+        </article>
+
+        <article class="service-card animate-on-scroll">
+          <div class="service-image-frame">
+            <img src="/assets/layanan/injection.png" alt="Injeksi Treatment" loading="lazy">
+          </div>
+          <h3 class="service-title">Injeksi</h3>
+          <p class="service-desc">Tindakan injeksi yang dilakukan secara profesional sesuai kebutuhan, setelah evaluasi kondisi kulit secara menyeluruh.</p>
+        </article>
+
+        <article class="service-card animate-on-scroll">
+          <div class="service-image-frame">
+            <img src="/assets/layanan/acne.png" alt="Acne Care Treatment" loading="lazy">
+          </div>
+          <h3 class="service-title">Acne Care</h3>
+          <p class="service-desc">Rangkaian perawatan untuk membantu mengurangi jerawat, meredakan peradangan, dan merawat tampilan bekas jerawat dengan lebih tepat.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" data-footer></footer>
+
+  <script>
+    // Toggle mobile menu tanpa ID beranda
+    const navToggle = document.querySelector('[data-nav-toggle]');
+    const navMenu = document.querySelector('[data-nav-menu]');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        navMenu.classList.toggle('open');
+        document.body.style.overflow = navMenu.classList.contains('open') ? 'hidden' : '';
+      });
+    }
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (!navToggle || !navMenu) return;
+        navToggle.classList.remove('active');
+        navMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+  </script>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

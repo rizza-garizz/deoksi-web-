@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/assets/images/logo.png" />
+  <title>Galeri - Deoksi Beauty Clinic Malang</title>
+  <meta name="description" content="Galeri Deoksi Clinic: fasilitas, hasil treatment, dan event." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    .gallery-page {
+      position: relative;
+      padding: 100px 0;
+      background: var(--white);
+    }
+
+    .gallery-header {
+      margin-bottom: 60px;
+    }
+
+    .cinema-band {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 32px;
+    }
+
+    .cinema-frame {
+      position: relative;
+      overflow: hidden;
+      border-radius: 34px;
+      min-height: 420px;
+      background: #2e241f;
+      box-shadow: 0 24px 52px rgba(26, 26, 26, 0.16);
+      border: 1px solid rgba(233,122,43,0.10);
+    }
+
+    .cinema-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cinema-frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(233,122,43,0.05) 0%, rgba(46,36,31,0.66) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .cinema-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cinema-card {
+      padding: 28px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid rgba(233,124,152,0.12);
+      box-shadow: 0 14px 32px rgba(96, 52, 23, 0.05);
+    }
+
+    .cinema-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1.15rem;
+      color: var(--dark);
+      font-family: var(--font-display);
+    }
+
+    .cinema-card span {
+      display: block;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--text-light);
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <nav class="navbar navbar-dark" data-navbar>
+    <div class="container nav-container">
+      <a href="/" class="brand-logo" data-nav-logo>
+        <div class="brand-title">
+          <span class="brand-orange">DEOKSI</span><span class="brand-dark">Clinic</span>
+        </div>
+        <div class="brand-subtitle">BEAUTY CENTER</div>
+      </a>
+
+      <button class="nav-toggle" data-nav-toggle aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-menu" data-nav-menu>
+        <li><a href="/" class="nav-link">Beranda</a></li>
+        <li><a href="/layanan.html" class="nav-link">Layanan</a></li>
+        <li><a href="/produk.html" class="nav-link">Produk</a></li>
+        <li><a href="/berita.html" class="nav-link">Berita</a></li>
+        <li><a href="/galeri.html" class="nav-link active">Galeri</a></li>
+        <li><a href="/tentang.html" class="nav-link">Tentang</a></li>
+        <li><a href="/lokasi.html" class="nav-link">Lokasi</a></li>
+        <li><a href="/konsultasi.html" class="nav-link">Konsultasi</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-tag animate-on-scroll">Momen & Fasilitas</span>
+      <h1 class="section-title animate-on-scroll">Visual Eksklusif Deoksi Clinic</h1>
+      <p class="animate-on-scroll">Intip kenyamanan fasilitas kami, hasil nyata dari perawatan pasien, serta momen berharga dalam perjalanan kami memberikan layanan kecantikan terbaik.</p>
+    </div>
+  </section>
+
+  <!-- Gallery Content -->
+  <section class="gallery-page">
+    <div class="container">
+      <div class="cinema-band animate-on-scroll">
+        <div class="cinema-frame">
+          <video autoplay muted loop playsinline poster="/assets/images/facilities/lobby.jpg">
+            <source src="/assets/videos/hero-cinematic.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="cinema-copy">
+          <div class="cinema-card">
+            <strong>Fasilitas Bintang 5</strong>
+            <span>Kenyamanan ruang tunggu dan privasi ruang konsultasi yang terjaga untuk pengalaman terbaik Anda.</span>
+          </div>
+          <div class="cinema-card">
+            <strong>Teknologi Modern</strong>
+            <span>Investasi berkelanjutan pada alat medis tercanggih demi hasil yang aman dan presisi.</span>
+          </div>
+        </div>
+      </div>
+      position: absolute;
+      inset: auto 0 0 0;
+      z-index: 3;
+      padding: 56px 28px 28px;
+      color: var(--white);
+      background: linear-gradient(180deg, rgba(46,36,31,0) 0%, rgba(46,36,31,0.20) 22%, rgba(46,36,31,0.78) 100%);
+    }
+
+    .cinema-copy span {
+      display: inline-flex;
+      margin-bottom: 12px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .cinema-copy h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      line-height: 1.12;
+      margin-bottom: 12px;
+      color: var(--white);
+      max-width: 16ch;
+      text-shadow: 0 10px 24px rgba(26, 18, 14, 0.34);
+    }
+
+    .cinema-copy p {
+      max-width: 44ch;
+      color: rgba(255,255,255,0.86);
+      line-height: 1.8;
+      text-shadow: 0 6px 18px rgba(26, 18, 14, 0.28);
+    }
+
+    .cinema-frame .video-hover-play {
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 22px;
+      z-index: 4;
+    }
+
+    .cinema-frame .video-hover-play-badge {
+      width: 52px;
+      height: 52px;
+      background: rgba(255,255,255,0.16);
+      box-shadow: 0 12px 26px rgba(40, 27, 21, 0.16);
+    }
+
+    .cinema-frame .video-hover-play-badge svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .insight-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .insight-card {
+      padding: 22px;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(233,122,43,0.10);
+      box-shadow: 0 16px 34px rgba(96, 52, 23, 0.07);
+    }
+
+    .insight-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1rem;
+      color: var(--dark);
+    }
+
+    .insight-card p {
+      color: var(--text-light);
+      line-height: 1.75;
+      font-size: 0.9rem;
+    }
+
+    .gallery-highlight {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 10px;
+    }
+
+    .highlight-card {
+      padding: 24px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(233,122,43,0.10);
+      box-shadow: 0 18px 34px rgba(96, 52, 23, 0.07);
+    }
+
+    .highlight-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--dark);
+      font-size: 1.05rem;
+      font-family: var(--font-display);
+    }
+
+    .highlight-card p {
+      color: var(--text-light);
+      font-size: 0.92rem;
+      line-height: 1.75;
+    }
+
+    .theme-section {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.95fr) minmax(0, 1.45fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .theme-section--reverse {
+      grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.95fr);
+    }
+
+    .theme-copy {
+      padding: 28px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(255,246,239,0.98) 100%);
+      border: 1px solid rgba(247,144,62,0.12);
+      box-shadow: 0 18px 40px rgba(96, 52, 23, 0.07);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100%;
+    }
+
+    .theme-kicker {
+      display: inline-flex;
+      width: fit-content;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(233,122,43,0.09);
+      color: var(--primary-dark);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .theme-copy h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.9rem, 3vw, 2.6rem);
+      line-height: 1.12;
+      color: var(--dark);
+      margin-bottom: 14px;
+    }
+
+    .theme-copy p {
+      color: var(--text);
+      line-height: 1.85;
+      margin-bottom: 18px;
+    }
+
+    .theme-copy ul {
+      display: grid;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .theme-copy li {
+      position: relative;
+      padding-left: 18px;
+      color: var(--text-light);
+      line-height: 1.7;
+      font-size: 0.92rem;
+    }
+
+    .theme-copy li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.72em;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .theme-card {
+      position: relative;
+      min-height: 280px;
+      overflow: hidden;
+      border-radius: 30px;
+      border: 1px solid rgba(233,122,43,0.10);
+      box-shadow: 0 20px 38px rgba(96, 52, 23, 0.08);
+      cursor: zoom-in;
+      background: linear-gradient(180deg, #fffdfb 0%, #fff4ee 100%);
+    }
+
+    .theme-card.is-large {
+      grid-column: span 2;
+      min-height: 380px;
+    }
+
+    .theme-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.55s var(--ease-out);
+    }
+
+    .theme-card:hover img {
+      transform: scale(1.06);
+    }
+
+    .theme-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(26,26,26,0.02) 12%, rgba(26,26,26,0.68) 100%);
+      pointer-events: none;
+    }
+
+    .theme-caption {
+      position: absolute;
+      inset: auto 0 0 0;
+      z-index: 2;
+      padding: 18px 18px 20px;
+      color: var(--white);
+    }
+
+    .theme-caption span {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.76);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .theme-caption strong {
+      display: block;
+      font-size: 1.02rem;
+      line-height: 1.4;
+    }
+
+    .quote-band {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) auto;
+      gap: 20px;
+      align-items: center;
+      padding: 28px 30px;
+      border-radius: 32px;
+      background: linear-gradient(135deg, rgba(233,122,43,0.95) 0%, rgba(233,124,152,0.90) 100%);
+      color: var(--white);
+      box-shadow: 0 22px 48px rgba(230,90,120,0.18);
+    }
+
+    .journey-section {
+      display: grid;
+      gap: 20px;
+      padding: 30px;
+      border-radius: 34px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(255,245,238,0.98) 100%);
+      border: 1px solid rgba(233,122,43,0.10);
+      box-shadow: 0 20px 42px rgba(96, 52, 23, 0.08);
+    }
+
+    .journey-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .journey-header-copy {
+      max-width: 56ch;
+    }
+
+    .journey-header-copy span {
+      display: inline-flex;
+      margin-bottom: 12px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,158,181,0.16);
+      color: var(--secondary-dark);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .journey-header-copy h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.9rem, 3vw, 2.6rem);
+      line-height: 1.12;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    .journey-header-copy p {
+      color: var(--text);
+      line-height: 1.8;
+    }
+
+    .journey-note {
+      padding: 16px 18px;
+      border-radius: 22px;
+      background: rgba(233,122,43,0.08);
+      color: var(--primary-dark);
+      font-size: 0.88rem;
+      line-height: 1.7;
+      max-width: 28ch;
+    }
+
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .journey-card {
+      overflow: hidden;
+      border-radius: 28px;
+      background: var(--white);
+      border: 1px solid rgba(233,122,43,0.10);
+      box-shadow: 0 18px 34px rgba(96, 52, 23, 0.07);
+    }
+
+    .journey-media {
+      position: relative;
+      height: 240px;
+      overflow: hidden;
+      background: #f7efe8;
+    }
+
+    .journey-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.55s var(--ease-out);
+    }
+
+    .journey-card:hover .journey-media img {
+      transform: scale(1.05);
+    }
+
+    .journey-step {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      height: 42px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(247,144,62,0.96) 0%, rgba(230,90,120,0.92) 100%);
+      color: var(--white);
+      font-weight: 800;
+      box-shadow: 0 12px 26px rgba(247,144,62,0.24);
+    }
+
+    .journey-body {
+      padding: 22px 22px 24px;
+    }
+
+    .journey-body strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--dark);
+      font-size: 1.06rem;
+      font-family: var(--font-display);
+    }
+
+    .journey-body p {
+      color: var(--text-light);
+      font-size: 0.92rem;
+      line-height: 1.78;
+      margin-bottom: 12px;
+    }
+
+    .journey-body small {
+      display: block;
+      color: var(--primary-dark);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .quote-band h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      line-height: 1.15;
+      margin-bottom: 10px;
+      color: var(--white);
+    }
+
+    .quote-band p {
+      color: rgba(255,255,255,0.88);
+      line-height: 1.8;
+      max-width: 48ch;
+    }
+
+    .quote-band .btn {
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.22);
+      color: var(--white);
+      box-shadow: none;
+    }
+
+    .quote-band .btn:hover {
+      background: rgba(255,255,255,0.22);
+      transform: translateY(-2px);
+    }
+
+    .gallery-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 24px;
+      padding: 20px 22px;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.86);
+      border: 1px solid rgba(247,144,62,0.12);
+      box-shadow: 0 18px 40px rgba(96, 52, 23, 0.07);
+    }
+
+    .toolbar-copy {
+      max-width: 44ch;
+    }
+
+    .toolbar-copy strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--dark);
+      font-size: 1rem;
+    }
+
+    .toolbar-copy span {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .tabs-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      border: 1px solid rgba(247,144,62,0.14);
+      background: rgba(255,255,255,0.78);
+      color: var(--dark);
+      border-radius: 999px;
+      padding: 11px 17px;
+      min-height: 44px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      transition: transform 0.25s var(--ease-out), background 0.25s var(--ease-out), border-color 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(247,144,62,0.32);
+      box-shadow: var(--shadow-md);
+    }
+
+    .tab-btn.is-active {
+      background: linear-gradient(135deg, #f7903e 0%, #ea6f20 100%);
+      color: var(--white);
+      border-color: rgba(247,144,62,0.32);
+      box-shadow: 0 14px 30px rgba(247,144,62,0.22);
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .photo-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 340px;
+      border-radius: 28px;
+      border: 1px solid rgba(247,144,62,0.08);
+      background: linear-gradient(180deg, #fffdfb 0%, #fff5eb 100%);
+      box-shadow: 0 20px 36px rgba(96, 52, 23, 0.08);
+      cursor: zoom-in;
+      transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), border-color 0.35s var(--ease-out);
+    }
+
+    .photo-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 44px rgba(96, 52, 23, 0.12);
+      border-color: rgba(247,144,62,0.2);
+    }
+
+    .photo-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(26,26,26,0.08) 56%, rgba(26,26,26,0.72) 100%);
+      z-index: 1;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transform: scale(1.01);
+      transition: transform 0.55s var(--ease-out);
+    }
+
+    .photo-card:hover img {
+      transform: scale(1.08);
+    }
+
+    .photo-caption {
+      position: absolute;
+      inset: auto 0 0 0;
+      z-index: 2;
+      padding: 18px 18px 20px;
+      color: var(--white);
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.2px;
+      background: linear-gradient(180deg, rgba(26, 26, 26, 0) 0%, rgba(26, 26, 26, 0.72) 100%);
+    }
+
+    .photo-caption::before {
+      content: attr(data-kicker);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.76);
+    }
+
+    .photo-card.is-hidden {
+      display: none;
+    }
+
+    .photo-card.is-featured {
+      grid-column: span 2;
+      min-height: 430px;
+    }
+
+    .photo-card.is-tall {
+      min-height: 430px;
+    }
+
+    .gallery-paging {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-top: 24px;
+      padding: 20px 22px;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.86);
+      border: 1px solid rgba(247,144,62,0.12);
+      box-shadow: 0 18px 40px rgba(96, 52, 23, 0.07);
+    }
+
+    .paging-status {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .paging-status strong {
+      color: var(--dark);
+    }
+
+    .paging-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .page-btn {
+      min-width: 46px;
+      height: 46px;
+      border: 1px solid rgba(247,144,62,0.16);
+      background: var(--white);
+      color: var(--dark);
+      border-radius: 16px;
+      padding: 0 16px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: transform 0.25s var(--ease-out), background 0.25s var(--ease-out), color 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+      box-shadow: 0 10px 22px rgba(96, 52, 23, 0.05);
+    }
+
+    .page-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(96, 52, 23, 0.08);
+    }
+
+    .page-btn.is-active {
+      background: linear-gradient(135deg, #f7903e 0%, #ea6f20 100%);
+      color: var(--white);
+      border-color: rgba(247,144,62,0.32);
+      box-shadow: 0 14px 28px rgba(247,144,62,0.22);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Simple Lightbox */
+    .simple-lightbox {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background: rgba(26,26,26,0.82);
+      z-index: 9999;
+    }
+
+    .simple-lightbox.is-open {
+      display: flex;
+    }
+
+    .lightbox-panel {
+      width: min(980px, 100%);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+      backdrop-filter: blur(8px);
+    }
+
+    .lightbox-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      color: rgba(255,255,255,0.92);
+      background: rgba(0,0,0,0.25);
+    }
+
+    .lightbox-title {
+      font-weight: 800;
+      font-size: 0.92rem;
+      letter-spacing: 0.2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .lightbox-close {
+      border: 1px solid rgba(255,255,255,0.20);
+      background: rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.95);
+      border-radius: 999px;
+      padding: 10px 14px;
+      min-height: 40px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.2s var(--ease-out), background 0.2s var(--ease-out);
+    }
+
+    .lightbox-close:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.16);
+    }
+
+    .lightbox-media {
+      background: rgba(0,0,0,0.35);
+    }
+
+    .lightbox-media img {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 78vh;
+      object-fit: contain;
+    }
+
+    @media (max-width: 1100px) {
+      .gallery-story-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .gallery-highlight,
+      .cinema-band,
+      .journey-header,
+      .journey-grid,
+      .theme-section,
+      .theme-section--reverse,
+      .quote-band {
+        grid-template-columns: 1fr;
+      }
+
+      .story-points {
+        grid-template-columns: 1fr;
+      }
+
+      .theme-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .gallery-story {
+        padding-top: 118px;
+      }
+
+      .story-copy,
+      .story-card,
+      .cinema-copy,
+      .highlight-card,
+      .journey-section,
+      .theme-copy,
+      .insight-card,
+      .quote-band {
+        padding: 22px 18px;
+        border-radius: 24px;
+      }
+
+      .cinema-frame {
+        min-height: 340px;
+        border-radius: 24px;
+      }
+
+      .cinema-frame .video-hover-play {
+        padding: 18px;
+      }
+
+      .story-mini {
+        grid-template-columns: 1fr;
+      }
+
+      .theme-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .theme-card,
+      .theme-card.is-large {
+        grid-column: auto;
+        min-height: 300px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER (template) -->
+  <nav class="navbar" data-navbar>
+    <div class="container nav-container">
+      <a href="/" class="brand-logo" data-nav-logo>
+        <div class="brand-title">
+          <span class="brand-orange">DEOKSI</span><span class="brand-dark">Clinic</span>
+        </div>
+        <div class="brand-subtitle">BEAUTY CENTER</div>
+      </a>
+
+      <button class="nav-toggle" data-nav-toggle aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-menu" data-nav-menu>
+        <li><a href="/" class="nav-link">Beranda</a></li>
+        <li><a href="/layanan.html" class="nav-link">Layanan</a></li>
+        <li><a href="/produk.html" class="nav-link">Produk</a></li>
+        <li><a href="/berita.html" class="nav-link">Berita</a></li>
+        <li><a href="/galeri.html" class="nav-link active">Galeri</a></li>
+        <li><a href="/tentang.html" class="nav-link">Tentang</a></li>
+        <li><a href="/lokasi.html" class="nav-link">Lokasi</a></li>
+        <li><a href="/konsultasi.html" class="nav-link">Konsultasi</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero berbeda dari beranda -->
+  <section class="gallery-story">
+    <div class="container">
+      <div class="gallery-story-grid">
+        <div class="story-copy">
+          <span class="section-tag animate-on-scroll">Galeri Eksplorasi</span>
+          <h1 class="section-title animate-on-scroll">Ruang, Hasil, dan Momen yang Membentuk Pengalaman Deoksi</h1>
+          <p class="animate-on-scroll">Galeri ini menampilkan suasana klinik, hasil perawatan, dan aktivitas Deoksi Clinic agar Anda dapat mengenal kualitas layanan kami dengan lebih dekat.</p>
+          <div class="story-points">
+            <div class="story-point animate-on-scroll">
+              <strong>3 Zona</strong>
+              <span>Fasilitas, hasil treatment, dan event dipisah agar lebih mudah dijelajahi.</span>
+            </div>
+            <div class="story-point animate-on-scroll">
+              <strong>Kurasi</strong>
+              <span>Komposisi visual dibuat seperti editorial board, bukan grid homepage.</span>
+            </div>
+            <div class="story-point animate-on-scroll">
+              <strong>Paging</strong>
+              <span>Navigasi halaman dibuat terpisah agar galeri memiliki ritme penjelajahan tersendiri.</span>
+            </div>
+          </div>
+        </div>
+        <div class="story-aside">
+          <div class="story-card animate-on-scroll">
+            <span class="story-label">Visual Archive</span>
+            <h2>Galeri yang berdiri sendiri, bukan salinan beranda.</h2>
+            <p>Setiap foto disusun sebagai showcase dengan ritme dan fokus visual yang lebih tenang, lebih imersif, dan lebih kuratorial.</p>
+          </div>
+          <div class="story-mini">
+            <div class="mini-panel animate-on-scroll">
+              <strong>Tampilan editorial</strong>
+              <span>Card besar-kecil dibuat bervariasi untuk memberi rasa pameran visual.</span>
+            </div>
+            <div class="mini-panel animate-on-scroll">
+              <strong>Browsing bertahap</strong>
+              <span>Konten dibagi per kategori dan pagination agar tidak terasa seperti slider homepage.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Showcase berbeda dari beranda -->
+  <section class="gallery-page">
+    <div class="container">
+      <div class="journal-shell">
+        <div class="gallery-highlight">
+          <article class="highlight-card animate-on-scroll">
+            <strong>Bukan preview beranda</strong>
+            <p>Halaman ini disusun sebagai showcase visual yang lebih tenang dan lebih kuratorial, bukan rangkuman section homepage.</p>
+          </article>
+          <article class="highlight-card animate-on-scroll">
+            <strong>Fokus pada pengalaman</strong>
+            <p>Setiap blok menampilkan nuansa ruang, proses perawatan, dan momen komunitas agar calon pasien bisa memahami atmosfer klinik.</p>
+          </article>
+          <article class="highlight-card animate-on-scroll">
+            <strong>Ritme baca berbeda</strong>
+            <p>Struktur galeri dibagi per tema, sehingga user menjelajah seperti membaca visual journal, bukan sekadar men-scroll card seragam.</p>
+          </article>
+        </div>
+
+        <section class="cinema-band">
+          <div class="cinema-frame video-hover-surface video-hover-surface--interactive animate-on-scroll" data-gallery-video-toggle role="button" tabindex="0" aria-label="Putar atau jeda video highlight galeri">
+            <video class="video-hover-media" autoplay muted loop playsinline preload="metadata" poster="/assets/images/hero_clinic.png" data-gallery-video>
+              <source src="/assets/videos/hover-utama.mp4" type="video/mp4">
+            </video>
+            <span class="video-hover-tint" aria-hidden="true"></span>
+            <span class="video-hover-play" aria-hidden="true">
+              <span class="video-hover-play-badge">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M8 6.5v11l9-5.5-9-5.5Z"></path>
+                </svg>
+              </span>
+            </span>
+            <div class="cinema-copy">
+              <span>Highlight Visual</span>
+              <h2>Potongan suasana klinik yang terasa lebih hidup daripada sekadar deretan foto statis.</h2>
+              <p>Video pembuka ini memberi kesan yang lebih imersif dan langsung membedakan galeri dari beranda. User bisa menangkap atmosfer brand hanya dalam beberapa detik pertama.</p>
+            </div>
+          </div>
+          <div class="insight-stack">
+            <article class="insight-card animate-on-scroll">
+              <strong>Visual lebih meyakinkan</strong>
+              <p>Gerak halus dari video membantu membangun kesan klinik yang aktif, modern, dan profesional.</p>
+            </article>
+            <article class="insight-card animate-on-scroll">
+              <strong>Karakter halaman lebih kuat</strong>
+              <p>Galeri terasa seperti halaman showcase tersendiri, bukan kompilasi ulang blok-blok dari homepage.</p>
+            </article>
+            <article class="insight-card animate-on-scroll">
+              <strong>Lebih cocok untuk trust building</strong>
+              <p>Calon pasien dapat melihat atmosfer ruang dan pelayanan secara lebih natural sebelum mereka lanjut ke konsultasi.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="theme-section">
+          <div class="theme-copy animate-on-scroll">
+            <div>
+              <span class="theme-kicker">Zona 01</span>
+              <h2>Suasana klinik yang dibuat nyaman, tenang, dan meyakinkan sejak langkah pertama.</h2>
+              <p>Alih-alih menumpuk semua foto dalam satu grid, bagian ini menonjolkan atmosfer ruang yang bersih, terang, dan tertata rapi agar calon pasien bisa membayangkan pengalaman kunjungan secara utuh.</p>
+            </div>
+            <ul>
+              <li>Ruang tunggu dirancang terasa premium namun tetap hangat.</li>
+              <li>Area treatment ditampilkan dengan fokus pada kenyamanan dan kebersihan.</li>
+              <li>Sudut interior dipilih untuk menunjukkan karakter visual Deoksi Clinic.</li>
+            </ul>
+          </div>
+          <div class="theme-grid">
+            <figure class="theme-card is-large animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/gallery_one.png" alt="Ruang tunggu premium Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_1_primary">
+              <figcaption class="theme-caption"><span>Fasilitas</span><strong>Ruang tunggu premium untuk pengalaman awal yang lebih nyaman</strong></figcaption>
+            </figure>
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/gallery_two.png" alt="Ruang treatment Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_1_secondary">
+              <figcaption class="theme-caption"><span>Fasilitas</span><strong>Ruang treatment yang terasa bersih dan tenang</strong></figcaption>
+            </figure>
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/hero_clinic.png" alt="Interior klinik Deoksi" loading="lazy" data-gallery-slot="gallery_zone_1_tertiary">
+              <figcaption class="theme-caption"><span>Interior</span><strong>Detail interior yang menjaga kesan rapi dan profesional</strong></figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="theme-section theme-section--reverse">
+          <div class="theme-grid">
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/service_aging.png" alt="Perawatan wajah slow aging" loading="lazy" data-gallery-slot="gallery_zone_2_secondary">
+              <figcaption class="theme-caption"><span>Perawatan</span><strong>Visual treatment dengan pendekatan yang lembut dan terukur</strong></figcaption>
+            </figure>
+            <figure class="theme-card is-large animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/service_consult.png" alt="Konsultasi perawatan kulit di Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_2_primary">
+              <figcaption class="theme-caption"><span>Konsultasi</span><strong>Diskusi personal untuk memahami kebutuhan kulit sebelum tindakan dilakukan</strong></figcaption>
+            </figure>
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/service_products.png" alt="Rangkaian produk perawatan kulit Deoksi" loading="lazy" data-gallery-slot="gallery_zone_2_tertiary">
+              <figcaption class="theme-caption"><span>Produk</span><strong>Rangkaian pendamping perawatan untuk menjaga hasil tetap optimal</strong></figcaption>
+            </figure>
+          </div>
+          <div class="theme-copy animate-on-scroll">
+            <div>
+              <span class="theme-kicker">Zona 02</span>
+              <h2>Galeri perawatan dibuat seperti cerita proses, bukan sekadar daftar layanan.</h2>
+              <p>Section ini menekankan perjalanan pasien: mulai dari konsultasi, tindakan yang relevan, sampai dukungan produk pendamping. Dengan begitu, galeri terasa lebih hidup dan lebih meyakinkan.</p>
+            </div>
+            <ul>
+              <li>Menonjolkan proses konsultasi agar klinik terasa edukatif, bukan agresif.</li>
+              <li>Memberi gambaran visual tentang kualitas perawatan dan pendampingannya.</li>
+              <li>Membangun kepercayaan melalui storytelling, bukan hanya katalog gambar.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="journey-section">
+          <div class="journey-header">
+            <div class="journey-header-copy animate-on-scroll">
+              <span>Perjalanan Treatment</span>
+              <h2>Galeri yang menunjukkan alur pengalaman pasien, bukan sekadar kumpulan visual acak.</h2>
+              <p>Section ini memberi struktur yang lebih naratif: mulai dari konsultasi, masuk ke tindakan yang relevan, lalu dilanjutkan ke perawatan pendamping. Dengan pendekatan ini, halaman galeri terasa lebih informatif dan lebih meyakinkan.</p>
+            </div>
+            <div class="journey-note animate-on-scroll">
+              Visual ini merepresentasikan alur pengalaman treatment di klinik, bukan klaim before-after spesifik pasien tertentu.
+            </div>
+          </div>
+          <div class="journey-grid">
+            <article class="journey-card animate-on-scroll">
+              <div class="journey-media">
+                <span class="journey-step">01</span>
+                <img src="/assets/images/service_consult.png" alt="Tahap konsultasi perawatan kulit" loading="lazy" data-gallery-slot="gallery_journey_consult">
+              </div>
+              <div class="journey-body">
+                <strong>Konsultasi Awal</strong>
+                <p>Kebutuhan kulit dipahami lebih dulu agar rekomendasi treatment terasa relevan, aman, dan tidak berlebihan.</p>
+                <small>Fokus: edukasi, analisis, kenyamanan pasien</small>
+              </div>
+            </article>
+
+            <article class="journey-card animate-on-scroll">
+              <div class="journey-media">
+                <span class="journey-step">02</span>
+                <img src="/assets/images/service_aging.png" alt="Tahap treatment slow aging di klinik" loading="lazy" data-gallery-slot="gallery_journey_treatment">
+              </div>
+              <div class="journey-body">
+                <strong>Treatment Terarah</strong>
+                <p>Proses tindakan ditampilkan sebagai pengalaman yang bersih, tertata, dan didampingi oleh tenaga profesional.</p>
+                <small>Fokus: ketelitian, kebersihan, pendekatan terukur</small>
+              </div>
+            </article>
+
+            <article class="journey-card animate-on-scroll">
+              <div class="journey-media">
+                <span class="journey-step">03</span>
+                <img src="/assets/images/service_products.png" alt="Tahap perawatan lanjutan dan produk pendamping" loading="lazy" data-gallery-slot="gallery_journey_aftercare">
+              </div>
+              <div class="journey-body">
+                <strong>Perawatan Lanjutan</strong>
+                <p>Hasil treatment dijaga dengan rutinitas dan produk pendamping yang membantu kulit tetap terawat setelah kunjungan.</p>
+                <small>Fokus: kesinambungan hasil, kebiasaan perawatan, after-visit care</small>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="theme-section">
+          <div class="theme-copy animate-on-scroll">
+            <div>
+              <span class="theme-kicker">Zona 03</span>
+              <h2>Momen komunitas dan interaksi hangat yang membuat brand terasa dekat.</h2>
+              <p>Berbeda dari homepage yang fokus pada section penjualan, blok ini memperlihatkan sisi brand yang lebih human: edukasi, interaksi tim, dan momen yang membuat klinik terasa ramah sekaligus terpercaya.</p>
+            </div>
+            <ul>
+              <li>Menegaskan bahwa Deoksi Clinic bukan hanya tempat treatment, tetapi juga tempat edukasi.</li>
+              <li>Membantu calon pasien melihat suasana tim dan hubungan dengan pelanggan.</li>
+              <li>Memberi variasi visual agar halaman galeri punya ritme sendiri.</li>
+            </ul>
+          </div>
+          <div class="theme-grid">
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/doctor1.jpg" alt="Tim dokter Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_3_primary">
+              <figcaption class="theme-caption"><span>Tim</span><strong>Dokter dan tim yang hadir dengan pendekatan profesional dan hangat</strong></figcaption>
+            </figure>
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/doctor2.jpg" alt="Sesi edukasi bersama dokter Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_3_secondary">
+              <figcaption class="theme-caption"><span>Edukasi</span><strong>Momen edukasi yang membuat informasi perawatan lebih mudah dipahami</strong></figcaption>
+            </figure>
+            <figure class="theme-card is-large animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/gallery_one.png" alt="Interaksi hangat di Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_3_tertiary">
+              <figcaption class="theme-caption"><span>Pengalaman</span><strong>Interaksi yang dirancang agar setiap kunjungan terasa nyaman dan personal</strong></figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="quote-band animate-on-scroll">
+          <div>
+            <h2>Galeri ini dirancang untuk membangun rasa percaya, bukan sekadar menampilkan foto.</h2>
+            <p>Jika Anda ingin mengetahui treatment yang paling sesuai, tim Deoksi Clinic siap membantu melalui konsultasi yang lebih personal.</p>
+          </div>
+          <a href="/konsultasi.html" class="btn">Lanjut ke Konsultasi</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox sederhana -->
+  <div class="simple-lightbox" data-lightbox role="dialog" aria-modal="true" aria-label="Tampilan foto besar">
+    <div class="lightbox-panel" data-lightbox-panel>
+      <div class="lightbox-topbar">
+        <div class="lightbox-title" data-lightbox-title>Foto</div>
+        <button type="button" class="lightbox-close" data-lightbox-close aria-label="Tutup">Tutup</button>
+      </div>
+      <div class="lightbox-media">
+        <img data-lightbox-img alt="" />
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER (template) -->
+  <footer class="footer" data-footer></footer>
+
+  <script>
+    // Toggle mobile menu tanpa ID milik beranda
+    const navToggle = document.querySelector('[data-nav-toggle]');
+    const navMenu = document.querySelector('[data-nav-menu]');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        navMenu.classList.toggle('open');
+        document.body.style.overflow = navMenu.classList.contains('open') ? 'hidden' : '';
+      });
+    }
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (!navToggle || !navMenu) return;
+        navToggle.classList.remove('active');
+        navMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // Lightbox sederhana
+    const lightbox = document.querySelector('[data-lightbox]');
+    const lightboxImg = document.querySelector('[data-lightbox-img]');
+    const lightboxTitle = document.querySelector('[data-lightbox-title]');
+    const lightboxClose = document.querySelector('[data-lightbox-close]');
+    const lightboxPanel = document.querySelector('[data-lightbox-panel]');
+    const galleryItems = document.querySelectorAll('[data-gallery-item]');
+    let lastFocusEl = null;
+
+    const openLightbox = (src, title) => {
+      if (!lightbox || !lightboxImg || !lightboxTitle) return;
+      lastFocusEl = document.activeElement;
+      lightboxImg.src = src;
+      lightboxImg.alt = title || 'Foto galeri';
+      lightboxTitle.textContent = title || 'Foto';
+      lightbox.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      if (lightboxClose) lightboxClose.focus();
+    };
+
+    const closeLightbox = () => {
+      if (!lightbox || !lightboxImg) return;
+      lightbox.classList.remove('is-open');
+      lightboxImg.src = '';
+      document.body.style.overflow = '';
+      if (lastFocusEl && typeof lastFocusEl.focus === 'function') lastFocusEl.focus();
+    };
+
+    const attachOpen = (card) => {
+      const img = card.querySelector('img');
+      const caption = card.querySelector('.photo-caption');
+      const title = caption ? caption.textContent.trim() : (img ? img.alt : 'Foto');
+      const src = img ? img.currentSrc || img.src : '';
+      if (!src) return;
+      openLightbox(src, title);
+    };
+
+    galleryItems.forEach(card => {
+      card.addEventListener('click', () => attachOpen(card));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          attachOpen(card);
+        }
+      });
+    });
+
+    if (lightboxClose) {
+      lightboxClose.addEventListener('click', closeLightbox);
+    }
+
+    if (lightbox) {
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox && lightbox.classList.contains('is-open')) {
+        closeLightbox();
+      }
+      if (e.key === 'Tab' && lightbox && lightbox.classList.contains('is-open') && lightboxPanel) {
+        const focusables = lightboxPanel.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    const galleryApiBase = window.location.port === '3001' ? '' : 'http://localhost:3001';
+
+    async function loadManagedGalleryContent() {
+      const videoEl = document.querySelector('[data-gallery-video]');
+      const videoToggle = document.querySelector('[data-gallery-video-toggle]');
+
+      if (videoToggle && videoEl && !videoToggle.dataset.bound) {
+        const syncVideoToggleLabel = () => {
+          const isPaused = videoEl.paused;
+          videoToggle.setAttribute('aria-label', isPaused ? 'Putar video highlight galeri' : 'Jeda video highlight galeri');
+        };
+
+        const toggleVideoPlayback = () => {
+          if (videoEl.paused) {
+            videoEl.play().catch(() => {});
+          } else {
+            videoEl.pause();
+          }
+          syncVideoToggleLabel();
+        };
+
+        syncVideoToggleLabel();
+        videoToggle.addEventListener('click', toggleVideoPlayback);
+        videoToggle.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleVideoPlayback();
+          }
+        });
+        videoEl.addEventListener('play', syncVideoToggleLabel);
+        videoEl.addEventListener('pause', syncVideoToggleLabel);
+        videoToggle.dataset.bound = 'true';
+      }
+
+      try {
+        const response = await fetch(`${galleryApiBase}/api/site-content?section=gallery_page&t=${Date.now()}`, {
+          cache: 'no-store',
+        });
+        if (!response.ok) return;
+        const payload = await response.json();
+        const slots = payload?.slots || {};
+        const gallerySlotSelectorMap = {
+          gallery_image_1: '[data-gallery-slot="gallery_zone_1_primary"]',
+          gallery_image_2: '[data-gallery-slot="gallery_zone_1_secondary"]',
+          gallery_image_3: '[data-gallery-slot="gallery_zone_1_tertiary"]',
+        };
+
+        Object.entries(slots).forEach(([slotKey, item]) => {
+          const img = document.querySelector(
+            gallerySlotSelectorMap[slotKey] || `[data-gallery-slot="${slotKey}"]`
+          );
+          if (img && (item.optimized_url || item.url)) {
+            img.src = item.optimized_url || item.url;
+            img.alt = item.alt_text || item.title || img.alt;
+          }
+        });
+
+        const videoItem = slots.gallery_highlight_video;
+        if (videoEl && videoItem && (videoItem.optimized_url || videoItem.url)) {
+          const source = videoEl.querySelector('source');
+          if (source) {
+            source.src = videoItem.optimized_url || videoItem.url;
+            videoEl.load();
+          }
+        }
+      } catch (error) {
+        console.warn('Gallery managed content fallback active.', error);
+      }
+    }
+
+    loadManagedGalleryContent();
+  </script>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

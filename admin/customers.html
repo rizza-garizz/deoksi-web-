@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pelanggan | Deoksi Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+    <main class="admin-main">
+      <h1 class="page-title">Data Pelanggan</h1>
+      <p class="page-desc">Kelola data pasien dan leads konsultasi dari website.</p>
+
+      <div class="admin-table-wrap">
+        <div class="admin-toolbar">
+          <input type="text" class="admin-search" id="search-input" placeholder="🔍  Cari nama atau telepon...">
+          <div class="admin-filter-group">
+            <select class="admin-select" id="status-filter">
+              <option value="">Semua Status</option>
+              <option value="new">Baru</option>
+              <option value="contacted">Dihubungi</option>
+              <option value="scheduled">Terjadwal</option>
+              <option value="done">Selesai</option>
+            </select>
+            <button class="btn-admin btn-admin--secondary btn-admin--sm" id="export-btn">📥 Export CSV</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Telepon</th>
+              <th>Email</th>
+              <th>Gender</th>
+              <th>Keluhan</th>
+              <th>Status</th>
+              <th>Tanggal</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="customers-tbody">
+            <tr><td colspan="8" class="admin-empty"><div class="admin-empty-icon">📊</div>Memuat data...</td></tr>
+          </tbody>
+        </table>
+        <div class="admin-pagination" id="pagination"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="admin-modal-overlay" id="detail-modal">
+    <div class="admin-modal">
+      <div class="admin-modal-header">
+        <span class="admin-modal-title">Detail Pelanggan</span>
+        <button class="admin-modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="admin-modal-body" id="detail-body"></div>
+      <div class="admin-modal-footer">
+        <button class="btn-admin btn-admin--secondary" onclick="closeModal()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/admin/js/admin.js"></script>
+  <script type="module">
+    if (!requireLogin()) throw new Error('redirect');
+    renderSidebar('customers');
+
+    let currentPage = 1;
+    const limit = 15;
+    let allData = [];
+
+    async function loadCustomers() {
+      const search = document.getElementById('search-input').value.trim();
+      const status = document.getElementById('status-filter').value;
+
+      let endpoint = `/customers?page=${currentPage}&limit=${limit}`;
+      if (search) endpoint += `&search=${encodeURIComponent(search)}`;
+      if (status) endpoint += `&status=${status}`;
+
+      try {
+        const result = await apiCall(endpoint);
+        if (!result) return;
+
+        allData = result.data;
+        renderTable(result.data);
+        renderPagination(result.pagination);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('customers-tbody');
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="admin-empty"><div class="admin-empty-icon">📭</div>Tidak ada data pelanggan.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = data.map(c => `
+        <tr>
+          <td><strong>${c.full_name}</strong></td>
+          <td>${c.phone}</td>
+          <td>${c.email || '-'}</td>
+          <td>${c.gender || '-'}</td>
+          <td style="max-width:180px">${(c.concerns || []).join(', ') || '-'}</td>
+          <td>
+            <select class="admin-select" style="padding:6px 10px; font-size:0.82rem;" onchange="updateStatus(${c.id}, this.value)">
+              <option value="new" ${c.status === 'new' ? 'selected' : ''}>Baru</option>
+              <option value="contacted" ${c.status === 'contacted' ? 'selected' : ''}>Dihubungi</option>
+              <option value="scheduled" ${c.status === 'scheduled' ? 'selected' : ''}>Terjadwal</option>
+              <option value="done" ${c.status === 'done' ? 'selected' : ''}>Selesai</option>
+            </select>
+          </td>
+          <td>${formatDate(c.created_at)}</td>
+          <td>
+            <div class="table-actions">
+              <button class="btn-admin btn-admin--secondary btn-admin--sm" onclick="showDetail(${c.id})">👁️</button>
+              <button class="btn-admin btn-admin--danger btn-admin--sm" onclick="deleteCustomer(${c.id}, '${c.full_name}')">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderPagination(pg) {
+      const div = document.getElementById('pagination');
+      const totalPages = Math.ceil(pg.total / pg.limit);
+      div.innerHTML = `
+        <span class="admin-pagination-info">Menampilkan ${(pg.page - 1) * pg.limit + 1}–${Math.min(pg.page * pg.limit, pg.total)} dari ${pg.total}</span>
+        <div class="admin-pagination-btns">
+          <button class="btn-admin btn-admin--secondary btn-admin--sm" ${pg.page <= 1 ? 'disabled' : ''} onclick="goPage(${pg.page - 1})">← Prev</button>
+          <button class="btn-admin btn-admin--secondary btn-admin--sm" ${pg.page >= totalPages ? 'disabled' : ''} onclick="goPage(${pg.page + 1})">Next →</button>
+        </div>
+      `;
+    }
+
+    function goPage(page) {
+      currentPage = page;
+      loadCustomers();
+    }
+
+    async function updateStatus(id, status) {
+      try {
+        await apiCall(`/customers?id=${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status }),
+        });
+        showToast('Status berhasil diupdate!');
+      } catch (err) {}
+    }
+
+    async function deleteCustomer(id, name) {
+      const confirmed = await showConfirm(`Yakin ingin menghapus data <strong>${name}</strong>?`);
+      if (!confirmed) return;
+
+      try {
+        await apiCall(`/customers?id=${id}`, { method: 'DELETE' });
+        showToast('Data berhasil dihapus.');
+        loadCustomers();
+      } catch (err) {}
+    }
+
+    function showDetail(id) {
+      const c = allData.find(x => x.id === id);
+      if (!c) return;
+
+      document.getElementById('detail-body').innerHTML = `
+        <div style="display:grid; gap:16px;">
+          <div><span class="form-label">Nama Lengkap</span><div>${c.full_name}</div></div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div><span class="form-label">Telepon</span><div>${c.phone}</div></div>
+            <div><span class="form-label">Email</span><div>${c.email || '-'}</div></div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div><span class="form-label">Gender</span><div>${c.gender || '-'}</div></div>
+            <div><span class="form-label">Usia</span><div>${c.age_range || '-'}</div></div>
+          </div>
+          <div><span class="form-label">Keluhan / Kebutuhan</span><div>${(c.concerns || []).join(', ') || '-'}</div></div>
+          <div><span class="form-label">Pesan</span><div>${c.message || '-'}</div></div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div><span class="form-label">Status</span><div>${statusBadge(c.status)}</div></div>
+            <div><span class="form-label">Tanggal Daftar</span><div>${formatDateTime(c.created_at)}</div></div>
+          </div>
+        </div>
+      `;
+      document.getElementById('detail-modal').classList.add('is-visible');
+    }
+
+    function closeModal() {
+      document.getElementById('detail-modal').classList.remove('is-visible');
+    }
+
+    // Export CSV
+    document.getElementById('export-btn').addEventListener('click', () => {
+      if (allData.length === 0) return showToast('Tidak ada data untuk di-export.', 'error');
+
+      const headers = ['Nama', 'Telepon', 'Email', 'Gender', 'Keluhan', 'Status', 'Tanggal'];
+      const rows = allData.map(c => [
+        c.full_name, c.phone, c.email || '', c.gender || '',
+        (c.concerns || []).join('; '), c.status, formatDate(c.created_at),
+      ]);
+
+      let csv = headers.join(',') + '\n';
+      rows.forEach(r => { csv += r.map(v => `"${v}"`).join(',') + '\n'; });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `pelanggan_deoksi_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+
+      showToast('CSV berhasil di-download!');
+    });
+
+    // Search & Filter listeners
+    let searchTimeout;
+    document.getElementById('search-input').addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => { currentPage = 1; loadCustomers(); }, 400);
+    });
+
+    document.getElementById('status-filter').addEventListener('change', () => {
+      currentPage = 1;
+      loadCustomers();
+    });
+
+    loadCustomers();
+  </script>
+</body>
+</html>

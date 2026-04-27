@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/assets/images/logo.png" />
+  <title>Konsultasi - Deoksi Beauty Clinic Malang</title>
+  <meta name="description" content="Konsultasi gratis Deoksi Clinic: isi formulir untuk jadwal dan keluhan kulit." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    .navbar .brand-dark,
+    .navbar .brand-subtitle,
+    .navbar .nav-link:not([href="/konsultasi.html"]) {
+      color: var(--dark);
+    }
+
+    .consult-page {
+      padding: 40px 0 95px;
+      background: var(--gradient-cream);
+    }
+
+    .consult-shell {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .form-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(247,144,62,0.10);
+      box-shadow: var(--shadow-sm);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 0%, rgba(247,144,62,0.10), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.35s var(--ease-out);
+      pointer-events: none;
+    }
+
+    .form-card:hover::before {
+      opacity: 1;
+    }
+
+    .form-header {
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-title {
+      margin-bottom: 8px;
+      /* Typography inherited from style.css h2/section-title */
+    }
+
+    .form-subtitle {
+      margin-bottom: 0;
+    }
+
+    .input:focus {
+      border-color: rgba(247,144,62,0.42);
+      box-shadow: 0 0 0 4px rgba(247,144,62,0.14);
+      background: var(--white);
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .checkbox-box {
+      border: 1px solid rgba(247,144,62,0.18);
+      background: rgba(250,243,239,0.65);
+      border-radius: 14px;
+      padding: 14px 14px 10px;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 14px;
+      margin-top: 10px;
+    }
+
+    .check {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .check input {
+      margin-top: 2px;
+      accent-color: var(--primary);
+      width: 18px;
+      height: 18px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: center;
+      margin-top: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: var(--gradient-primary);
+      border: 1px solid rgba(247,144,62,0.38);
+      color: var(--white);
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(247,144,62,0.20);
+      transition: transform 0.25s var(--ease-out), filter 0.25s var(--ease-out);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(0.98);
+    }
+
+    .form-error {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(230, 90, 120, 0.10);
+      border: 1px solid rgba(230, 90, 120, 0.22);
+      color: var(--dark);
+      font-weight: 800;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-error.is-visible {
+      display: block;
+    }
+
+    .privacy-field {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(247,144,62,0.15);
+    }
+
+    .privacy-text {
+      font-weight: 500;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      line-height: 1.4;
+    }
+
+    .privacy-label {
+      cursor: pointer;
+    }
+
+    @media (max-width: 720px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .checkbox-grid { grid-template-columns: 1fr; }
+      .form-card { padding: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER (template) -->
+  <nav class="navbar" data-navbar>
+    <div class="container nav-container">
+      <a href="/" class="brand-logo" data-nav-logo>
+        <div class="brand-title">
+          <span class="brand-orange">DEOKSI</span><span class="brand-dark">Clinic</span>
+        </div>
+        <div class="brand-subtitle">BEAUTY CENTER</div>
+      </a>
+
+      <button class="nav-toggle" data-nav-toggle aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-menu" data-nav-menu>
+        <li><a href="/" class="nav-link">Beranda</a></li>
+        <li><a href="/layanan.html" class="nav-link">Layanan</a></li>
+        <li><a href="/produk.html" class="nav-link">Produk</a></li>
+        <li><a href="/berita.html" class="nav-link">Berita</a></li>
+        <li><a href="/galeri.html" class="nav-link">Galeri</a></li>
+        <li><a href="/tentang.html" class="nav-link">Tentang</a></li>
+        <li><a href="/lokasi.html" class="nav-link">Lokasi</a></li>
+        <li><a href="/konsultasi.html" class="nav-link active">Konsultasi</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero kecil -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-tag animate-on-scroll">Langkah Awal</span>
+      <h1 class="section-title animate-on-scroll">Konsultasi Awal dengan Dokter</h1>
+      <p class="animate-on-scroll">Isi formulir singkat di bawah ini. Tim kami akan menghubungi Anda melalui WhatsApp untuk konfirmasi jadwal.</p>
+    </div>
+  </section>
+
+  <section class="consult-page">
+    <div class="container">
+      <div class="consult-shell">
+        <div class="form-card animate-on-scroll">
+          <div class="form-header">
+            <div class="form-title">Form Konsultasi</div>
+            <div class="form-subtitle">Semua field wajib diisi. Pilih minimal 1 keluhan atau kebutuhan perawatan.</div>
+          </div>
+
+          <form data-consult-form novalidate>
+            <div class="grid-2">
+              <div class="field">
+                <label for="name">Nama</label>
+                <input class="input" type="text" id="name" name="name" autocomplete="name" required placeholder="Nama lengkap">
+              </div>
+
+              <div class="field">
+                <label for="wa">Nomor WA</label>
+                <input class="input" type="tel" id="wa" name="wa" inputmode="tel" autocomplete="tel"
+                  required placeholder="Contoh: 0823xxxxxxx">
+              </div>
+
+              <div class="field">
+                <label for="age">Usia</label>
+                <input class="input" type="number" id="age" name="age" min="10" max="90" required placeholder="Contoh: 25">
+              </div>
+
+              <div class="field">
+                <label for="date">Pilih tanggal</label>
+                <input class="input" type="date" id="date" name="date" required>
+              </div>
+
+              <div class="field full">
+                <label>Keluhan atau kebutuhan perawatan (pilih minimal 1)</label>
+                <div class="checkbox-box">
+                  <div class="checkbox-grid" data-problem-grid>
+                    <label class="check"><input type="checkbox" name="problems" value="Jerawat"> Jerawat</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Bruntusan / Komedo"> Bruntusan / Komedo</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Bekas Jerawat"> Bekas Jerawat</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Flek / Hiperpigmentasi / Melasma"> Flek / Hiperpigmentasi / Melasma</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Kemerahan / Rosacea"> Kemerahan / Rosacea</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Kulit Sensitif / Iritasi"> Kulit Sensitif / Iritasi</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Kerutan / Tanda Penuaan Dini"> Kerutan / Tanda Penuaan Dini</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Kulit Kusam / Tekstur Tidak Merata"> Kulit Kusam / Tekstur Tidak Merata</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Pori Besar"> Pori Besar</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Benang Hidung"> Benang Hidung</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Implan Rambut"> Implan Rambut</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Penyuburan Rambut"> Penyuburan Rambut</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Lainnya"> Lainnya</label>
+                  </div>
+                </div>
+              </div>
+            <div class="field full privacy-field">
+              <label class="check privacy-label">
+                <input type="checkbox" id="privacy" name="privacy" required>
+                <span class="privacy-text">Saya setuju data di atas digunakan untuk keperluan penjadwalan konsultasi dan kerahasiaannya akan dijaga sesuai kebijakan privasi Deoksi Clinic.</span>
+              </label>
+            </div>
+          </div>
+
+            <div class="actions">
+              <button class="submit-btn" type="submit">
+                Kirim
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="form-error" data-form-error role="alert" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER (template) -->
+  <footer class="footer" data-footer></footer>
+
+  <script>
+    // Toggle mobile menu tanpa ID milik beranda
+    const navToggle = document.querySelector('[data-nav-toggle]');
+    const navMenu = document.querySelector('[data-nav-menu]');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        navMenu.classList.toggle('open');
+        document.body.style.overflow = navMenu.classList.contains('open') ? 'hidden' : '';
+      });
+    }
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (!navToggle || !navMenu) return;
+        navToggle.classList.remove('active');
+        navMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // Validasi sederhana: tidak boleh kosong + minimal 1 checkbox
+    const form = document.querySelector('[data-consult-form]');
+    const errorEl = document.querySelector('[data-form-error]');
+    const problemGrid = document.querySelector('[data-problem-grid]');
+
+    const showError = (msg) => {
+      if (!errorEl) return;
+      errorEl.textContent = msg;
+      errorEl.classList.add('is-visible');
+    };
+
+    const clearError = () => {
+      if (!errorEl) return;
+      errorEl.textContent = '';
+      errorEl.classList.remove('is-visible');
+    };
+
+    const hasCheckedProblem = () => {
+      if (!problemGrid) return false;
+      return Array.from(problemGrid.querySelectorAll('input[type="checkbox"]')).some(c => c.checked);
+    };
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        clearError();
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Basic validation already handled above, but let's be double sure
+        const requireds = form.querySelectorAll('[required]');
+        for (let input of requireds) {
+          if (!input.value.trim()) {
+            showError(`Mohon isi field ${input.previousElementSibling ? input.previousElementSibling.innerText : 'yang wajib'}.`);
+            input.focus();
+            return;
+          }
+        }
+
+        if (!hasCheckedProblem()) {
+          showError('Mohon pilih minimal 1 keluhan atau kebutuhan perawatan.');
+          return;
+        }
+
+        // Prepare data
+        const formData = new FormData(form);
+        const concerns = Array.from(form.querySelectorAll('input[name="problems"]:checked')).map(cb => cb.value);
+        
+        const payload = {
+          full_name: formData.get('name'),
+          phone: formData.get('wa'),
+          age: parseInt(formData.get('age')),
+          preferred_date: formData.get('date'),
+          concerns: concerns,
+          privacy_agreed: !!formData.get('privacy')
+        };
+
+        // Show loading state
+        submitBtn.disabled = true;
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span>⏳ Mengirim...</span>';
+
+        try {
+          const response = await fetch('/api/customers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) throw new Error(result.error || 'Terjadi kesalahan saat mengirim data.');
+
+          // Success State
+          form.innerHTML = `
+            <div style="text-align: center; padding: 40px 0;">
+              <div style="font-size: 64px; margin-bottom: 20px;">✅</div>
+              <h2 class="section-title">Terima Kasih, ${payload.full_name}!</h2>
+              <p style="color: var(--text-secondary); margin-bottom: 30px;">Data konsultasi Anda telah kami terima. Tim Deoksi Beauty Clinic akan segera menghubungi Anda melalui WhatsApp atau telepon.</p>
+              <a href="/" class="btn btn-primary">Kembali ke Beranda</a>
+            </div>
+          `;
+          window.scrollTo({ top: form.offsetTop - 100, behavior: 'smooth' });
+
+        } catch (err) {
+          showError(err.message);
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      });
+
+      form.addEventListener('input', () => {
+        if (errorEl && errorEl.classList.contains('is-visible')) clearError();
+      });
+    }
+  </script>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>
