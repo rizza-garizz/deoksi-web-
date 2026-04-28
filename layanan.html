@@ -19,10 +19,15 @@
 
     .services-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 40px;
       margin-top: 0;
     }
+
+    @media (max-width: 1024px) {
+      .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
 
     .service-card {
       background: #FFFFFF;
@@ -206,6 +211,22 @@
           </div>
           <h3 class="service-title">Acne Care</h3>
           <p class="service-desc">Rangkaian perawatan untuk membantu mengurangi jerawat, meredakan peradangan, dan merawat tampilan bekas jerawat dengan lebih tepat.</p>
+        </article>
+
+        <article class="service-card animate-on-scroll">
+          <div class="service-image-frame">
+            <img src="/assets/layanan/peeling.png" alt="Chemical Peeling" loading="lazy">
+          </div>
+          <h3 class="service-title">Chemical Peeling</h3>
+          <p class="service-desc">Prosedur medis untuk mengangkat sel kulit mati, memperbaiki tekstur kulit, dan mencerahkan wajah secara merata.</p>
+        </article>
+
+        <article class="service-card animate-on-scroll">
+          <div class="service-image-frame">
+            <img src="/assets/layanan/booster.png" alt="Skin Booster" loading="lazy">
+          </div>
+          <h3 class="service-title">Skin Booster</h3>
+          <p class="service-desc">Perawatan hidrasi mendalam dengan injeksi nutrisi untuk kulit yang lebih kenyal, sehat, dan bercahaya alami.</p>
         </article>
       </div>
     </div>

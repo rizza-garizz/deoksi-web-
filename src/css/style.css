@@ -41,7 +41,7 @@
   /* Color Palette - Deoksi Original */
   --primary: #E97A2B;
   --primary-light: #F0A265;
-  --primary-dark: #D9681A;
+  --primary-dark: #F7903E;
   --primary-rgb: 233, 122, 43;
 
   /* Secondary Palette - Aesthetic Pink */
@@ -323,7 +323,7 @@ small, .text-small {
 }
 
 .brand-orange {
-  color: #D9681A;
+  color: #F7903E;
 }
 
 .brand-dark {
