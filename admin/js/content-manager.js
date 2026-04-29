@@ -321,7 +321,7 @@ window.openEditModal = function(pageKey, sectionId) {
             <div style="margin-bottom: 12px; max-height: 150px; overflow: hidden; border-radius: 8px; display: flex; justify-content: center; align-items: center;">
               <img src="${escapeHtml(value) || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23555%22 stroke-width=%222%22><rect x=%223%22 y=%223%22 width=%2218%22 height=%2218%22 rx=%222%22/><circle cx=%228.5%22 cy=%228.5%22 r=%221.5%22/><polyline points=%2221 15 16 10 5 21%22/></svg>'}" style="max-width: 100%; max-height: 150px; object-fit: contain;" id="preview-${field.id}" />
             </div>
-            <input class="content-input" type="file" accept="image/*,video/*" style="font-size: 0.9rem;" onchange="window.previewMedia(this, '${field.id}')">
+            <button type="button" class="btn-admin btn-admin--secondary" onclick="window.openMediaPicker('${field.id}')">Pilih Media</button>
             <input type="hidden" id="${field.id}" name="${field.id}" value="${escapeHtml(value)}">
           </div>
         `;
@@ -392,7 +392,7 @@ function renderArrayItems(section) {
             <div style="margin-bottom: 12px; max-height: 150px; overflow: hidden; border-radius: 8px; display: flex; justify-content: center; align-items: center;">
               <img src="${escapeHtml(value) || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23555%22 stroke-width=%222%22><rect x=%223%22 y=%223%22 width=%2218%22 height=%2218%22 rx=%222%22/><circle cx=%228.5%22 cy=%228.5%22 r=%221.5%22/><polyline points=%2221 15 16 10 5 21%22/></svg>'}" style="max-width: 100%; max-height: 150px; object-fit: contain;" id="preview-${section.id}-${index}-${field.id}" />
             </div>
-            <input class="content-input" type="file" accept="image/*,video/*" style="font-size: 0.9rem;" onchange="window.previewMedia(this, '${section.id}-${index}-${field.id}', '${section.id}', ${index}, '${field.id}')">
+            <button type="button" class="btn-admin btn-admin--secondary" onclick="window.openMediaPicker('${section.id}-${index}-${field.id}', '${section.id}', ${index}, '${field.id}')">Pilih Media</button>
             <input type="hidden" value="${escapeHtml(value)}">
           </div>
         `;
@@ -409,31 +409,121 @@ function renderArrayItems(section) {
   container.innerHTML = html;
 }
 
-// Handle file uploads directly in form
-window.previewMedia = function(input, previewId, arraySectionId = null, arrayIndex = null, arrayFieldId = null) {
-  if (input.files && input.files[0]) {
-    const file = input.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = function(e) {
-      // Update the preview image
-      const previewImg = document.getElementById(`preview-${previewId}`);
-      if (previewImg) previewImg.src = e.target.result;
+// Media Picker Logic
+let pickerTargetId = null;
+let pickerArraySectionId = null;
+let pickerArrayIndex = null;
+let pickerArrayFieldId = null;
+
+window.openMediaPicker = async function(previewId, arraySectionId = null, arrayIndex = null, arrayFieldId = null) {
+  pickerTargetId = previewId;
+  pickerArraySectionId = arraySectionId;
+  pickerArrayIndex = arrayIndex;
+  pickerArrayFieldId = arrayFieldId;
+  
+  document.getElementById('media-picker-modal').classList.add('is-open');
+  await loadPickerMedia();
+};
+
+document.getElementById('media-picker-close').addEventListener('click', () => {
+  document.getElementById('media-picker-modal').classList.remove('is-open');
+});
+
+async function loadPickerMedia(search = '') {
+  const grid = document.getElementById('media-picker-grid');
+  grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center;">Memuat media...</div>';
+  
+  try {
+    const res = await apiCall(`/media?limit=50`);
+    if (res && res.data) {
+      const items = res.data.filter(m => 
+        (m.filename && m.filename.toLowerCase().includes(search.toLowerCase())) || 
+        (m.title && m.title.toLowerCase().includes(search.toLowerCase()))
+      );
       
-      // Update the data
-      if (arraySectionId !== null && arrayIndex !== null && arrayFieldId !== null) {
-        // It's an array item, update the global array directly
-        window.updateArrayItem(arraySectionId, arrayIndex, arrayFieldId, e.target.result);
-      } else {
-        // It's a static field, update the hidden input next to the file input
-        const hiddenInput = document.getElementById(previewId); // previewId is the field.id for static
-        if (hiddenInput) hiddenInput.value = e.target.result;
+      if (items.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#888;">Tidak ada media ditemukan.</div>';
+        return;
       }
+      
+      grid.innerHTML = items.map(item => {
+        const isVideo = item.url && item.url.match(/\.(mp4|webm|ogg)$/i);
+        const previewHtml = isVideo 
+            ? `<video src="${item.url}" muted style="width:100%;height:100%;object-fit:cover;"></video>`
+            : `<img src="${item.url}" alt="${item.filename}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`;
+
+        return `
+          <div style="aspect-ratio:1; border-radius:8px; overflow:hidden; border:2px solid var(--admin-border); cursor:pointer; position:relative;"
+               onclick="window.selectMedia('${item.url}')"
+               onmouseover="this.style.borderColor='var(--admin-primary)'"
+               onmouseout="this.style.borderColor='var(--admin-border)'">
+            ${previewHtml}
+            <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); color:#fff; font-size:10px; padding:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.filename}</div>
+          </div>
+        `;
+      }).join('');
     }
-    
-    reader.readAsDataURL(file);
+  } catch (err) {
+    grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:red;">Gagal memuat media.</div>';
   }
 }
+
+document.getElementById('media-picker-search').addEventListener('input', (e) => {
+  loadPickerMedia(e.target.value);
+});
+
+document.getElementById('picker-file-upload').addEventListener('change', async (e) => {
+  if (e.target.files && e.target.files.length > 0) {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    document.getElementById('media-picker-grid').innerHTML = '<div style="grid-column: 1/-1; text-align:center;">Mengunggah...</div>';
+    
+    try {
+      const uploadRes = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${window.localStorage.getItem('deoksi_admin_token')}` },
+        body: formData
+      });
+      if (!uploadRes.ok) throw new Error('Upload failed');
+      const uploadData = await uploadRes.json();
+      
+      await apiCall('/media', {
+        method: 'POST',
+        body: JSON.stringify({
+            filename: uploadData.filename,
+            title: file.name,
+            url: uploadData.url,
+            type: file.type.startsWith('video') ? 'video' : 'image',
+            size_bytes: uploadData.size,
+            status: 'active'
+        })
+      });
+      
+      window.selectMedia(uploadData.url);
+    } catch (err) {
+      alert('Gagal mengunggah file.');
+      loadPickerMedia();
+    }
+  }
+});
+
+window.selectMedia = function(url) {
+  // Update preview image
+  const previewImg = document.getElementById(`preview-${pickerTargetId}`);
+  if (previewImg) previewImg.src = url;
+  
+  // Update data
+  if (pickerArraySectionId !== null && pickerArrayIndex !== null && pickerArrayFieldId !== null) {
+    window.updateArrayItem(pickerArraySectionId, pickerArrayIndex, pickerArrayFieldId, url);
+  } else {
+    const hiddenInput = document.getElementById(pickerTargetId);
+    if (hiddenInput) hiddenInput.value = url;
+  }
+  
+  document.getElementById('media-picker-modal').classList.remove('is-open');
+};
 
 // Global functions for array manipulation
 window.addArrayItem = function(sectionId) {

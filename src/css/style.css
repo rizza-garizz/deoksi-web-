@@ -414,12 +414,16 @@ small, .text-small {
 .nav-toggle {
   display: none;
   flex-direction: column;
+  justify-content: center;
   gap: 5px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
+  padding: 12px; /* Increased from 5px for better touch target */
+  min-width: 44px; /* Standard mobile touch target */
+  min-height: 44px;
   z-index: 1002;
+  margin-right: -8px; /* Offset padding to keep alignment */
 }
 
 .nav-toggle span {
@@ -723,38 +727,51 @@ small, .text-small {
 
 @media (max-width: 576px) {
   .hero-science {
-    padding: 100px 24px 56px;
+    padding: 100px 24px 64px; /* Slightly more bottom padding */
   }
 
   .hero-science__container {
-    gap: 32px;
+    gap: 36px;
   }
 
   .hero-science__title {
-    font-size: clamp(2.3rem, 10vw, 3.3rem);
+    font-size: clamp(2.2rem, 11vw, 3rem); /* More precise scaling */
+    letter-spacing: -0.03em;
   }
 
   .hero-science__text {
     font-size: 0.98rem;
     line-height: 1.75;
+    margin-bottom: 28px;
   }
 
   .hero-science__button {
     width: 100%;
     justify-content: center;
+    padding: 18px 28px; /* More substantial button */
   }
 
   .hero-science__trust {
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns instead of full width bars */
+    gap: 12px;
+    width: 100%;
+    margin-top: 8px;
   }
 
   .hero-science__trust span {
     width: 100%;
-    justify-content: center;
+    justify-content: flex-start; /* Left align text in badges */
+    font-size: 0.78rem;
+    padding: 10px 14px;
+  }
+  
+  .hero-science__trust span:last-child {
+    grid-column: span 2; /* Last item spans both columns if odd */
   }
 
   .hero-science__image-shell {
-    border-radius: 24px;
+    border-radius: 28px;
   }
 
   .hero-science__image {
@@ -762,14 +779,31 @@ small, .text-small {
   }
 
   .hero-science__video {
-    min-height: auto;
+    min-height: 320px;
     animation: none;
     transform: scale(1.02);
   }
 
   .hero-science__badge {
-    position: static;
-    margin: 14px;
+    position: absolute; /* Keep it as overlay */
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    max-width: none;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(255, 253, 248, 0.95);
+    margin: 0; /* Remove the static margin */
+  }
+  
+  .hero-science__badge strong {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+  
+  .hero-science__badge span {
+    font-size: 0.78rem;
+    line-height: 1.5;
   }
 }
 
@@ -2591,14 +2625,16 @@ small, .text-small {
 
   #reviews-slider .review-card {
     width: 100%;
-    height: 320px;
-    padding: 28px 24px;
-    border-radius: 24px;
+    height: auto; /* Changed from 320px for flexibility */
+    min-height: 320px; /* Keep minimum height for visual consistency */
+    padding: 32px 24px;
+    border-radius: 28px;
   }
 
   #reviews-slider .review-text {
-    min-height: 132px;
-    max-height: 132px;
+    min-height: auto; /* Removed fixed height constraints */
+    max-height: none;
+    overflow: visible;
   }
 
   #google-review-link {
@@ -2858,61 +2894,23 @@ small, .text-small {
 
 @media (max-width: 768px) {
   :root {
-    --section-py: 70px;
+    --section-py: 64px; /* Slightly tighter vertical spacing */
+    --container-px: 24px; /* More breathing room on sides */
+  }
+  
+  .section-header {
+    margin-bottom: 48px;
+  }
+  
+  .section-title {
+    font-size: 28px;
   }
 
-  /* Mobile Nav */
-  .nav-toggle {
-    display: flex;
-  }
-
-  .nav-menu {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 80%;
-    max-width: 360px;
-    height: 100vh;
-    background: var(--white);
-    flex-direction: column;
-    padding: 100px 40px 40px;
-    gap: 0;
-    transition: right 0.4s var(--ease-out);
-    box-shadow: -10px 0 40px rgba(0,0,0,0.1);
-  }
-
-  .nav-menu.open {
-    right: 0;
-  }
-
-  .nav-link {
-    color: var(--text) !important;
-    padding: 16px 0;
-    font-size: 1.15rem;
-    font-weight: 600;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-  }
-
-  .nav-cta {
-    margin-top: 20px;
-    text-align: center;
-    justify-content: center;
-    border-bottom: none !important;
-  }
-
-  .nav-toggle.active span:nth-child(1) {
-    transform: rotate(45deg) translateY(7px);
-  }
-  .nav-toggle.active span:nth-child(2) {
-    opacity: 0;
-  }
-  .nav-toggle.active span:nth-child(3) {
-    transform: rotate(-45deg) translateY(-7px);
-  }
-
-  /* Hero */
+  /* Mobile Nav ... (already updated partially, but making sure container spacing matches) */
+  
+  /* Hero section (already updated above for 576px, but let's check 768px) */
   .hero-content {
-    padding-top: 140px;
+    padding-top: 130px;
   }
 
   /* Services */
@@ -2920,14 +2918,13 @@ small, .text-small {
     grid-template-columns: 1fr;
     max-width: 500px;
     margin: 0 auto;
+    gap: 20px;
   }
-
-
 
   /* About */
   .about-container {
     grid-template-columns: 1fr;
-    gap: 50px;
+    gap: 40px;
   }
 
   .about-visual {
@@ -2945,10 +2942,13 @@ small, .text-small {
 
   .about-features {
     justify-items: center;
+    gap: 12px;
   }
 
   .about-text .btn {
     margin: 0 auto;
+    width: 100%; /* Consistent full width buttons on mobile */
+    justify-content: center;
   }
 
   /* Location */
@@ -2957,22 +2957,29 @@ small, .text-small {
   }
 
   .location-map {
-    min-height: 280px;
+    min-height: 300px;
   }
 
   /* Footer */
   .footer-grid {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 48px;
+    text-align: center;
+  }
+  
+  .footer-socials {
+    justify-content: center;
+  }
+  
+  .footer-links li a {
+    justify-content: center;
   }
 }
 
 @media (max-width: 480px) {
   .hero-title {
-    font-size: 2.4rem;
+    font-size: 2.2rem;
   }
-
-
 
   .about-features {
     grid-template-columns: 1fr;
@@ -2980,6 +2987,10 @@ small, .text-small {
 
   .about-floating-card.card-2 {
     display: none;
+  }
+  
+  .promo-card {
+    padding: 24px; /* Tighter padding for small screens */
   }
 }
 /* Doctor Grid (Global Audit Update) */

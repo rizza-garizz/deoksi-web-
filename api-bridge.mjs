@@ -73,12 +73,12 @@ async function buildWebRequest(req) {
   });
 }
 
-// Route map: URL pathname -> handler file path
 const API_ROUTES = {
   '/api/auth/login': './api/auth/login.js',
   '/api/customers': './api/customers.js',
   '/api/articles': './api/articles.js',
   '/api/media': './api/media.js',
+  '/api/upload': './api/upload.js',
   '/api/media-config': './api/media-config.js',
   '/api/gallery-content': './api/gallery-content.js',
   '/api/homepage-content': './api/homepage-content.js',

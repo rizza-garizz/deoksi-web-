@@ -212,20 +212,20 @@
 
 <body>
   <!-- HEADER (template) -->
-  <nav class="navbar" data-navbar>
+  <nav class="navbar" id="navbar">
     <div class="container nav-container">
-      <a href="/" class="brand-logo" data-nav-logo>
+      <a href="/" class="brand-logo" id="nav-logo">
         <div class="brand-title">
           <span class="brand-orange">DEOKSI</span><span class="brand-dark">Clinic</span>
         </div>
         <div class="brand-subtitle">BEAUTY CENTER</div>
       </a>
 
-      <button class="nav-toggle" data-nav-toggle aria-label="Toggle navigation">
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
       </button>
 
-      <ul class="nav-menu" data-nav-menu>
+      <ul class="nav-menu" id="nav-menu">
         <li><a href="/" class="nav-link">Beranda</a></li>
         <li><a href="/layanan.html" class="nav-link">Layanan</a></li>
         <li><a href="/produk.html" class="nav-link active">Produk</a></li>
@@ -409,25 +409,6 @@
   <footer class="footer" data-footer></footer>
 
   <script>
-    // Toggle mobile menu tanpa ID milik beranda
-    const navToggle = document.querySelector('[data-nav-toggle]');
-    const navMenu = document.querySelector('[data-nav-menu]');
-    if (navToggle && navMenu) {
-      navToggle.addEventListener('click', () => {
-        navToggle.classList.toggle('active');
-        navMenu.classList.toggle('open');
-        document.body.style.overflow = navMenu.classList.contains('open') ? 'hidden' : '';
-      });
-    }
-    document.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        if (!navToggle || !navMenu) return;
-        navToggle.classList.remove('active');
-        navMenu.classList.remove('open');
-        document.body.style.overflow = '';
-      });
-    });
-
     // Filter produk
     const filterButtons = document.querySelectorAll('[data-filter]');
     const productCards = document.querySelectorAll('[data-category]');

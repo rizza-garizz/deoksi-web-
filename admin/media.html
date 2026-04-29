@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Library - Admin Deoksi</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/admin/css/admin-style.css">
+    
+    <style>
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .media-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--admin-surface-2);
+            border: 1px solid var(--admin-border);
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .media-item:hover {
+            border-color: var(--admin-primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .media-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .media-item .media-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 8px;
+            font-size: 0.75rem;
+            transform: translateY(100%);
+            transition: transform 0.2s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .media-item:hover .media-info {
+            transform: translateY(0);
+        }
+
+        .media-actions {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .media-item:hover .media-actions {
+            opacity: 1;
+        }
+
+        .media-btn {
+            background: white;
+            border: none;
+            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            color: var(--admin-text);
+        }
+
+        .media-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .media-btn.danger {
+            color: #dc2626;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--admin-border);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: var(--admin-surface);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--admin-primary);
+            background: var(--admin-primary-light);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            color: var(--admin-text-muted);
+        }
+
+        .upload-text {
+            color: var(--admin-text-muted);
+            font-size: 0.9rem;
+        }
+
+        .media-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .media-modal.is-open {
+            display: flex;
+        }
+
+        .media-modal-content {
+            background: var(--admin-surface);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .media-modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--admin-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .media-modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            gap: 24px;
+        }
+
+        .media-preview-large {
+            flex: 2;
+            background: var(--admin-surface-2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-height: 300px;
+        }
+
+        .media-preview-large img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        .media-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .detail-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: var(--admin-text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            font-size: 0.9rem;
+            color: var(--admin-text);
+            word-break: break-all;
+        }
+
+        .copy-url-btn {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: var(--admin-surface-2);
+            border: 1px solid var(--admin-border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .copy-url-btn:hover {
+            background: var(--admin-border);
+        }
+        
+        /* Picker specific styles */
+        .media-picker-mode .media-item {
+            border: 2px solid transparent;
+        }
+        .media-picker-mode .media-item.selected {
+            border-color: var(--admin-primary);
+        }
+        .media-picker-mode .media-item.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--admin-primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="admin-body">
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="sidebar"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+                <h1 class="page-title">Media Library</h1>
+            </div>
+            <div class="header-right">
+                <button class="btn-admin" onclick="document.getElementById('file-upload').click()">+ Upload File</button>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <input type="file" id="file-upload" accept="image/*,video/*" style="display: none;" multiple>
+            
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Klik atau seret file ke sini untuk mengunggah media baru</div>
+                <div class="upload-text" style="font-size: 0.75rem; margin-top: 8px;">Maks. 5MB untuk gambar, 20MB untuk video</div>
+            </div>
+
+            <div class="media-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div class="search-box" style="width: 300px;">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="Cari media..." class="search-input">
+                </div>
+                <div class="media-stats" id="media-stats" style="color: var(--admin-text-muted); font-size: 0.85rem;">
+                    Memuat...
+                </div>
+            </div>
+
+            <div id="media-loading" style="text-align: center; padding: 40px; color: var(--admin-text-muted); display: none;">
+                Memuat media...
+            </div>
+
+            <div class="media-grid" id="media-grid">
+                <!-- Media items will be rendered here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Media Detail Modal -->
+    <div class="media-modal" id="media-detail-modal">
+        <div class="media-modal-content">
+            <div class="media-modal-header">
+                <h3 id="modal-filename">Detail Media</h3>
+                <button class="lightbox-close" id="modal-close" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+            </div>
+            <div class="media-modal-body">
+                <div class="media-preview-large" id="modal-preview">
+                    <!-- Image -->
+                </div>
+                <div class="media-details">
+                    <div class="detail-row">
+                        <span class="detail-label">File Name</span>
+                        <span class="detail-value" id="detail-name">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">URL Path</span>
+                        <span class="detail-value" id="detail-url">-</span>
+                        <button class="copy-url-btn" id="copy-url-btn">
+                            📄 Salin URL
+                        </button>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Uploaded At</span>
+                        <span class="detail-value" id="detail-date">-</span>
+                    </div>
+                    <div style="margin-top: auto; display: flex; justify-content: flex-end;">
+                        <button class="btn-admin btn-admin--secondary" style="color: #dc2626; border-color: #dc2626;" id="detail-delete-btn">Hapus File</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script type="module" src="/admin/js/media-manager.js"></script>
+</body>
+</html>

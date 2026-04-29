@@ -722,6 +722,26 @@
     </div>
   </div>
 
+  <!-- Media Picker Modal -->
+  <div class="modal-overlay" id="media-picker-modal" style="z-index: 3000;">
+    <div class="modal-container" style="max-width: 900px; height: 80vh;">
+      <div class="modal-header">
+        <div class="modal-title">Pilih Media</div>
+        <button class="modal-close" id="media-picker-close">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 0; display: flex; flex-direction: column;">
+        <div style="padding: 16px; border-bottom: 1px solid var(--admin-border); display: flex; gap: 16px;">
+          <input type="text" id="media-picker-search" class="content-input" placeholder="Cari media..." style="flex-grow: 1;">
+          <button class="btn-admin btn-admin--secondary" onclick="document.getElementById('picker-file-upload').click()">+ Upload Baru</button>
+          <input type="file" id="picker-file-upload" accept="image/*,video/*" style="display: none;">
+        </div>
+        <div id="media-picker-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; padding: 16px; overflow-y: auto; flex-grow: 1; align-content: flex-start;">
+          <!-- Media items will be rendered here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="/admin/js/admin.js"></script>
   <script type="module" src="/admin/js/content-manager.js"></script>
 </body>
