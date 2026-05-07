@@ -14,5 +14,7 @@ export default async function handler(request) {
     enabled: Boolean(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_UPLOAD_PRESET),
     cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
     uploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET || '',
+    folder: process.env.CLOUDINARY_UPLOAD_FOLDER || '',
+    mode: process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_UPLOAD_PRESET ? 'cloudinary' : 'disabled',
   });
 }

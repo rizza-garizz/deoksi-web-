@@ -24,6 +24,24 @@
       margin-top: 0;
     }
 
+    .services-fallback-note {
+      display: none;
+      max-width: 720px;
+      margin: 0 auto 24px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      background: rgba(247,144,62,0.06);
+      border: 1px solid rgba(233, 122, 43, 0.12);
+      color: #7D6B62;
+      line-height: 1.65;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .services-grid.is-fallback + .services-fallback-note {
+      display: block;
+    }
+
     @media (max-width: 1024px) {
       .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
@@ -179,7 +197,7 @@
   <!-- Konten utama -->
   <section class="services-page">
     <div class="container">
-      <div class="services-grid">
+      <div class="services-grid is-fallback">
         <article class="service-card animate-on-scroll">
           <div class="service-image-frame">
             <img src="/assets/layanan/facial.png" alt="Facial Treatment" loading="lazy">
@@ -227,6 +245,9 @@
           <h3 class="service-title">Skin Booster</h3>
           <p class="service-desc">Perawatan hidrasi mendalam dengan injeksi nutrisi untuk kulit yang lebih kenyal, sehat, dan bercahaya alami.</p>
         </article>
+      </div>
+      <div class="services-fallback-note">
+        Daftar layanan akan menyesuaikan pembaruan terbaru dari sistem. Jika koneksi sedang lambat, tampilan awal ini tetap membantu Anda melihat gambaran umum layanan Deoksi Clinic.
       </div>
     </div>
   </section>

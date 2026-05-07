@@ -9,7 +9,8 @@ describe('homepage content manager', () => {
     expect(content.hero_badge).toBe('Beauty Consultation');
     expect(content.headline).toBe('Kulit Berbasis Sains');
     expect(content.highlight_text).toBe('Sains');
-    expect(content.cta_text).toBe('Konsultasi dengan Dokter');
+    expect(content.cta_text).toBe('Konsultasi dengan tim kami');
+    expect(Array.isArray(content.promos)).toBe(true);
   });
 
   test('updates only requested homepage fields', () => {

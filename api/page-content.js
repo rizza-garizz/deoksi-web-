@@ -1,9 +1,31 @@
 import { getDB, hasDatabase } from './_lib/db.js';
 import { requireAuth } from './_lib/auth.js';
-import { getPageContent, updatePageContent } from './_lib/local-db.js';
+import { getPageContent, normalizePageContentRecord, updatePageContent } from './_lib/local-db.js';
 import { errorResponse, handleCors, jsonResponse } from './_lib/utils.js';
 
 export const config = { runtime: 'edge' };
+
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function deepMerge(base, patch) {
+  if (!isPlainObject(base) || !isPlainObject(patch)) {
+    return patch;
+  }
+
+  const result = { ...base };
+
+  for (const [key, value] of Object.entries(patch)) {
+    if (isPlainObject(value) && isPlainObject(result[key])) {
+      result[key] = deepMerge(result[key], value);
+    } else {
+      result[key] = value;
+    }
+  }
+
+  return result;
+}
 
 async function ensurePageContentTable(sql) {
   await sql`
@@ -23,14 +45,14 @@ async function readPageContentFromDb(sql, pageKey) {
   if (rows.length === 0) {
     return getPageContent(pageKey); // fallback to default if not in DB yet
   }
-  return rows[0].content;
+  return normalizePageContentRecord(pageKey, rows[0].content);
 }
 
 async function writePageContentToDb(sql, pageKey, payload) {
   await ensurePageContentTable(sql);
   
   const existingContent = await readPageContentFromDb(sql, pageKey);
-  const nextContent = { ...existingContent, ...payload };
+  const nextContent = normalizePageContentRecord(pageKey, deepMerge(existingContent, payload));
 
   await sql`
     INSERT INTO page_content (page_key, content, updated_at)

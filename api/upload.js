@@ -1,9 +1,57 @@
-import fs from 'fs';
-import path from 'path';
 import { requireAuth } from './_lib/auth.js';
 import { handleCors, jsonResponse, errorResponse } from './_lib/utils.js';
 
 export const config = { runtime: 'edge' };
+
+export function getCloudinaryUploadConfig() {
+  return {
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
+    uploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET || '',
+    folder: process.env.CLOUDINARY_UPLOAD_FOLDER || '',
+  };
+}
+
+export function buildCloudinaryUploadUrl(cloudName) {
+  return `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
+}
+
+function shouldUseCloudinary() {
+  const { cloudName, uploadPreset } = getCloudinaryUploadConfig();
+  return Boolean(cloudName && uploadPreset);
+}
+
+async function uploadToCloudinary(file) {
+  const { cloudName, uploadPreset, folder } = getCloudinaryUploadConfig();
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', uploadPreset);
+  if (folder) {
+    formData.append('folder', folder);
+  }
+
+  const response = await fetch(buildCloudinaryUploadUrl(cloudName), {
+    method: 'POST',
+    body: formData,
+  });
+
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload?.error?.message || payload?.error || 'Cloudinary upload gagal.');
+  }
+
+  return {
+    success: true,
+    url: payload.secure_url || payload.url,
+    filename: payload.public_id || file.name,
+    size: payload.bytes || file.size,
+    type: file.type,
+    provider: 'cloudinary',
+    public_id: payload.public_id || null,
+    width: payload.width || null,
+    height: payload.height || null,
+    format: payload.format || null,
+  };
+}
 
 export default async function handler(request) {
   const cors = handleCors(request);
@@ -29,38 +77,12 @@ export default async function handler(request) {
       return errorResponse('No file uploaded or invalid file format.', 400);
     }
 
-    // Since we are running in a simulated edge environment locally (api-bridge.mjs),
-    // we can use Node.js fs to save the file. In a real Vercel Edge environment,
-    // this would fail, and we would need a cloud storage solution (S3, Cloudinary).
-    
-    // Convert File to Buffer
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    // Generate unique filename
-    const timestamp = Date.now();
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const filename = `${timestamp}-${originalName}`;
-    
-    const uploadDir = path.join(process.cwd(), 'public', 'assets', 'uploads');
-    
-    // Ensure directory exists
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    if (shouldUseCloudinary()) {
+      const result = await uploadToCloudinary(file);
+      return jsonResponse(result, 201);
     }
 
-    const filePath = path.join(uploadDir, filename);
-    fs.writeFileSync(filePath, buffer);
-
-    const fileUrl = `/assets/uploads/${filename}`;
-
-    return jsonResponse({
-      success: true,
-      url: fileUrl,
-      filename: filename,
-      size: file.size,
-      type: file.type
-    }, 201);
+    return errorResponse('Upload cloud belum dikonfigurasi. Isi CLOUDINARY_CLOUD_NAME dan CLOUDINARY_UPLOAD_PRESET.', 503);
 
   } catch (error) {
     console.error('Upload API Error:', error);

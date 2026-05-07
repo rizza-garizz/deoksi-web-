@@ -16,7 +16,7 @@ export const PAGE_SCHEMAS = {
         previewFields: ['headline', 'highlight_text'],
         previewImage: 'hero_media',
         fields: [
-          { id: 'hero_media', label: 'Background Video / Gambar Hero', type: 'media' },
+          { id: 'hero_media', label: 'Background Video / Gambar Hero', type: 'media', helper: 'Jika hero memakai gambar, pilih foto dari Google Drive. Jika hero memakai video, gunakan media video Cloudinary yang sudah tersimpan di library.' },
           { id: 'hero_badge', label: 'Hero Badge', type: 'text' },
           { id: 'headline', label: 'Headline', type: 'text' },
           { id: 'highlight_text', label: 'Highlight Text', type: 'text' },
@@ -43,7 +43,7 @@ export const PAGE_SCHEMAS = {
       {
         id: 'promos',
         title: 'Promo Section',
-        desc: 'Daftar paket promo yang tampil di Beranda.',
+        desc: 'Daftar flyer promo yang tampil di Beranda.',
         ctaLabel: 'Kelola Promo',
         icon: '🏷️',
         isArray: true,
@@ -51,7 +51,7 @@ export const PAGE_SCHEMAS = {
           { id: 'title', label: 'Judul Promo', type: 'text' },
           { id: 'description', label: 'Deskripsi Singkat', type: 'textarea' },
           { id: 'price', label: 'Harga Promo', type: 'text', default: 'Rp ' },
-          { id: 'image_url', label: 'Upload Foto Promo', type: 'media', fullWidth: true },
+          { id: 'image_url', label: 'Upload Flyer Promo', type: 'media', fullWidth: true, helper: 'Gunakan foto/poster flyer vertikal dari Media Library agar tampil optimal di section promo homepage. Homepage hanya menampilkan maksimal 3 flyer teratas.' },
           { id: 'cta_link', label: 'Link Tombol', type: 'text', default: 'https://wa.me/6282333344919', fullWidth: true },
           { id: 'is_visible', label: 'Tampilkan?', type: 'checkbox', default: true }
         ]
@@ -124,7 +124,7 @@ export const PAGE_SCHEMAS = {
         isArray: true,
         itemFields: [
           { id: 'name', label: 'Nama Produk', type: 'text' },
-          { id: 'image_url', label: 'Foto Produk', type: 'media', fullWidth: true },
+          { id: 'image_url', label: 'Foto Produk', type: 'media', fullWidth: true, helper: 'Gunakan foto produk yang sumbernya Google Drive dari Media Library.' },
           { id: 'category', label: 'Kategori', type: 'select', options: [
             { value: 'sabun', label: 'Sabun' },
             { value: 'serum', label: 'Serum' },
@@ -133,6 +133,17 @@ export const PAGE_SCHEMAS = {
           { id: 'price', label: 'Harga', type: 'text', default: 'Rp ' },
           { id: 'rating', label: 'Rating (0-5)', type: 'number', default: 5 },
           { id: 'has_bpom', label: 'Badge BPOM?', type: 'checkbox', default: true },
+          { id: 'has_halal_mui', label: 'Badge Halal MUI?', type: 'checkbox', default: true },
+          {
+            id: 'bpom_number',
+            label: 'Nomor BPOM (Opsional)',
+            type: 'text',
+            placeholder: 'Contoh: NA18240123456',
+            helper: 'Isi hanya jika nomor registrasi resmi sudah tersedia dan terverifikasi. Biarkan kosong bila belum ada data legal yang pasti.'
+          },
+          { id: 'key_benefit', label: 'Manfaat Utama (Opsional)', type: 'text', placeholder: 'Contoh: Membantu membersihkan wajah tanpa membuat kulit terasa kering' },
+          { id: 'netto', label: 'Isi Bersih / Netto (Opsional)', type: 'text', placeholder: 'Contoh: 100 ml' },
+          { id: 'usage_hint', label: 'Cara Pakai Singkat (Opsional)', type: 'text', placeholder: 'Contoh: Gunakan pagi dan malam pada wajah yang telah dibasahi' },
           { id: 'is_visible', label: 'Tampilkan?', type: 'checkbox', default: true }
         ]
       }
@@ -171,7 +182,7 @@ export const PAGE_SCHEMAS = {
           { id: 'publish_date', label: 'Tanggal Terbit', type: 'text' },
           { id: 'excerpt', label: 'Kutipan Singkat (Excerpt)', type: 'textarea' },
           { id: 'content', label: 'Isi Artikel', type: 'textarea', fullWidth: true },
-          { id: 'image_url', label: 'Upload Gambar Sampul', type: 'media', fullWidth: true },
+          { id: 'image_url', label: 'Upload Gambar Sampul', type: 'media', fullWidth: true, helper: 'Gunakan gambar sampul artikel dari Google Drive melalui Media Library.' },
           { id: 'is_published', label: 'Tampilkan?', type: 'checkbox', default: true }
         ]
       }
@@ -210,7 +221,7 @@ export const PAGE_SCHEMAS = {
             { value: 'image', label: 'Foto (Gambar)' },
             { value: 'video', label: 'Video (MP4/WebM)' }
           ]},
-          { id: 'media_url', label: 'Upload Foto / Video', type: 'media', fullWidth: true },
+          { id: 'media_url', label: 'Upload Foto / Video', type: 'media', fullWidth: true, helper: 'Untuk item foto gunakan media Google Drive. Untuk item video gunakan media Cloudinary sesuai jenis media yang dipilih.' },
           { id: 'is_visible', label: 'Tampilkan?', type: 'checkbox', default: true }
         ]
       }
@@ -251,7 +262,7 @@ export const PAGE_SCHEMAS = {
           { id: 'name', label: 'Nama', type: 'text' },
           { id: 'specialization', label: 'Spesialisasi', type: 'text' },
           { id: 'description', label: 'Deskripsi', type: 'textarea' },
-          { id: 'photo_url', label: 'Upload Foto Profil', type: 'media', fullWidth: true }
+          { id: 'photo_url', label: 'Upload Foto Profil', type: 'media', fullWidth: true, helper: 'Gunakan foto profil yang sumbernya Google Drive dari Media Library.' }
         ]
       },
       {
@@ -265,7 +276,7 @@ export const PAGE_SCHEMAS = {
           { id: 'name', label: 'Nama Sertifikat', type: 'text' },
           { id: 'badge_code', label: 'Kode Badge (Max 3 char)', type: 'text' },
           { id: 'description', label: 'Deskripsi Singkat', type: 'text' },
-          { id: 'image_url', label: 'Upload Gambar Sertifikat', type: 'media', fullWidth: true },
+          { id: 'image_url', label: 'Upload Gambar Sertifikat', type: 'media', fullWidth: true, helper: 'Gunakan gambar sertifikat yang sumbernya Google Drive dari Media Library.' },
           { id: 'issuer', label: 'Penerbit', type: 'text', fullWidth: true }
         ]
       }
@@ -420,7 +431,7 @@ export const PAGE_SCHEMAS = {
         fields: [
           { id: 'homepage_meta_title', label: 'Homepage - Title', type: 'text', fullWidth: true },
           { id: 'homepage_meta_description', label: 'Homepage - Description', type: 'textarea' },
-          { id: 'homepage_og_image', label: 'Homepage - OG Image', type: 'media', fullWidth: true }
+          { id: 'homepage_og_image', label: 'Homepage - OG Image', type: 'media', fullWidth: true, helper: 'Gunakan gambar OG dari Google Drive atau media image publik yang sudah tervalidasi di library.' }
         ]
       },
       {

@@ -17,6 +17,7 @@ const HOMEPAGE_FIELDS = [
   'bullet_benefit_3',
   'consultation_card_title',
   'consultation_card_description',
+  'hero_media',
 ];
 
 const DEFAULT_HOMEPAGE_CONTENT = {
@@ -25,68 +26,126 @@ const DEFAULT_HOMEPAGE_CONTENT = {
   highlight_text: 'Sains',
   description:
     'Konsultasikan kebutuhan kulit Anda bersama dokter berpengalaman untuk mendapatkan rekomendasi perawatan yang aman, nyaman, dan sesuai kondisi kulit.',
-  cta_text: 'Konsultasi dengan Dokter',
-  cta_link: 'https://wa.me/6282333344919?text=Halo%20Deoksi%20Clinic,%20saya%20ingin%20konsultasi%20dengan%20dokter.',
+  cta_text: 'Konsultasi dengan tim kami',
+  cta_link: 'https://wa.me/6282333344919?text=Halo%20Deoksi%20Clinic,%20saya%20ingin%20konsultasi%20dengan%20tim%20kami.',
   bullet_benefit_1: 'Dokter berpengalaman',
   bullet_benefit_2: 'Perawatan terarah',
   bullet_benefit_3: 'Konsultasi nyaman',
   consultation_card_title: 'Konsultasi Personal',
   consultation_card_description:
     'Pendekatan dokter yang aman, nyaman, dan sesuai kondisi kulit.',
+  hero_media: '',
 };
 
-async function ensureHomepageContentTable(sql) {
-  await sql`
-    CREATE TABLE IF NOT EXISTS homepage_content (
-      key VARCHAR(100) PRIMARY KEY,
-      value TEXT NOT NULL,
-      updated_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `;
+function buildHomepagePageContent() {
+  return {
+    hero: {
+      hero_media: DEFAULT_HOMEPAGE_CONTENT.hero_media,
+      hero_badge: DEFAULT_HOMEPAGE_CONTENT.hero_badge,
+      headline: DEFAULT_HOMEPAGE_CONTENT.headline,
+      highlight_text: DEFAULT_HOMEPAGE_CONTENT.highlight_text,
+      description: DEFAULT_HOMEPAGE_CONTENT.description,
+      cta_text: DEFAULT_HOMEPAGE_CONTENT.cta_text,
+      cta_link: DEFAULT_HOMEPAGE_CONTENT.cta_link,
+    },
+    hero_benefits: {
+      bullet_benefit_1: DEFAULT_HOMEPAGE_CONTENT.bullet_benefit_1,
+      bullet_benefit_2: DEFAULT_HOMEPAGE_CONTENT.bullet_benefit_2,
+      bullet_benefit_3: DEFAULT_HOMEPAGE_CONTENT.bullet_benefit_3,
+      consultation_card_title: DEFAULT_HOMEPAGE_CONTENT.consultation_card_title,
+      consultation_card_description: DEFAULT_HOMEPAGE_CONTENT.consultation_card_description,
+    },
+    promos: [],
+  };
 }
 
-function sanitizeHomepageContent(payload = {}) {
-  const nextContent = {};
+function flattenHomepageContent(content = {}) {
+  return {
+    ...DEFAULT_HOMEPAGE_CONTENT,
+    ...(content.hero || {}),
+    ...(content.hero_benefits || {}),
+    promos: Array.isArray(content.promos) ? content.promos : [],
+  };
+}
+
+function nestHomepageContent(payload = {}, content = {}) {
+  const nextContent = {
+    ...buildHomepagePageContent(),
+    ...content,
+    hero: {
+      ...buildHomepagePageContent().hero,
+      ...(content.hero || {}),
+    },
+    hero_benefits: {
+      ...buildHomepagePageContent().hero_benefits,
+      ...(content.hero_benefits || {}),
+    },
+    promos: Array.isArray(content.promos) ? content.promos : [],
+  };
 
   for (const field of HOMEPAGE_FIELDS) {
-    const rawValue = payload[field];
-    if (rawValue === undefined) continue;
+    if (payload[field] === undefined) continue;
 
-    const value = String(rawValue ?? '').trim();
-    nextContent[field] = value || DEFAULT_HOMEPAGE_CONTENT[field];
+    const value = String(payload[field] ?? '').trim() || DEFAULT_HOMEPAGE_CONTENT[field];
+    if (['hero_media', 'hero_badge', 'headline', 'highlight_text', 'description', 'cta_text', 'cta_link'].includes(field)) {
+      nextContent.hero[field] = value;
+    } else {
+      nextContent.hero_benefits[field] = value;
+    }
+  }
+
+  if (payload.promos !== undefined) {
+    nextContent.promos = Array.isArray(payload.promos) ? payload.promos : [];
   }
 
   return nextContent;
 }
 
+async function ensurePageContentTable(sql) {
+  await sql`
+    CREATE TABLE IF NOT EXISTS page_content (
+      page_key VARCHAR(50) PRIMARY KEY,
+      content JSONB NOT NULL DEFAULT '{}',
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+}
+
 async function readHomepageContentFromDb(sql) {
-  await ensureHomepageContentTable(sql);
-  const rows = await sql`SELECT key, value FROM homepage_content`;
-
-  const content = { ...DEFAULT_HOMEPAGE_CONTENT };
-  rows.forEach((row) => {
-    if (HOMEPAGE_FIELDS.includes(row.key)) {
-      content[row.key] = row.value || DEFAULT_HOMEPAGE_CONTENT[row.key];
-    }
-  });
-
-  return content;
+  await ensurePageContentTable(sql);
+  const rows = await sql`SELECT content FROM page_content WHERE page_key = 'homepage'`;
+  if (rows.length === 0) {
+    return buildHomepagePageContent();
+  }
+  const storedContent = rows[0].content || {};
+  return {
+    ...buildHomepagePageContent(),
+    ...storedContent,
+    hero: {
+      ...buildHomepagePageContent().hero,
+      ...(storedContent.hero || {}),
+    },
+    hero_benefits: {
+      ...buildHomepagePageContent().hero_benefits,
+      ...(storedContent.hero_benefits || {}),
+    },
+    promos: Array.isArray(storedContent.promos) ? storedContent.promos : [],
+  };
 }
 
 async function writeHomepageContentToDb(sql, payload) {
-  await ensureHomepageContentTable(sql);
-  const sanitized = sanitizeHomepageContent(payload);
+  await ensurePageContentTable(sql);
+  const existingContent = await readHomepageContentFromDb(sql);
+  const nextContent = nestHomepageContent(payload, existingContent);
 
-  for (const [key, value] of Object.entries(sanitized)) {
-    await sql`
-      INSERT INTO homepage_content (key, value, updated_at)
-      VALUES (${key}, ${value}, NOW())
-      ON CONFLICT (key)
-      DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
-    `;
-  }
+  await sql`
+    INSERT INTO page_content (page_key, content, updated_at)
+    VALUES ('homepage', ${nextContent}, NOW())
+    ON CONFLICT (page_key)
+    DO UPDATE SET content = EXCLUDED.content, updated_at = NOW()
+  `;
 
-  return readHomepageContentFromDb(sql);
+  return flattenHomepageContent(nextContent);
 }
 
 export default async function handler(request) {
@@ -101,7 +160,7 @@ export default async function handler(request) {
 
       const sql = getDB();
       const data = await readHomepageContentFromDb(sql);
-      return jsonResponse({ data });
+      return jsonResponse({ data: flattenHomepageContent(data) });
     }
 
     if (request.method === 'PUT') {

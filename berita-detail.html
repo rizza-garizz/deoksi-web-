@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="page-title">Berita Deoksi | Deoksi Beauty Clinic Malang</title>
   <meta name="description" id="meta-description" content="Baca artikel edukasi selengkapnya di Deoksi Beauty Clinic.">
+  <link rel="canonical" id="canonical-link" href="https://deoksibeautyclinic.id/berita-detail.html">
   
   <link rel="stylesheet" href="/src/css/style.css">
 
@@ -153,6 +154,12 @@
     document.addEventListener('DOMContentLoaded', async () => {
       const params = new URLSearchParams(window.location.search);
       const slug = params.get('slug');
+      const formatCategory = (value) => {
+        if (value === 'tips') return 'Tips Skincare';
+        if (value === 'promo') return 'Promo & Event';
+        if (!value) return 'Edukasi';
+        return value.charAt(0).toUpperCase() + value.slice(1);
+      };
 
       if (!slug) {
         window.location.href = '/berita.html';
@@ -170,10 +177,11 @@
         // Update UI
         document.title = `${a.title} | Deoksi Beauty Clinic`;
         document.getElementById('article-title').textContent = a.title;
-        document.getElementById('article-category').textContent = a.category;
+        document.getElementById('article-category').textContent = formatCategory(a.category);
         document.getElementById('article-date').textContent = new Date(a.published_at || a.created_at).toLocaleDateString('id-ID', {
           day: 'numeric', month: 'long', year: 'numeric'
         });
+        document.getElementById('article-author').textContent = `Oleh: ${a.author || 'Tim Deoksi Clinic'}`;
         
         if (a.cover_image) {
           const img = document.getElementById('article-cover');
@@ -184,7 +192,9 @@
 
         // Render content (supporting basic line breaks if not HTML)
         const bodyEl = document.getElementById('article-body');
-        if (a.content.includes('<') && a.content.includes('>')) {
+        if (!a.content) {
+          bodyEl.innerHTML = '<p>Konten artikel belum tersedia.</p>';
+        } else if (a.content.includes('<') && a.content.includes('>')) {
             bodyEl.innerHTML = a.content;
         } else {
             bodyEl.innerHTML = a.content.split('\n').map(p => p.trim() ? `<p>${p}</p>` : '').join('');
@@ -192,6 +202,10 @@
 
         // Meta tags
         document.getElementById('meta-description').content = a.excerpt || '';
+        const canonicalLink = document.getElementById('canonical-link');
+        if (canonicalLink) {
+          canonicalLink.href = `${window.location.origin}/berita-detail.html?slug=${encodeURIComponent(a.slug)}`;
+        }
 
       } catch (err) {
         console.error(err);

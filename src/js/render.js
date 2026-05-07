@@ -1,4 +1,5 @@
 const CLOUD_ORIGIN = ''; // Contoh: 'https://ik.imagekit.io/deoksi/'
+export const HOMEPAGE_PROMO_LIMIT = 3;
 
 /**
  * Helper untuk mendapatkan URL aset dari Cloud atau Lokal
@@ -22,6 +23,113 @@ function getAssetUrl(path, transform = '') {
   }
   
   return `/${cleanPath}`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function renderPromoMedia({ imageUrl = '', videoUrl = '', title = '', altText = '', isFlyer = false }) {
+  const normalizedTitle = escapeHtml(title);
+  const normalizedAlt = escapeHtml(altText || (isFlyer ? `Flyer Promo ${title}` : `Ilustrasi ${title}`));
+  const normalizedImageUrl = escapeHtml(imageUrl);
+  const normalizedVideoUrl = escapeHtml(videoUrl);
+
+  if (videoUrl) {
+    return `
+      <video class="video-hover-media" src="${normalizedVideoUrl}" ${imageUrl ? `poster="${normalizedImageUrl}"` : ''} preload="metadata" muted loop playsinline aria-label="Video promo ${normalizedTitle}"></video>
+      <div class="video-hover-tint promo-video-tint" aria-hidden="true"></div>
+      <div class="video-hover-play promo-video-play" aria-hidden="true">
+        <span class="video-hover-play-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z"></path>
+          </svg>
+        </span>
+      </div>
+    `;
+  }
+
+  return `<img src="${normalizedImageUrl}" alt="${normalizedAlt}" loading="lazy" width="${isFlyer ? '360' : '200'}" height="${isFlyer ? '509' : '250'}">`;
+}
+
+export function renderPromoGrid(promoGrid, items = [], options = {}) {
+  if (!promoGrid) return;
+
+  const {
+    isFlyer = false,
+    resolveLink = null,
+  } = options;
+
+  promoGrid.classList.toggle('promo-grid-flyer', Boolean(isFlyer));
+
+  if (!Array.isArray(items) || items.length === 0) {
+    promoGrid.innerHTML = '';
+    return;
+  }
+
+  promoGrid.innerHTML = items.map((item, index) => {
+    const title = item.title || `Promo ${index + 1}`;
+    const subtitle = item.subtitle || item.description || 'Promo aktif dari Deoksi Clinic.';
+    const price = item.price || '';
+    const color = item.color || 'var(--color-primary, var(--primary))';
+    const href = resolveLink ? resolveLink(item, index) : (item.link || item.cta_link || '#');
+    const imageUrl = item.image || item.image_url || '/assets/images/service_products.png';
+    const videoUrl = item.video || '';
+    const hasVideo = Boolean(videoUrl);
+    const altText = item.altText || item.alt_text || '';
+    const cardClassNames = [
+      'promo-card',
+      'animate-on-scroll',
+      isFlyer ? 'promo-flyer' : '',
+      hasVideo ? 'promo-card--has-video video-hover-surface video-hover-surface--interactive' : '',
+    ].filter(Boolean).join(' ');
+
+    if (isFlyer) {
+      return `
+        <a href="${escapeHtml(href)}" class="${cardClassNames}" target="_blank" rel="noopener noreferrer" style="--delay: ${index * 0.1}s" aria-label="Ambil Promo: ${escapeHtml(title)}" data-promo-index="${index}">
+          <div class="flyer-image">
+            ${renderPromoMedia({ imageUrl, videoUrl, title, altText, isFlyer: true })}
+          </div>
+          <div class="flyer-overlay">
+            <span class="promo-flyer-kicker">Promo Flyer</span>
+            <span class="promo-flyer-hint">Tap untuk klaim promo via WhatsApp</span>
+            <div class="promo-btn">
+              Ambil Promo
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </a>
+      `;
+    }
+
+    return `
+      <a href="${escapeHtml(href)}" class="${cardClassNames}" target="_blank" rel="noopener noreferrer" style="--delay: ${index * 0.1}s" aria-label="Ambil Promo: ${escapeHtml(title)}" data-promo-index="${index}">
+        <div class="promo-content">
+          <span class="promo-label">SPECIAL OFFER</span>
+          <h3 class="promo-title">${escapeHtml(title)}</h3>
+          <p class="promo-subtitle">${escapeHtml(subtitle)}</p>
+          ${price ? `<p class="promo-price">${escapeHtml(price)}</p>` : ''}
+          <div class="promo-btn">
+            Ambil Promo
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+        <div class="promo-image">
+          ${renderPromoMedia({ imageUrl, videoUrl, title, altText })}
+        </div>
+        <div class="promo-bg-shape" style="background: ${escapeHtml(color)}"></div>
+      </a>
+    `;
+  }).join('');
 }
 
 export async function initContent() {
@@ -62,7 +170,7 @@ export async function initContent() {
 }
 
 function applyManagedSections(data, managedSlots) {
-  const promoAssets = ['promo_banner_1', 'promo_banner_2']
+  const promoAssets = ['promo_banner_1', 'promo_banner_2', 'promo_featured']
     .map((slotKey) => managedSlots?.[slotKey])
     .filter(Boolean);
 
@@ -102,6 +210,13 @@ function applyManagedSections(data, managedSlots) {
 }
 
 function renderContent(data) {
+  const heroWhatsappLink = data.hero?.whatsappLink || '';
+  const waUrl = heroWhatsappLink ? new URL(heroWhatsappLink) : null;
+  const waNumber = waUrl ? waUrl.pathname.replace(/\//g, '') : '';
+  const getContextualLink = waNumber
+    ? (message) => `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`
+    : () => '#';
+
   // 1. Hero Section
   const heroContent = document.getElementById('hero-content');
   const heroBg = document.getElementById('hero-bg-container');
@@ -142,56 +257,22 @@ function renderContent(data) {
   // 1.5 Promo Section
   const promoGrid = document.getElementById('promo-grid');
   if (data.sections.promo && promoGrid) {
-    const isFlyer = data.sections.promo.isFlyer;
-    promoGrid.classList.toggle('promo-grid-flyer', Boolean(isFlyer));
-    
-    promoGrid.innerHTML = data.sections.promo.items.map((item, index) => {
-      if (isFlyer) {
-        return `
-          <a href="${item.link || '#'}" class="promo-card promo-flyer animate-on-scroll" target="_blank" rel="noopener noreferrer" style="--delay: ${index * 0.1}s" aria-label="Ambil Promo: ${item.title}">
-            <div class="flyer-image">
-              ${
-                item.video
-                  ? `<video class="video-hover-media" src="${getAssetUrl(item.video)}" poster="${getAssetUrl(item.image)}" preload="metadata" muted loop playsinline></video>`
-                  : `<img src="${getAssetUrl(item.image)}" alt="${item.altText || `Flyer Promo ${item.title}`}" loading="lazy" width="360" height="509">`
-              }
-            </div>
-            <div class="flyer-overlay">
-              <div class="promo-btn">
-                Ambil Promo
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </div>
-            </div>
-          </a>
-        `;
-      }
-      
-      return `
-        <a href="${item.link || '#'}" class="promo-card animate-on-scroll" target="_blank" rel="noopener noreferrer" style="--delay: ${index * 0.1}s" aria-label="Ambil Promo: ${item.title}">
-          <div class="promo-content">
-            <span class="promo-label">SPECIAL OFFER</span>
-            <h3 class="promo-title">${item.title}</h3>
-            <p class="promo-subtitle">${item.subtitle}</p>
-            <div class="promo-btn">
-              Ambil Promo
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-          <div class="promo-image">
-            ${
-              item.video
-                ? `<video class="video-hover-media" src="${getAssetUrl(item.video)}" poster="${getAssetUrl(item.image)}" preload="metadata" muted loop playsinline></video>`
-                : `<img src="${getAssetUrl(item.image)}" alt="${item.altText || `Ilustrasi ${item.title}`}" loading="lazy" width="200" height="250">`
-            }
-          </div>
-          <div class="promo-bg-shape" style="background: ${item.color}"></div>
-        </a>
-      `;
-    }).join('');
+    const promoItems = Array.isArray(data.sections.promo.items)
+      ? data.sections.promo.items.slice(0, HOMEPAGE_PROMO_LIMIT)
+      : [];
+
+    renderPromoGrid(
+      promoGrid,
+      promoItems.map((item) => ({
+        ...item,
+        image: getAssetUrl(item.image),
+        video: item.video ? getAssetUrl(item.video) : '',
+      })),
+      {
+        isFlyer: Boolean(data.sections.promo.isFlyer),
+        resolveLink: (item) => item.link || getContextualLink(`Halo Deoksi Clinic, saya tertarik dengan promo: ${item.title}. Mohon info lebih lanjut.`),
+      },
+    );
   }
 
   // 2. Services Section
@@ -496,10 +577,10 @@ function renderContent(data) {
           <div class="footer-links">
             <h4>Kontak</h4>
             <ul>
-              <li>Jl. Puncak Borobudur Kav. 6, Kota Malang</li>
+              <li>Jl. Puncak Borobudur Kav. 6, Kota Malang — sekitar 50 meter di sebelah barat Bundaran Soekarno Hatta</li>
               <li><a href="tel:+6282333344919">+6282 3333 44919 (WA)</a></li>
               <li><a href="https://wa.me/6282333344919" target="_blank" rel="noopener noreferrer">Chat WhatsApp</a></li>
-              <li>Senin - Sabtu, 09.00 - 20.00</li>
+              <li>Senin - Jumat, 10.30 - 18.30 WIB<br>Sabtu - Minggu, 09.00 - 17.00 WIB</li>
             </ul>
           </div>
         </div>
@@ -509,12 +590,6 @@ function renderContent(data) {
       </div>
     `;
   }
-
-  // Update Global WA Links
-  const waUrl = new URL(data.hero.whatsappLink);
-  const waNumber = waUrl.pathname.replace(/\//g, '');
-  
-  const getContextualLink = (message) => `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
 
   // 1. Hero
   if (heroContent) {
@@ -526,8 +601,11 @@ function renderContent(data) {
   if (promoGrid) {
     const promoButtons = promoGrid.querySelectorAll('.promo-card');
     promoButtons.forEach((btn, i) => {
-      const promoTitle = data.sections.promo.items[i].title;
-      const explicitLink = data.sections.promo.items[i].link;
+      const promoItem = data.sections.promo.items[i];
+      if (!promoItem) return;
+
+      const promoTitle = promoItem.title;
+      const explicitLink = promoItem.link;
       if (!explicitLink || explicitLink === '#') {
         btn.href = getContextualLink(`Halo Deoksi Clinic, saya tertarik dengan promo: ${promoTitle}. Mohon info lebih lanjut.`);
       }

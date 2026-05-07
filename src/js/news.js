@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const limitAttr = newsGrid.getAttribute('data-limit');
     const limit = limitAttr ? parseInt(limitAttr) : 9;
 
-    const filterBtns = document.querySelectorAll('.news-section .btn-outline');
+    const filterBtns = document.querySelectorAll('[data-news-filter]');
     const paginationContainer = document.getElementById('news-pagination');
     const showingText = document.getElementById('news-showing');
 
@@ -23,12 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
 
-                const text = btn.textContent.trim().toLowerCase();
-                if (text === 'semua') currentCategory = '';
-                else if (text === 'edukasi') currentCategory = 'edukasi';
-                else if (text === 'tips skincare') currentCategory = 'tips';
-                else if (text.includes('promo')) currentCategory = 'promo';
-                else currentCategory = text;
+                const selectedCategory = btn.getAttribute('data-news-filter') || 'all';
+                currentCategory = selectedCategory === 'all' ? '' : selectedCategory;
 
                 currentPage = 1;
                 loadNews();
@@ -148,6 +144,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initial load disabled. Content is now rendered via page-renderer.js and the page-based CMS.
-    // loadNews();
+    loadNews();
 });

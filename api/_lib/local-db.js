@@ -1,4 +1,5 @@
 import { buildWebsiteSlotMap, groupWebsiteContentAssets } from './content-sections.js';
+import { normalizeMediaPayload, normalizeMediaPlacement } from './media-library.js';
 
 function clone(data) {
   return JSON.parse(JSON.stringify(data));
@@ -10,6 +11,7 @@ function nowIso() {
 
 function getDefaultHomepageContent() {
   return {
+    hero_media: '',
     hero_badge: 'Beauty Consultation',
     headline: 'Kulit Berbasis Sains',
     highlight_text: 'Sains',
@@ -26,8 +28,152 @@ function getDefaultHomepageContent() {
   };
 }
 
+const DEFAULT_LOCATION_HOURS = 'Senin–Jumat: 10.30–18.30 WIB\nSabtu–Minggu: 09.00–17.00 WIB';
+const DEFAULT_GLOBAL_HOURS = 'Senin - Jumat, 10.30 - 18.30 WIB<br>Sabtu - Minggu, 09.00 - 17.00 WIB';
+const DEFAULT_LOCATION_ADDRESS = 'Deoksi Beauty Clinic, Jl. Puncak Borobudur Kav. 6, Kota Malang, Jawa Timur — sekitar 50 meter di sebelah barat Bundaran Soekarno Hatta.';
+const DEFAULT_GLOBAL_ADDRESS = 'Jl. Puncak Borobudur Kav. 6, Kota Malang — sekitar 50 meter di sebelah barat Bundaran Soekarno Hatta.';
+const DEFAULT_LOCATION_MAP_EMBED = 'https://www.google.com/maps?q=-7.9364532,112.6259121&z=17&output=embed';
+const DEFAULT_LOCATION_MAP_LINK = 'https://www.google.com/maps/search/?api=1&query=-7.9364532,112.6259121';
+const DEFAULT_HERO_VIDEO_URL = 'https://res.cloudinary.com/demo/video/upload/samples/sea-turtle.mp4';
+const DEFAULT_PROMO_DRIVE_URL = 'https://drive.google.com/file/d/1PromoDriveQa111111111111111111111/view?usp=sharing';
+const DEFAULT_FEATURED_DRIVE_URL = 'https://drive.google.com/file/d/1FeaturedDriveQa111111111111111111/view?usp=sharing';
+const LEGACY_LOCATION_HOURS = 'Senin–Sabtu: 09.00–20.00\nMinggu: Tutup';
+const LEGACY_GLOBAL_HOURS = 'Senin - Sabtu, 09.00 - 20.00';
+const LEGACY_LOCATION_ADDRESS = 'Deoksi Beauty Clinic, Jl. Puncak Borobudur Kav. 6, Kota Malang, Jawa Timur.';
+const LEGACY_GLOBAL_ADDRESS = 'Jl. Puncak Borobudur Kav. 6, Kota Malang';
+const LEGACY_LOCATION_MAP_EMBED = 'https://www.google.com/maps?q=Malang%2C%20Jawa%20Timur&output=embed';
+const LEGACY_HERO_IMAGE_URL = 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=900&q=80';
+const LEGACY_PROMO_IMAGE_URL = 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80';
+const LEGACY_FEATURED_IMAGE_URL = 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=80';
+
+function shouldUpgradeLocationAddress(value = '') {
+  const normalized = String(value || '').toLowerCase();
+  if (!normalized) return true;
+  const mentionsBaseAddress =
+    normalized.includes('puncak borobudur') ||
+    normalized.includes('borobudur kav. 6') ||
+    normalized.includes('soekarno hatta');
+  const hasDirectionalHint =
+    normalized.includes('50 meter') ||
+    normalized.includes('bundaran soekarno hatta') ||
+    normalized.includes('bundaran sukarno hatta');
+
+  return mentionsBaseAddress && !hasDirectionalHint;
+}
+
+function ensureLegacyMediaCompliance(media = []) {
+  return (media || []).map((item) => {
+    if (
+      item?.slot_key === 'hero_media' &&
+      item?.source_type === 'cloudinary' &&
+      item?.type === 'image' &&
+      String(item?.original_url || item?.url || '').includes('photo-1519494026892-80bbd2d6fd0d')
+    ) {
+      return {
+        ...item,
+        filename: 'clinic-lobby.mp4',
+        source_type: 'cloudinary',
+        media_kind: 'video_cloudinary',
+        type: 'video',
+        category: 'video',
+        original_url: DEFAULT_HERO_VIDEO_URL,
+        optimized_url: DEFAULT_HERO_VIDEO_URL,
+        thumb_url: DEFAULT_HERO_VIDEO_URL,
+        url: DEFAULT_HERO_VIDEO_URL,
+        notes: 'Video hero contoh Cloudinary untuk library lokal.',
+      };
+    }
+
+    if (
+      item?.slot_key === 'promo_featured' &&
+      item?.source_type === 'cloudinary' &&
+      item?.type === 'image' &&
+      String(item?.original_url || item?.url || '').includes('photo-1522335789203-aabd1fc54bc9')
+    ) {
+      return {
+        ...item,
+        source_type: 'google_drive',
+        media_kind: item.media_kind || 'website_photo',
+        original_url: DEFAULT_PROMO_DRIVE_URL,
+        optimized_url: DEFAULT_PROMO_DRIVE_URL,
+        thumb_url: DEFAULT_PROMO_DRIVE_URL,
+        url: DEFAULT_PROMO_DRIVE_URL,
+        notes: 'Foto promo contoh Google Drive untuk library lokal.',
+      };
+    }
+
+    if (
+      item?.slot_key === 'featured_media' &&
+      item?.source_type === 'cloudinary' &&
+      item?.type === 'image' &&
+      String(item?.original_url || item?.url || '').includes('photo-1559839734-2b71ea197ec2')
+    ) {
+      return {
+        ...item,
+        source_type: 'google_drive',
+        original_url: DEFAULT_FEATURED_DRIVE_URL,
+        optimized_url: DEFAULT_FEATURED_DRIVE_URL,
+        thumb_url: DEFAULT_FEATURED_DRIVE_URL,
+        url: DEFAULT_FEATURED_DRIVE_URL,
+        notes: 'Foto featured contoh Google Drive untuk library lokal.',
+      };
+    }
+
+    return item;
+  });
+}
+
+function getDefaultHomepagePageContent() {
+  const defaults = getDefaultHomepageContent();
+  return {
+    hero: {
+      hero_media: '',
+      hero_badge: defaults.hero_badge,
+      headline: defaults.headline,
+      highlight_text: defaults.highlight_text,
+      description: defaults.description,
+      cta_text: defaults.cta_text,
+      cta_link: defaults.cta_link,
+    },
+    hero_benefits: {
+      bullet_benefit_1: defaults.bullet_benefit_1,
+      bullet_benefit_2: defaults.bullet_benefit_2,
+      bullet_benefit_3: defaults.bullet_benefit_3,
+      consultation_card_title: defaults.consultation_card_title,
+      consultation_card_description: defaults.consultation_card_description,
+    },
+    promos: [
+      {
+        title: 'Brightening Starter Package',
+        description: 'Rangkaian konsultasi, facial, dan skincare dasar untuk membantu kulit tampak lebih segar dan merata.',
+        price: 'Rp 399.000',
+        image_url: '/assets/images/service_products.png',
+        cta_link: 'https://wa.me/6282333344919?text=Halo%20Deoksi%20Clinic,%20saya%20ingin%20menanyakan%20promo%20Brightening%20Starter%20Package.',
+        is_visible: true,
+      },
+      {
+        title: 'Acne Recovery Program',
+        description: 'Program perawatan bertahap untuk kulit berjerawat dengan fokus pada pemulihan skin barrier dan kontrol minyak.',
+        price: 'Rp 549.000',
+        image_url: '/assets/images/service_consult.png',
+        cta_link: 'https://wa.me/6282333344919?text=Halo%20Deoksi%20Clinic,%20saya%20ingin%20menanyakan%20promo%20Acne%20Recovery%20Program.',
+        is_visible: true,
+      },
+      {
+        title: 'Skin Booster Glow Session',
+        description: 'Paket treatment intensif untuk membantu kulit terasa lebih lembap, halus, dan tampak glowing.',
+        price: 'Rp 699.000',
+        image_url: '/assets/images/service_aging.png',
+        cta_link: 'https://wa.me/6282333344919?text=Halo%20Deoksi%20Clinic,%20saya%20ingin%20menanyakan%20promo%20Skin%20Booster%20Glow%20Session.',
+        is_visible: true,
+      },
+    ],
+  };
+}
+
 function getDefaultPageContent() {
   return {
+    homepage: getDefaultHomepagePageContent(),
     layanan: {
       page_tag: 'Solusi Perawatan',
       page_title: 'Layanan yang Disesuaikan dengan Kebutuhan Kulit Anda',
@@ -46,16 +192,75 @@ function getDefaultPageContent() {
       page_title: 'Produk Kami',
       page_description: 'Pilih produk sesuai kebutuhan kulit. Untuk mendapatkan rekomendasi yang paling tepat, konsultasikan terlebih dahulu.',
       products: [
-        { name: 'Deoksi Facial Wash', category: 'sabun', price: 'Rp 85.000', rating: 4.8, has_bpom: true, is_visible: true, sort_order: 1 },
-        { name: 'Deoksi Gentle Cleanser', category: 'sabun', price: 'Rp 95.000', rating: 4.7, has_bpom: true, is_visible: true, sort_order: 2 },
-        { name: 'Deoksi Glow Serum', category: 'serum', price: 'Rp 150.000', rating: 4.9, has_bpom: true, is_visible: true, sort_order: 3 },
-        { name: 'Deoksi Barrier Serum', category: 'serum', price: 'Rp 165.000', rating: 4.8, has_bpom: true, is_visible: true, sort_order: 4 },
-        { name: 'Deoksi Sun Shield SPF 50', category: 'sunscreen', price: 'Rp 95.000', rating: 4.8, has_bpom: true, is_visible: true, sort_order: 5 },
-        { name: 'Deoksi UV Daily Defense', category: 'sunscreen', price: 'Rp 110.000', rating: 4.7, has_bpom: true, is_visible: true, sort_order: 6 },
-        { name: 'Deoksi Age Defy', category: 'serum', price: 'Rp 175.000', rating: 4.9, has_bpom: true, is_visible: true, sort_order: 7 },
-        { name: 'Deoksi Deep Cleanser', category: 'sabun', price: 'Rp 88.000', rating: 4.8, has_bpom: true, is_visible: true, sort_order: 8 },
-        { name: 'Deoksi Hydrating Toner', category: 'serum', price: 'Rp 125.000', rating: 4.8, has_bpom: true, is_visible: true, sort_order: 9 },
+        { name: 'Deoksi Facial Wash', category: 'sabun', price: 'Rp 85.000', rating: 4.8, has_bpom: true, has_halal_mui: true, bpom_number: 'NA18251200001', key_benefit: 'Membantu membersihkan wajah tanpa membuat kulit terasa kering.', netto: '100 ml', usage_hint: 'Gunakan pagi dan malam pada wajah yang telah dibasahi.', is_visible: true, sort_order: 1 },
+        { name: 'Deoksi Gentle Cleanser', category: 'sabun', price: 'Rp 95.000', rating: 4.7, has_bpom: true, has_halal_mui: true, bpom_number: 'NA18251200002', key_benefit: 'Membantu menjaga kebersihan kulit sensitif dengan rasa yang lebih lembut.', netto: '100 ml', usage_hint: 'Gunakan secukupnya, pijat lembut, lalu bilas hingga bersih.', is_visible: true, sort_order: 2 },
+        { name: 'Deoksi Glow Serum', category: 'serum', price: 'Rp 150.000', rating: 4.9, has_bpom: true, has_halal_mui: true, bpom_number: 'NA18251200003', key_benefit: 'Membantu membuat tampilan kulit terlihat lebih cerah dan segar.', netto: '20 ml', usage_hint: 'Gunakan 2-3 tetes setelah toner, pagi atau malam hari.', is_visible: true, sort_order: 3 },
+        { name: 'Deoksi Barrier Serum', category: 'serum', price: 'Rp 165.000', rating: 4.8, has_bpom: true, has_halal_mui: true, bpom_number: 'NA18251200004', key_benefit: 'Membantu menjaga kelembapan dan kenyamanan skin barrier.', netto: '20 ml', usage_hint: 'Aplikasikan merata pada wajah bersih sebelum pelembap.', is_visible: true, sort_order: 4 },
+        { name: 'Deoksi Sun Shield SPF 50', category: 'sunscreen', price: 'Rp 95.000', rating: 4.8, has_bpom: true, has_halal_mui: true, bpom_number: 'NA18251200005', key_benefit: 'Membantu melindungi kulit dari paparan sinar matahari harian.', netto: '40 ml', usage_hint: 'Gunakan 15 menit sebelum aktivitas luar ruang dan ulangi seperlunya.', is_visible: true, sort_order: 5 },
+        { name: 'Deoksi UV Daily Defense', category: 'sunscreen', price: 'Rp 110.000', rating: 4.7, has_bpom: true, has_halal_mui: true, bpom_number: 'NA18251200006', key_benefit: 'Membantu memberi perlindungan UV harian dengan rasa ringan di kulit.', netto: '40 ml', usage_hint: 'Gunakan merata pada wajah dan leher sebelum beraktivitas.', is_visible: true, sort_order: 6 },
+        { name: 'Deoksi Age Defy', category: 'serum', price: 'Rp 175.000', rating: 4.9, has_bpom: true, has_halal_mui: true, bpom_number: 'NA18251200007', key_benefit: 'Membantu merawat tampilan kulit agar terasa lebih halus dan terawat.', netto: '20 ml', usage_hint: 'Gunakan pada malam hari setelah rangkaian pembersih wajah.', is_visible: true, sort_order: 7 },
+        { name: 'Deoksi Deep Cleanser', category: 'sabun', price: 'Rp 88.000', rating: 4.8, has_bpom: true, has_halal_mui: true, bpom_number: 'NA18251200008', key_benefit: 'Membantu mengangkat sisa kotoran dan minyak berlebih dengan nyaman.', netto: '100 ml', usage_hint: 'Gunakan secukupnya pada wajah yang lembap, lalu bilas.', is_visible: true, sort_order: 8 },
+        { name: 'Deoksi Hydrating Toner', category: 'serum', price: 'Rp 125.000', rating: 4.8, has_bpom: true, has_halal_mui: true, bpom_number: 'NA18251200009', key_benefit: 'Membantu memberi hidrasi awal agar kulit terasa lebih siap menerima skincare.', netto: '120 ml', usage_hint: 'Tepuk perlahan ke wajah setelah mencuci muka.', is_visible: true, sort_order: 9 },
       ]
+    },
+    berita: {
+      page_tag: 'Informasi Terkini',
+      page_title: 'Berita & Edukasi Klinik',
+      page_description: 'Temukan berbagai informasi terbaru mengenai tren kecantikan, tips perawatan kulit, dan aktivitas terkini dari para ahli kami.',
+      articles: [
+        {
+          title: '5 Langkah Medis Menjaga Skin Barrier Pasca Treatment Laser & Peeling',
+          author: 'Tim Medis Deoksi',
+          publish_date: '20 April 2026',
+          excerpt: 'Jangan biarkan hasil treatment Anda sia-sia. Pahami cara melindungi lapisan pelindung kulit agar pemulihan lebih cepat dan hasil lebih glowing.',
+          content: 'Setelah treatment seperti laser atau peeling, kulit membutuhkan perawatan yang lembut, hidrasi yang cukup, dan proteksi sinar UV yang konsisten. Edukasi ini membantu pasien memahami langkah pemulihan yang aman dan terarah.',
+          image_url: '/assets/images/service_aging.png',
+          is_published: true,
+        },
+        {
+          title: 'Glow Up Series: Paket Brightening Premium dengan Teknologi Antioksidatif',
+          author: 'Deoksi Admin',
+          publish_date: '19 April 2026',
+          excerpt: 'Sambut momen penting dengan kulit cerah dan sehat melalui kombinasi treatment brightening dan skincare pendukung yang tepat.',
+          content: 'Paket brightening Deoksi dirancang untuk membantu meratakan warna kulit, menjaga hidrasi, dan memberikan tampilan kulit yang lebih segar melalui evaluasi kebutuhan kulit secara personal.',
+          image_url: '/assets/images/service_products.png',
+          is_published: true,
+        },
+        {
+          title: 'Mengenal Teknologi Pico Laser untuk Membantu Menyamarkan Flek',
+          author: 'Deoksi Clinic',
+          publish_date: '18 April 2026',
+          excerpt: 'Solusi modern untuk masalah pigmentasi dengan downtime yang lebih singkat dan pendekatan medis yang terarah.',
+          content: 'Teknologi Pico Laser dapat menjadi salah satu opsi perawatan untuk membantu menangani pigmentasi tertentu. Pemilihan tindakan tetap perlu diawali dengan konsultasi agar sesuai kondisi kulit pasien.',
+          image_url: '/assets/images/hero_clinic.png',
+          is_published: false,
+        },
+      ],
+    },
+    galeri: {
+      page_tag: 'Visual Clinic Journal',
+      page_title: 'Galeri Klinik',
+      page_description: 'Dokumentasi suasana ruang, proses treatment, dan momen klinik yang membantu calon pasien memahami pengalaman perawatan secara lebih utuh.',
+      media_items: [
+        {
+          title: 'Suasana lobby utama Deoksi Clinic',
+          media_type: 'image',
+          media_url: '/assets/images/hero_clinic.png',
+          is_visible: true,
+        },
+        {
+          title: 'Area treatment yang bersih dan tertata',
+          media_type: 'image',
+          media_url: '/assets/images/gallery_one.png',
+          is_visible: true,
+        },
+        {
+          title: 'Cuplikan visual proses treatment di klinik',
+          media_type: 'video',
+          media_url: '/assets/videos/hover-utama.mp4',
+          is_visible: true,
+        },
+      ],
     },
     tentang: {
       page_tag: 'Mengenal Kami',
@@ -69,6 +274,7 @@ function getDefaultPageContent() {
         { name: 'dr. Beni Lukandar', specialization: 'Dokter Estetika', description: 'Berfokus pada perawatan slow aging dan peremajaan kulit dengan rencana perawatan yang jelas dan aman.', photo_url: '/assets/images/doctor1.jpg', sort_order: 1 },
         { name: 'dr. Zuliatul Chusniyah', specialization: 'Dokter Kulit', description: 'Menangani berbagai masalah kulit dengan pendekatan dermatologi dan perawatan antioksidatif.', photo_url: '/assets/images/doctor2.jpg', sort_order: 2 },
         { name: 'Tim Deoksi Clinic', specialization: 'Layanan Pendamping', description: 'Mendampingi pasien sejak konsultasi hingga perawatan lanjutan agar pengalaman perawatan terasa nyaman.', photo_url: '/assets/images/hero_clinic.png', sort_order: 3 },
+        { name: 'Tim Konsultasi Deoksi', specialization: 'Koordinator Konsultasi', description: 'Membantu memastikan alur konsultasi awal, edukasi layanan, dan kebutuhan pasien terkoordinasi dengan rapi sebelum treatment dilakukan.', photo_url: '/assets/images/service_consult.png', sort_order: 4 },
       ],
       certificates: [
         { name: 'Kemenkes', description: 'Memenuhi ketentuan kesehatan dan operasional klinik.', badge_code: 'KM', sort_order: 1 },
@@ -82,11 +288,12 @@ function getDefaultPageContent() {
       page_tag: 'Temukan Kami',
       page_title: 'Lokasi & Kontak',
       page_description: 'Datang langsung ke klinik atau hubungi kami untuk mendapatkan jadwal konsultasi dan informasi layanan.',
-      address: 'Deoksi Beauty Clinic, Jl. Puncak Borobudur Kav. 6, Kota Malang, Jawa Timur.',
-      operating_hours: 'Senin–Sabtu: 09.00–20.00\nMinggu: Tutup',
+      address: DEFAULT_LOCATION_ADDRESS,
+      operating_hours: DEFAULT_LOCATION_HOURS,
       phone: '+6282333344919',
       whatsapp_link: 'https://wa.me/6282333344919',
-      maps_embed_url: 'https://www.google.com/maps?q=Malang%2C%20Jawa%20Timur&output=embed'
+      maps_embed_url: DEFAULT_LOCATION_MAP_EMBED,
+      google_maps_link: DEFAULT_LOCATION_MAP_LINK
     },
     konsultasi: {
       page_tag: 'Langkah Awal',
@@ -113,12 +320,12 @@ function getDefaultPageContent() {
       clinic_name: 'Deoksi Beauty Clinic',
       clinic_tagline: 'BEAUTY CENTER',
       footer_description: 'Deoksi Beauty Clinic Malang menghadirkan perawatan slow aging dan antioxidative care berbasis sains.',
-      address: 'Jl. Puncak Borobudur Kav. 6, Kota Malang',
+      address: DEFAULT_GLOBAL_ADDRESS,
       phone: '+6282 3333 44919 (WA)',
       whatsapp_number: '6282333344919',
       instagram_url: 'https://www.instagram.com/deoksi_clinic',
       tiktok_url: 'https://www.tiktok.com/@deoksi_clinic',
-      operating_hours: 'Senin - Sabtu, 09.00 - 20.00',
+      operating_hours: DEFAULT_GLOBAL_HOURS,
       copyright_text: '© 2026 Deoksi Beauty Clinic. All rights reserved.'
     },
     seo: {
@@ -130,6 +337,173 @@ function getDefaultPageContent() {
       konsultasi: { meta_title: 'Konsultasi - Deoksi Beauty Clinic Malang', meta_description: 'Konsultasi gratis Deoksi Clinic: isi formulir untuk jadwal dan keluhan kulit.' }
     }
   };
+}
+
+function ensureDefaultPageContentShape(pageContent) {
+  const defaults = getDefaultPageContent();
+  if (!pageContent || typeof pageContent !== 'object') return clone(defaults);
+
+  if (!pageContent.homepage || typeof pageContent.homepage !== 'object') {
+    pageContent.homepage = clone(defaults.homepage);
+  } else if (!Array.isArray(pageContent.homepage.promos) || pageContent.homepage.promos.length === 0) {
+    pageContent.homepage.promos = clone(defaults.homepage.promos);
+  }
+
+  if (!pageContent.berita || typeof pageContent.berita !== 'object') {
+    pageContent.berita = clone(defaults.berita);
+  } else {
+    pageContent.berita.page_tag ||= defaults.berita.page_tag;
+    pageContent.berita.page_title ||= defaults.berita.page_title;
+    pageContent.berita.page_description ||= defaults.berita.page_description;
+    if (!Array.isArray(pageContent.berita.articles) || pageContent.berita.articles.length === 0) {
+      pageContent.berita.articles = clone(defaults.berita.articles);
+    }
+  }
+
+  if (!pageContent.galeri || typeof pageContent.galeri !== 'object') {
+    pageContent.galeri = clone(defaults.galeri);
+  } else {
+    pageContent.galeri.page_tag ||= defaults.galeri.page_tag;
+    pageContent.galeri.page_title ||= defaults.galeri.page_title;
+    pageContent.galeri.page_description ||= defaults.galeri.page_description;
+    if (!Array.isArray(pageContent.galeri.media_items) || pageContent.galeri.media_items.length === 0) {
+      pageContent.galeri.media_items = clone(defaults.galeri.media_items);
+    }
+  }
+
+  if (pageContent.tentang && Array.isArray(pageContent.tentang.doctors) && pageContent.tentang.doctors.length === 3) {
+    pageContent.tentang.doctors = clone(defaults.tentang.doctors);
+  }
+
+  if (!pageContent.lokasi || typeof pageContent.lokasi !== 'object') {
+    pageContent.lokasi = clone(defaults.lokasi);
+  } else if (!pageContent.lokasi.operating_hours || pageContent.lokasi.operating_hours === LEGACY_LOCATION_HOURS) {
+    pageContent.lokasi.operating_hours = defaults.lokasi.operating_hours;
+  }
+  if (pageContent.lokasi && (!pageContent.lokasi.address || pageContent.lokasi.address === LEGACY_LOCATION_ADDRESS || shouldUpgradeLocationAddress(pageContent.lokasi.address))) {
+    pageContent.lokasi.address = defaults.lokasi.address;
+  }
+  if (pageContent.lokasi && (!pageContent.lokasi.maps_embed_url || pageContent.lokasi.maps_embed_url === LEGACY_LOCATION_MAP_EMBED)) {
+    pageContent.lokasi.maps_embed_url = defaults.lokasi.maps_embed_url;
+  }
+  if (pageContent.lokasi && !pageContent.lokasi.google_maps_link) {
+    pageContent.lokasi.google_maps_link = defaults.lokasi.google_maps_link;
+  }
+
+  if (!pageContent.global || typeof pageContent.global !== 'object') {
+    pageContent.global = clone(defaults.global);
+  } else if (!pageContent.global.operating_hours || pageContent.global.operating_hours === LEGACY_GLOBAL_HOURS) {
+    pageContent.global.operating_hours = defaults.global.operating_hours;
+  }
+  if (pageContent.global && (!pageContent.global.address || pageContent.global.address === LEGACY_GLOBAL_ADDRESS || shouldUpgradeLocationAddress(pageContent.global.address))) {
+    pageContent.global.address = defaults.global.address;
+  }
+
+  return pageContent;
+}
+
+function normalizePageContentRecord(pageKey, content = {}) {
+  const defaults = getDefaultPageContent();
+  const next = clone(content);
+
+  if (pageKey === 'lokasi') {
+    next.address = defaults.lokasi.address;
+    next.maps_embed_url = defaults.lokasi.maps_embed_url;
+    next.google_maps_link = defaults.lokasi.google_maps_link;
+    if (!next.operating_hours || next.operating_hours === LEGACY_LOCATION_HOURS) {
+      next.operating_hours = defaults.lokasi.operating_hours;
+    }
+  }
+
+  if (pageKey === 'global') {
+    next.address = defaults.global.address;
+    if (!next.operating_hours || next.operating_hours === LEGACY_GLOBAL_HOURS) {
+      next.operating_hours = defaults.global.operating_hours;
+    }
+  }
+
+  if (pageKey === 'tentang' && Array.isArray(next.doctors) && next.doctors.length === 3) {
+    next.doctors = clone(defaults.tentang.doctors);
+  }
+
+  return next;
+}
+
+function getDefaultCustomers() {
+  return [
+    {
+      id: 1,
+      full_name: 'Nadya Prameswari',
+      phone: '081234567890',
+      email: 'nadya@example.com',
+      gender: 'Perempuan',
+      age_range: '25-34',
+      concerns: ['Jerawat', 'Bekas jerawat'],
+      message: 'Ingin konsultasi treatment untuk acne scar.',
+      customer_type: 'new',
+      nik: null,
+      address: null,
+      identity_verified: false,
+      identity_verified_at: null,
+      status: 'new',
+      created_at: '2026-04-22T08:30:00.000Z',
+      updated_at: '2026-04-22T08:30:00.000Z',
+    },
+    {
+      id: 2,
+      full_name: 'Rama Saputra',
+      phone: '081298765432',
+      email: 'rama@example.com',
+      gender: 'Laki-laki',
+      age_range: '25-34',
+      concerns: ['Kulit kusam'],
+      message: 'Mau tahu paket facial yang cocok.',
+      customer_type: 'new',
+      nik: null,
+      address: null,
+      identity_verified: false,
+      identity_verified_at: null,
+      status: 'contacted',
+      created_at: '2026-04-21T10:15:00.000Z',
+      updated_at: '2026-04-21T12:00:00.000Z',
+    },
+    {
+      id: 3,
+      full_name: 'Mira Oktavia',
+      phone: '081377788899',
+      email: 'mira@example.com',
+      gender: 'Perempuan',
+      age_range: '35-44',
+      concerns: ['Flek hitam', 'Anti aging'],
+      message: 'Minta jadwal konsultasi dokter.',
+      customer_type: 'existing',
+      nik: '3578011204830002',
+      address: 'Jl. Soekarno Hatta No. 18, Lowokwaru, Malang',
+      identity_verified: true,
+      identity_verified_at: '2026-04-21T09:20:00.000Z',
+      status: 'scheduled',
+      created_at: '2026-04-20T13:45:00.000Z',
+      updated_at: '2026-04-21T09:20:00.000Z',
+    },
+    {
+      id: 4,
+      full_name: 'Tania Kusuma',
+      phone: '081355544433',
+      email: 'tania@example.com',
+      gender: 'Perempuan',
+      age_range: '18-24',
+      concerns: ['Bruntusan'],
+      message: 'Sudah pernah treatment dan mau lanjut.',
+      customer_type: 'existing',
+      nik: '3578012001990004',
+      address: 'Perum Griya Cempaka Blok B2, Malang',
+      identity_verified: true,
+      identity_verified_at: '2026-04-19T10:10:00.000Z',
+      status: 'done',
+      created_at: '2026-04-18T15:00:00.000Z',
+      updated_at: '2026-04-19T10:10:00.000Z',
+    },
+  ];
 }
 
 function slugify(value) {
@@ -146,6 +520,13 @@ function ensureState() {
   if (!globalThis.__DEOKSI_LOCAL_DB__) {
     const now = nowIso();
     globalThis.__DEOKSI_LOCAL_DB__ = {
+      adminUser: {
+        id: 1,
+        username: process.env.LOCAL_ADMIN_USERNAME || 'admin',
+        password: process.env.LOCAL_ADMIN_PASSWORD || 'deoksi2026',
+        full_name: process.env.LOCAL_ADMIN_FULL_NAME || 'Admin Deoksi',
+        role: 'admin',
+      },
       counters: {
         customers: 4,
         articles: 3,
@@ -153,60 +534,7 @@ function ensureState() {
       },
       homepageContent: getDefaultHomepageContent(),
       pageContent: getDefaultPageContent(),
-      customers: [
-        {
-          id: 1,
-          full_name: 'Nadya Prameswari',
-          phone: '081234567890',
-          email: 'nadya@example.com',
-          gender: 'Perempuan',
-          age_range: '25-34',
-          concerns: ['Jerawat', 'Bekas jerawat'],
-          message: 'Ingin konsultasi treatment untuk acne scar.',
-          status: 'new',
-          created_at: '2026-04-22T08:30:00.000Z',
-          updated_at: '2026-04-22T08:30:00.000Z',
-        },
-        {
-          id: 2,
-          full_name: 'Rama Saputra',
-          phone: '081298765432',
-          email: 'rama@example.com',
-          gender: 'Laki-laki',
-          age_range: '25-34',
-          concerns: ['Kulit kusam'],
-          message: 'Mau tahu paket facial yang cocok.',
-          status: 'contacted',
-          created_at: '2026-04-21T10:15:00.000Z',
-          updated_at: '2026-04-21T12:00:00.000Z',
-        },
-        {
-          id: 3,
-          full_name: 'Mira Oktavia',
-          phone: '081377788899',
-          email: 'mira@example.com',
-          gender: 'Perempuan',
-          age_range: '35-44',
-          concerns: ['Flek hitam', 'Anti aging'],
-          message: 'Minta jadwal konsultasi dokter.',
-          status: 'scheduled',
-          created_at: '2026-04-20T13:45:00.000Z',
-          updated_at: '2026-04-21T09:20:00.000Z',
-        },
-        {
-          id: 4,
-          full_name: 'Tania Kusuma',
-          phone: '081355544433',
-          email: 'tania@example.com',
-          gender: 'Perempuan',
-          age_range: '18-24',
-          concerns: ['Bruntusan'],
-          message: 'Sudah pernah treatment dan mau lanjut.',
-          status: 'done',
-          created_at: '2026-04-18T15:00:00.000Z',
-          updated_at: '2026-04-19T10:10:00.000Z',
-        },
-      ],
+      customers: getDefaultCustomers(),
       articles: [
         {
           id: 1,
@@ -254,7 +582,7 @@ function ensureState() {
       media: [
         {
           id: 1,
-          filename: 'clinic-lobby.jpg',
+          filename: 'clinic-lobby.mp4',
           title: 'Lobby Klinik Utama',
           source_type: 'cloudinary',
           cloudinary_id: null,
@@ -263,18 +591,18 @@ function ensureState() {
           slot_name: 'Hero Media',
           is_slot_active: true,
           display_order: 1,
-          original_url: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=900&q=80',
-          optimized_url: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1280&q=80',
-          thumb_url: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=320&q=70',
-          url: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=900&q=80',
-          type: 'image',
-          category: 'gallery',
+          original_url: DEFAULT_HERO_VIDEO_URL,
+          optimized_url: DEFAULT_HERO_VIDEO_URL,
+          thumb_url: DEFAULT_HERO_VIDEO_URL,
+          url: DEFAULT_HERO_VIDEO_URL,
+          type: 'video',
+          category: 'video',
           alt_text: 'Lobby klinik Deoksi',
           tags: ['lobby', 'branding'],
           platform: 'website',
           campaign: 'Evergreen Clinic Profile',
           status: 'active',
-          notes: 'Dipakai untuk hero dan galeri profil klinik.',
+          notes: 'Video hero contoh Cloudinary untuk library lokal.',
           last_used_at: '2026-04-21T07:00:00.000Z',
           usage_count: 3,
           size_bytes: 420000,
@@ -285,17 +613,17 @@ function ensureState() {
           id: 2,
           filename: 'promo-april.jpg',
           title: 'Poster Promo April',
-          source_type: 'cloudinary',
+          source_type: 'google_drive',
           cloudinary_id: null,
           section_name: 'Promo Section',
           slot_key: 'promo_featured',
           slot_name: 'Promo Featured',
           is_slot_active: true,
           display_order: 1,
-          original_url: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80',
-          optimized_url: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1280&q=80',
-          thumb_url: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=320&q=70',
-          url: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80',
+          original_url: DEFAULT_PROMO_DRIVE_URL,
+          optimized_url: DEFAULT_PROMO_DRIVE_URL,
+          thumb_url: DEFAULT_PROMO_DRIVE_URL,
+          url: DEFAULT_PROMO_DRIVE_URL,
           type: 'image',
           category: 'promo',
           alt_text: 'Poster promo April',
@@ -303,7 +631,7 @@ function ensureState() {
           platform: 'instagram',
           campaign: 'Promo April 2026',
           status: 'active',
-          notes: 'Versi feed Instagram dan landing promo.',
+          notes: 'Foto promo contoh Google Drive untuk library lokal.',
           last_used_at: '2026-04-20T07:00:00.000Z',
           usage_count: 6,
           size_bytes: 390000,
@@ -314,17 +642,17 @@ function ensureState() {
           id: 3,
           filename: 'dokter-utama.jpg',
           title: 'Dokter Utama Deoksi',
-          source_type: 'cloudinary',
+          source_type: 'google_drive',
           cloudinary_id: null,
           section_name: 'Featured Media',
           slot_key: 'featured_media',
           slot_name: 'Featured Media',
           is_slot_active: false,
           display_order: 1,
-          original_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=80',
-          optimized_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=1280&q=80',
-          thumb_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=320&q=70',
-          url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=80',
+          original_url: DEFAULT_FEATURED_DRIVE_URL,
+          optimized_url: DEFAULT_FEATURED_DRIVE_URL,
+          thumb_url: DEFAULT_FEATURED_DRIVE_URL,
+          url: DEFAULT_FEATURED_DRIVE_URL,
           type: 'image',
           category: 'doctor',
           alt_text: 'Dokter utama Deoksi',
@@ -332,7 +660,7 @@ function ensureState() {
           platform: 'website',
           campaign: 'Doctor Profile',
           status: 'draft',
-          notes: 'Siap dipakai untuk profil dokter dan about page.',
+          notes: 'Foto featured contoh Google Drive untuk library lokal.',
           last_used_at: null,
           usage_count: 0,
           size_bytes: 360000,
@@ -343,6 +671,8 @@ function ensureState() {
     };
   }
 
+  globalThis.__DEOKSI_LOCAL_DB__.media = ensureLegacyMediaCompliance(globalThis.__DEOKSI_LOCAL_DB__.media);
+  globalThis.__DEOKSI_LOCAL_DB__.pageContent = ensureDefaultPageContentShape(globalThis.__DEOKSI_LOCAL_DB__.pageContent);
   return globalThis.__DEOKSI_LOCAL_DB__;
 }
 
@@ -360,37 +690,128 @@ function paginate(rows, page, limit) {
   };
 }
 
+function summarizeCustomers(rows = []) {
+  const summary = {
+    total: rows.length,
+    new: 0,
+    contacted: 0,
+    scheduled: 0,
+    done: 0,
+  };
+
+  rows.forEach((row) => {
+    if (summary[row.status] !== undefined) {
+      summary[row.status] += 1;
+    }
+  });
+
+  return summary;
+}
+
 export function isLocalMode() {
   return !process.env.DATABASE_URL;
 }
 
 export function getLocalAdmin() {
-  return {
-    id: 1,
-    username: process.env.LOCAL_ADMIN_USERNAME || 'admin',
-    password: process.env.LOCAL_ADMIN_PASSWORD || 'deoksi2026',
-    full_name: process.env.LOCAL_ADMIN_FULL_NAME || 'Admin Deoksi',
-    role: 'admin',
-  };
+  const state = ensureState();
+  return clone(state.adminUser);
 }
 
-export function listCustomers({ status, search, page = 1, limit = 20 } = {}) {
+export function updateLocalAdminProfile(payload = {}) {
   const state = ensureState();
-  let rows = [...state.customers].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  if (payload.full_name !== undefined) {
+    state.adminUser.full_name = String(payload.full_name || '').trim() || state.adminUser.full_name;
+  }
+  if (payload.username !== undefined) {
+    state.adminUser.username = String(payload.username || '').trim() || state.adminUser.username;
+  }
+  return clone(state.adminUser);
+}
+
+export function updateLocalAdminPassword(nextPassword) {
+  const state = ensureState();
+  state.adminUser.password = String(nextPassword || '');
+  return clone(state.adminUser);
+}
+
+function getCustomerPeriodStart(period) {
+  const now = new Date();
+
+  if (period === 'week') {
+    const start = new Date(now);
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() - 6);
+    return start;
+  }
+
+  if (period === 'month') {
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  }
+
+  return null;
+}
+
+function applyCustomerFilters(rows, { status, search, period, customerType, identityStatus } = {}) {
+  let nextRows = [...rows].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+  const periodStart = getCustomerPeriodStart(period);
+  if (periodStart) {
+    nextRows = nextRows.filter((row) => new Date(row.created_at) >= periodStart);
+  }
 
   if (status) {
-    rows = rows.filter((row) => row.status === status);
+    nextRows = nextRows.filter((row) => row.status === status);
+  }
+
+  if (customerType) {
+    nextRows = nextRows.filter((row) => row.customer_type === customerType);
+  }
+
+  if (identityStatus) {
+    nextRows = nextRows.filter((row) => {
+      const statusLabel = row.customer_type === 'existing'
+        ? (row.identity_verified ? 'verified' : 'pending')
+        : 'not_required';
+      return statusLabel === identityStatus;
+    });
   }
 
   if (search) {
     const query = search.toLowerCase();
-    rows = rows.filter((row) =>
+    nextRows = nextRows.filter((row) =>
       row.full_name.toLowerCase().includes(query) ||
       row.phone.toLowerCase().includes(query)
     );
   }
 
-  return paginate(rows, page, limit);
+  return nextRows;
+}
+
+export function listCustomers({ status, search, period, customerType, identityStatus, page = 1, limit = 20 } = {}) {
+  const state = ensureState();
+  const rows = applyCustomerFilters(state.customers, { status, search, period, customerType, identityStatus });
+  return {
+    ...paginate(rows, page, limit),
+    summary: summarizeCustomers(rows),
+  };
+}
+
+export function resetLocalCustomers() {
+  const state = ensureState();
+  state.customers = getDefaultCustomers();
+  state.counters.customers = state.customers.length;
+  return clone(state.customers);
+}
+
+export function findCustomerByNik(nik, excludeId = null) {
+  const state = ensureState();
+  const normalizedNik = String(nik || '').trim();
+  if (!normalizedNik) return null;
+
+  return clone(state.customers.find((item) =>
+    String(item.nik || '').trim() === normalizedNik &&
+    String(item.id) !== String(excludeId)
+  ) || null);
 }
 
 export function createCustomer(payload) {
@@ -406,6 +827,11 @@ export function createCustomer(payload) {
     concerns: Array.isArray(payload.concerns) ? payload.concerns : [],
     message: payload.message || null,
     preferred_date: payload.preferred_date || null,
+    customer_type: payload.customer_type || 'new',
+    nik: payload.nik || null,
+    address: payload.address || null,
+    identity_verified: Boolean(payload.identity_verified),
+    identity_verified_at: payload.identity_verified ? (payload.identity_verified_at || timestamp) : null,
     status: 'new',
     created_at: timestamp,
     updated_at: timestamp,
@@ -421,6 +847,31 @@ export function updateCustomerStatus(id, status) {
   if (!customer) return null;
 
   customer.status = status;
+  customer.updated_at = nowIso();
+  return clone(customer);
+}
+
+export function updateCustomerProfile(id, payload = {}) {
+  const state = ensureState();
+  const customer = state.customers.find((item) => String(item.id) === String(id));
+  if (!customer) return null;
+
+  if (payload.customer_type !== undefined) {
+    customer.customer_type = payload.customer_type;
+  }
+  if (payload.nik !== undefined) {
+    customer.nik = payload.nik;
+  }
+  if (payload.address !== undefined) {
+    customer.address = payload.address;
+  }
+  if (payload.identity_verified !== undefined) {
+    customer.identity_verified = Boolean(payload.identity_verified);
+  }
+  if (payload.identity_verified_at !== undefined) {
+    customer.identity_verified_at = payload.identity_verified_at;
+  }
+
   customer.updated_at = nowIso();
   return clone(customer);
 }
@@ -534,23 +985,49 @@ function normalizeStoredStatus(status) {
   return status === 'inactive' ? 'archived' : (status || 'draft');
 }
 
-export function listMedia({ category, type, status, platform, slot_key, section_name, search, page = 1, limit = 20 } = {}) {
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function deepMerge(base, patch) {
+  if (!isPlainObject(base) || !isPlainObject(patch)) {
+    return patch;
+  }
+
+  const result = { ...base };
+  for (const [key, value] of Object.entries(patch)) {
+    if (isPlainObject(value) && isPlainObject(result[key])) {
+      result[key] = deepMerge(result[key], value);
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
+export function listMedia({ category, type, status, platform, slot_key, section_name, media_kind, page_key, section_key, position_key, search, page = 1, limit = 20 } = {}) {
   const state = ensureState();
-  let rows = [...state.media].sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at));
+  let rows = [...state.media]
+    .map((item) => normalizeMediaPlacement(item))
+    .sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at));
 
   if (category) rows = rows.filter((item) => item.category === category);
   if (type) rows = rows.filter((item) => item.type === type);
   if (status) rows = rows.filter((item) => item.status === status);
   if (platform) rows = rows.filter((item) => item.platform === platform);
+  if (media_kind) rows = rows.filter((item) => item.media_kind === media_kind);
+  if (page_key) rows = rows.filter((item) => item.page_key === page_key);
+  if (section_key) rows = rows.filter((item) => item.section_key === section_key);
+  if (position_key) rows = rows.filter((item) => item.position_key === position_key);
   if (slot_key) rows = rows.filter((item) => item.slot_key === slot_key);
   if (section_name) rows = rows.filter((item) => item.section_name === section_name);
   if (search) {
     const query = String(search).toLowerCase();
     rows = rows.filter((item) =>
-      [item.filename, item.title, item.category, item.campaign, item.platform, item.alt_text, item.notes]
+      [item.filename, item.title, item.category, item.campaign, item.platform, item.alt_text, item.notes, item.page_label, item.section_label, item.position_label, item.usage_label]
         .filter(Boolean)
         .some((value) => String(value).toLowerCase().includes(query)) ||
-      [item.slot_key, item.slot_name, item.section_name].filter(Boolean).some((value) => String(value).toLowerCase().includes(query)) ||
+      [item.slot_key, item.slot_name, item.section_name, item.page_key, item.section_key, item.position_key].filter(Boolean).some((value) => String(value).toLowerCase().includes(query)) ||
       (item.tags || []).some((tag) => String(tag).toLowerCase().includes(query))
     );
   }
@@ -560,7 +1037,7 @@ export function listMedia({ category, type, status, platform, slot_key, section_
 
 export function getMediaSummary() {
   const state = ensureState();
-  const rows = state.media;
+  const rows = state.media.map((item) => normalizeMediaPlacement(item));
 
   return {
     total: rows.length,
@@ -568,6 +1045,8 @@ export function getMediaSummary() {
     draft: rows.filter((item) => item.status === 'draft').length,
     archived: rows.filter((item) => item.status === 'archived').length,
     documents: rows.filter((item) => item.type === 'document').length,
+    videos: rows.filter((item) => item.media_kind === 'video_cloudinary').length,
+    photos: rows.filter((item) => item.media_kind === 'website_photo').length,
   };
 }
 
@@ -576,6 +1055,7 @@ export function getActiveMediaBySlotKeys(slotKeys = []) {
   const allowed = new Set((slotKeys || []).filter(Boolean));
   return clone(
     state.media
+      .map((item) => normalizeMediaPlacement(item))
       .filter((item) => item.is_slot_active && item.status === 'active' && (!allowed.size || allowed.has(item.slot_key)))
       .sort((a, b) => {
         const orderDiff = Number(a.display_order || 0) - Number(b.display_order || 0);
@@ -608,32 +1088,51 @@ export function listActiveWebsiteSlots() {
 }
 
 export function getHomepageContent() {
-  const state = ensureState();
+  const homepage = getPageContent('homepage');
   return clone({
     ...getDefaultHomepageContent(),
-    ...(state.homepageContent || {}),
+    ...(homepage.hero || {}),
+    ...(homepage.hero_benefits || {}),
+    promos: Array.isArray(homepage.promos) ? homepage.promos : [],
   });
 }
 
 export function updateHomepageContent(payload = {}) {
-  const state = ensureState();
-  const nextContent = { ...(state.homepageContent || getDefaultHomepageContent()) };
+  const currentHomepage = getPageContent('homepage');
+  const nextHomepage = clone(currentHomepage);
+  const defaults = getDefaultHomepageContent();
 
-  Object.entries(getDefaultHomepageContent()).forEach(([key, defaultValue]) => {
-    if (payload[key] !== undefined) {
-      nextContent[key] = String(payload[key] ?? '').trim() || defaultValue;
+  Object.entries(defaults).forEach(([key, defaultValue]) => {
+    if (payload[key] === undefined) return;
+
+    const value = String(payload[key] ?? '').trim() || defaultValue;
+    if (['hero_badge', 'headline', 'highlight_text', 'description', 'cta_text', 'cta_link', 'hero_media'].includes(key)) {
+      nextHomepage.hero = {
+        ...(nextHomepage.hero || {}),
+        [key]: value,
+      };
+      return;
     }
+
+    nextHomepage.hero_benefits = {
+      ...(nextHomepage.hero_benefits || {}),
+      [key]: value,
+    };
   });
 
-  state.homepageContent = nextContent;
-  return clone(nextContent);
+  if (payload.promos !== undefined) {
+    nextHomepage.promos = Array.isArray(payload.promos) ? payload.promos : [];
+  }
+
+  updatePageContent('homepage', nextHomepage);
+  return getHomepageContent();
 }
 
 export function getPageContent(pageKey) {
   const state = ensureState();
   if (!state.pageContent) state.pageContent = getDefaultPageContent();
   const defaults = getDefaultPageContent()[pageKey] || {};
-  return clone({
+  return normalizePageContentRecord(pageKey, {
     ...defaults,
     ...(state.pageContent[pageKey] || {}),
   });
@@ -645,89 +1144,112 @@ export function updatePageContent(pageKey, payload = {}) {
   if (!state.pageContent[pageKey]) {
     state.pageContent[pageKey] = {};
   }
-  
-  // Update state deeply if needed, here we just assign properties
-  const nextContent = { ...state.pageContent[pageKey], ...payload };
-  state.pageContent[pageKey] = nextContent;
-  return clone(nextContent);
+
+  const nextContent = deepMerge(state.pageContent[pageKey], payload);
+  state.pageContent[pageKey] = normalizePageContentRecord(pageKey, nextContent);
+  return clone(state.pageContent[pageKey]);
 }
+
+export { normalizePageContentRecord };
 
 export function createMedia(payload) {
   const state = ensureState();
   const timestamp = nowIso();
+  const normalizedPayload = normalizeMediaPayload(payload);
   const media = {
     id: ++state.counters.media,
-    filename: payload.filename,
-    title: payload.title || payload.filename,
-    source_type: payload.source_type || 'external',
-    cloudinary_id: payload.cloudinary_id || null,
-    section_name: payload.section_name || null,
-    slot_key: payload.slot_key || null,
-    slot_name: payload.slot_name || null,
-    is_slot_active: Boolean(payload.is_slot_active),
-    display_order: payload.display_order || 0,
-    original_url: payload.original_url || payload.url,
-    optimized_url: payload.optimized_url || payload.url,
-    thumb_url: payload.thumb_url || payload.url,
-    url: payload.url,
-    type: payload.type || 'image',
-    category: payload.category || 'gallery',
-    alt_text: payload.alt_text || null,
-    tags: normalizeTags(payload.tags),
-    platform: payload.platform || 'website',
-    campaign: payload.campaign || null,
-    status: normalizeStoredStatus(payload.status),
-    notes: payload.notes || null,
-    last_used_at: payload.last_used_at || null,
-    usage_count: payload.usage_count || 0,
-    size_bytes: payload.size_bytes || null,
+    filename: normalizedPayload.filename,
+    title: normalizedPayload.title || normalizedPayload.filename,
+    media_kind: normalizedPayload.media_kind || null,
+    source_type: normalizedPayload.source_type || 'external',
+    cloudinary_id: normalizedPayload.cloudinary_id || null,
+    page_key: normalizedPayload.page_key || null,
+    section_key: normalizedPayload.section_key || null,
+    position_key: normalizedPayload.position_key || null,
+    replace_policy: normalizedPayload.replace_policy || 'multiple',
+    section_name: normalizedPayload.section_name || null,
+    slot_key: normalizedPayload.slot_key || null,
+    slot_name: normalizedPayload.slot_name || null,
+    is_slot_active: Boolean(normalizedPayload.is_slot_active),
+    display_order: normalizedPayload.display_order || 0,
+    original_url: normalizedPayload.original_url || normalizedPayload.url,
+    optimized_url: normalizedPayload.optimized_url || normalizedPayload.url,
+    thumb_url: normalizedPayload.thumb_url || normalizedPayload.url,
+    url: normalizedPayload.url,
+    type: normalizedPayload.type || 'image',
+    category: normalizedPayload.category || 'gallery',
+    alt_text: normalizedPayload.alt_text || null,
+    tags: normalizeTags(normalizedPayload.tags),
+    platform: normalizedPayload.platform || 'website',
+    campaign: normalizedPayload.campaign || null,
+    status: normalizeStoredStatus(normalizedPayload.status),
+    notes: normalizedPayload.notes || null,
+    last_used_at: normalizedPayload.last_used_at || null,
+    usage_count: normalizedPayload.usage_count || 0,
+    size_bytes: normalizedPayload.size_bytes || null,
     uploaded_at: timestamp,
     updated_at: timestamp,
   };
 
+  if (media.is_slot_active && media.slot_key && media.replace_policy === 'single') {
+    state.media.forEach((item) => {
+      if (item.slot_key === media.slot_key) {
+        item.is_slot_active = false;
+        item.status = item.status === 'active' ? 'archived' : item.status;
+      }
+    });
+  }
+
   state.media.push(media);
-  return clone(media);
+  return clone(normalizeMediaPlacement(media));
 }
 
 export function updateMedia(id, payload) {
   const state = ensureState();
   const media = state.media.find((item) => String(item.id) === String(id));
   if (!media) return null;
+  const normalizedPayload = normalizeMediaPayload({ ...media, ...payload });
 
-  if (payload.is_slot_active === true && payload.slot_key) {
+  if (normalizedPayload.is_slot_active === true && normalizedPayload.slot_key && normalizedPayload.replace_policy === 'single') {
     for (const item of state.media) {
-      if (item.slot_key === payload.slot_key && item.id !== media.id) {
+      if (item.slot_key === normalizedPayload.slot_key && item.id !== media.id) {
         item.is_slot_active = false;
+        item.status = item.status === 'active' ? 'archived' : item.status;
       }
     }
   }
 
-  if (payload.filename !== undefined) media.filename = payload.filename || media.filename;
-  if (payload.title !== undefined) media.title = payload.title || media.title;
-  if (payload.source_type !== undefined) media.source_type = payload.source_type || media.source_type;
-  if (payload.section_name !== undefined) media.section_name = payload.section_name || null;
-  if (payload.slot_key !== undefined) media.slot_key = payload.slot_key || null;
-  if (payload.slot_name !== undefined) media.slot_name = payload.slot_name || null;
-  if (payload.is_slot_active !== undefined) media.is_slot_active = Boolean(payload.is_slot_active);
-  if (payload.display_order !== undefined) media.display_order = payload.display_order || 0;
-  if (payload.url !== undefined) media.url = payload.url || media.url;
-  if (payload.original_url !== undefined) media.original_url = payload.original_url || media.original_url;
-  if (payload.optimized_url !== undefined) media.optimized_url = payload.optimized_url || media.optimized_url;
-  if (payload.thumb_url !== undefined) media.thumb_url = payload.thumb_url || media.thumb_url;
-  if (payload.type !== undefined) media.type = payload.type || media.type;
-  if (payload.category !== undefined) media.category = payload.category || media.category;
-  if (payload.alt_text !== undefined) media.alt_text = payload.alt_text || null;
-  if (payload.tags !== undefined) media.tags = normalizeTags(payload.tags);
-  if (payload.platform !== undefined) media.platform = payload.platform || 'website';
-  if (payload.campaign !== undefined) media.campaign = payload.campaign || null;
-  if (payload.status !== undefined) media.status = normalizeStoredStatus(payload.status);
-  if (payload.notes !== undefined) media.notes = payload.notes || null;
-  if (payload.last_used_at !== undefined) media.last_used_at = payload.last_used_at || null;
-  if (payload.usage_count !== undefined) media.usage_count = payload.usage_count || 0;
-  if (payload.size_bytes !== undefined) media.size_bytes = payload.size_bytes || null;
+  if (payload.filename !== undefined) media.filename = normalizedPayload.filename || media.filename;
+  if (payload.title !== undefined) media.title = normalizedPayload.title || media.title;
+  if (payload.media_kind !== undefined) media.media_kind = normalizedPayload.media_kind || media.media_kind;
+  if (payload.source_type !== undefined) media.source_type = normalizedPayload.source_type || media.source_type;
+  if (payload.page_key !== undefined) media.page_key = normalizedPayload.page_key || media.page_key || null;
+  if (payload.section_key !== undefined) media.section_key = normalizedPayload.section_key || media.section_key || null;
+  if (payload.position_key !== undefined) media.position_key = normalizedPayload.position_key || media.position_key || null;
+  if (payload.replace_policy !== undefined) media.replace_policy = normalizedPayload.replace_policy || 'multiple';
+  if (payload.section_name !== undefined) media.section_name = normalizedPayload.section_name || media.section_name || null;
+  if (payload.slot_key !== undefined) media.slot_key = normalizedPayload.slot_key || media.slot_key || null;
+  if (payload.slot_name !== undefined) media.slot_name = normalizedPayload.slot_name || media.slot_name || null;
+  if (payload.is_slot_active !== undefined) media.is_slot_active = Boolean(normalizedPayload.is_slot_active);
+  if (payload.display_order !== undefined) media.display_order = normalizedPayload.display_order || 0;
+  if (payload.url !== undefined) media.url = normalizedPayload.url || media.url;
+  if (payload.original_url !== undefined) media.original_url = normalizedPayload.original_url || media.original_url;
+  if (payload.optimized_url !== undefined) media.optimized_url = normalizedPayload.optimized_url || media.optimized_url;
+  if (payload.thumb_url !== undefined) media.thumb_url = normalizedPayload.thumb_url || media.thumb_url;
+  if (payload.type !== undefined) media.type = normalizedPayload.type || media.type;
+  if (payload.category !== undefined) media.category = normalizedPayload.category || media.category;
+  if (payload.alt_text !== undefined) media.alt_text = normalizedPayload.alt_text || null;
+  if (payload.tags !== undefined) media.tags = normalizeTags(normalizedPayload.tags);
+  if (payload.platform !== undefined) media.platform = normalizedPayload.platform || 'website';
+  if (payload.campaign !== undefined) media.campaign = normalizedPayload.campaign || null;
+  if (payload.status !== undefined) media.status = normalizeStoredStatus(normalizedPayload.status);
+  if (payload.notes !== undefined) media.notes = normalizedPayload.notes || null;
+  if (payload.last_used_at !== undefined) media.last_used_at = normalizedPayload.last_used_at || null;
+  if (payload.usage_count !== undefined) media.usage_count = normalizedPayload.usage_count || 0;
+  if (payload.size_bytes !== undefined) media.size_bytes = normalizedPayload.size_bytes || null;
   media.updated_at = nowIso();
 
-  return clone(media);
+  return clone(normalizeMediaPlacement(media));
 }
 
 export function deleteMediaById(id) {

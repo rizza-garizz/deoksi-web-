@@ -1,4 +1,5 @@
 const siteContentApiBase = '';
+let managedSectionCache = null;
 
 function escapeHtml(value) {
   return String(value ?? '')
@@ -31,6 +32,7 @@ export async function loadAndApplyPageContent() {
     const payload = await response.json();
     const data = payload?.data;
     if (!data) return;
+    const managedSections = await getManagedSections();
 
     // Apply header text
     const pageTagEl = document.querySelector('.section-tag');
@@ -42,16 +44,105 @@ export async function loadAndApplyPageContent() {
     if (pageDescEl && data.page_description) pageDescEl.textContent = data.page_description;
 
     // Apply page specific lists
-    if (pageKey === 'layanan' && data.services) applyServices(data.services);
-    if (pageKey === 'produk' && data.products) applyProducts(data.products);
-    if (pageKey === 'tentang') applyTentang(data);
+    if (pageKey === 'layanan' && data.services) {
+      data.services = injectManagedAssets(data.services, managedSections['layanan:service_cards'], 'image_url');
+      applyServices(data.services);
+    }
+    if (pageKey === 'produk' && data.products) {
+      data.products = injectManagedAssets(data.products, managedSections['produk:product_cards'], 'image_url');
+      applyProducts(data.products);
+    }
+    if (pageKey === 'tentang') {
+      data.doctors = injectManagedAssets(data.doctors, managedSections['tentang:doctor_profiles'], 'photo_url');
+      data.certificates = injectManagedAssets(data.certificates, managedSections['tentang:certificates'], 'image_url');
+      applyTentang(data);
+    }
     if (pageKey === 'lokasi') applyLokasi(data);
     if (pageKey === 'konsultasi') applyKonsultasi(data);
-    if (pageKey === 'galeri' && data.media_items) applyGaleri(data.media_items);
-    if (pageKey === 'berita' && data.articles) applyBerita(data.articles);
-
+    if (pageKey === 'galeri') {
+      // Dedicated gallery page manages its visual slots directly from site-content/gallery_page.
+      // We keep page-renderer responsible only for shared page text to avoid conflicting render paths.
+    }
   } catch (error) {
     console.warn(`Fallback active for ${pageKey} content.`, error);
+  }
+}
+
+async function getManagedSections() {
+  if (managedSectionCache) return managedSectionCache;
+
+  try {
+    const response = await fetch(`${siteContentApiBase}/api/site-content?t=${Date.now()}`, {
+      cache: 'no-store',
+    });
+    if (!response.ok) {
+      managedSectionCache = {};
+      return managedSectionCache;
+    }
+
+    const payload = await response.json();
+    managedSectionCache = payload?.sections || {};
+    return managedSectionCache;
+  } catch (error) {
+    console.warn('Managed sections fallback active.', error);
+    managedSectionCache = {};
+    return managedSectionCache;
+  }
+}
+
+function getPositionIndex(positionKey = '') {
+  const match = String(positionKey).match(/(\d+)$/);
+  return match ? Number(match[1]) : 1;
+}
+
+function injectManagedAssets(items = [], assets = [], targetField = 'image_url') {
+  if (!Array.isArray(items) || !items.length || !Array.isArray(assets) || !assets.length) {
+    return items;
+  }
+
+  const assetMap = [...assets]
+    .filter((item) => item.status === 'active' && item.url)
+    .sort((a, b) => getPositionIndex(a.position_key) - getPositionIndex(b.position_key))
+    .reduce((acc, item) => {
+      acc.set(getPositionIndex(item.position_key), item);
+      return acc;
+    }, new Map());
+
+  return items.map((item, index) => {
+    const asset = assetMap.get(index + 1);
+    if (!asset) return item;
+    return {
+      ...item,
+      [targetField]: asset.url,
+    };
+  });
+}
+
+async function applyManagedGaleri() {
+  try {
+    const response = await fetch(`${siteContentApiBase}/api/gallery-content?t=${Date.now()}`, {
+      cache: 'no-store',
+    });
+    if (!response.ok) return false;
+
+    const payload = await response.json();
+    const items = Array.isArray(payload?.data) ? payload.data : [];
+    if (!items.length) return false;
+
+    const mappedItems = items.map((item) => ({
+      title: item.title,
+      media_type: item.type,
+      media_url: item.url,
+      alt_text: item.alt_text,
+      is_visible: item.status === 'active',
+      sort_order: item.display_order || 0,
+    }));
+
+    applyGaleri(mappedItems);
+    return true;
+  } catch (error) {
+    console.warn('Managed gallery fallback active.', error);
+    return false;
   }
 }
 
@@ -62,6 +153,7 @@ function applyServices(services) {
   const visibleServices = services.filter(s => s.is_visible).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
   if (visibleServices.length === 0) return;
 
+  container.classList.remove('is-fallback');
   container.innerHTML = visibleServices.map(service => `
     <article class="service-card animate-on-scroll visible">
       <div class="service-image-frame">
@@ -87,6 +179,37 @@ function applyProducts(products) {
     // Determine stars text
     const r = Math.round(product.rating || 5);
     const starsText = '★'.repeat(r) + '☆'.repeat(5 - r);
+    const bpomNumber = String(product.bpom_number || '').trim();
+    const keyBenefit = String(product.key_benefit || '').trim();
+    const netto = String(product.netto || '').trim();
+    const usageHint = String(product.usage_hint || '').trim();
+    const bpomDetail = bpomNumber
+      ? `
+        <div class="product-trust-block" aria-label="Informasi registrasi BPOM">
+          <div class="product-trust-label">Nomor Registrasi BPOM</div>
+          <div class="product-trust-note">${escapeHtml(bpomNumber)}</div>
+        </div>
+      `
+      : '';
+    const metaPills = [netto ? `<div class="product-meta-pill">Isi Bersih: ${escapeHtml(netto)}</div>` : '', usageHint ? `<div class="product-meta-pill">Cara Pakai: ${escapeHtml(usageHint)}</div>` : '']
+      .filter(Boolean)
+      .join('');
+    const metaRow = metaPills ? `<div class="product-meta-row">${metaPills}</div>` : '';
+    const benefitBlock = keyBenefit ? `<p class="product-benefit">${escapeHtml(keyBenefit)}</p>` : '';
+    const certificationBadges = [
+      product.has_bpom ? `
+        <span class="bpom-badge">
+          <img src="/assets/images/bpom-logo.png" alt="Logo BPOM" loading="lazy">
+          <span>BPOM</span>
+        </span>
+      ` : '',
+      product.has_halal_mui !== false ? `
+        <span class="halal-badge">
+          <img src="/assets/images/halal-mui-logo.png" alt="Logo Halal Indonesia" loading="lazy">
+          <span>Halal MUI</span>
+        </span>
+      ` : '',
+    ].filter(Boolean).join('');
 
     return `
       <article class="product-card animate-on-scroll visible" data-category="${escapeHtml(product.category || 'all')}">
@@ -98,9 +221,12 @@ function applyProducts(products) {
         </div>
         <div class="product-top">
           <h3 class="product-name">${escapeHtml(product.name)}</h3>
-          ${product.has_bpom ? '<span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>' : ''}
+          <div class="product-certifications">${certificationBadges}</div>
         </div>
         <div class="product-price">${escapeHtml(product.price)}</div>
+        ${bpomDetail}
+        ${benefitBlock}
+        ${metaRow}
         <div class="rating-row" aria-label="Rating ${product.rating || 5} dari 5">
           <span class="stars" aria-hidden="true">${starsText}</span>
           <span>${product.rating || 5}</span>
@@ -114,21 +240,9 @@ function applyProducts(products) {
 }
 
 function rewireProductFilter() {
-  const filterButtons = document.querySelectorAll('[data-filter]');
-  const productCards = document.querySelectorAll('[data-category]');
-  if (!filterButtons.length || !productCards.length) return;
-
-  filterButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterButtons.forEach(b => b.classList.remove('is-active'));
-      btn.classList.add('is-active');
-      const category = btn.getAttribute('data-filter');
-      productCards.forEach(card => {
-        const show = category === 'all' || card.getAttribute('data-category') === category;
-        card.classList.toggle('is-hidden', !show);
-      });
-    });
-  });
+  if (typeof window !== 'undefined' && typeof window.__deoksiInitProductFilter === 'function') {
+    window.__deoksiInitProductFilter();
+  }
 }
 
 function applyTentang(data) {
@@ -151,6 +265,7 @@ function applyTentang(data) {
     const doctorsContainer = document.querySelector('.doctor-grid');
     if (doctorsContainer) {
       const sortedDocs = [...data.doctors].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+      doctorsContainer.classList.remove('is-fallback');
       doctorsContainer.innerHTML = sortedDocs.map(doc => `
         <article class="doctor-card animate-on-scroll visible">
           <div class="doctor-photo">
@@ -190,9 +305,15 @@ function applyLokasi(data) {
   const phoneEl = document.getElementById('lokasi-phone');
   const waBtnEl = document.getElementById('lokasi-wa-btn');
   const mapIframeEl = document.getElementById('lokasi-map-iframe');
+  const locationGridEl = document.querySelector('.location-grid');
+  const formatMultilineHtml = (value) =>
+    escapeHtml(String(value ?? ''))
+      .replace(/&lt;br\s*\/?&gt;/gi, '<br>')
+      .replace(/\n/g, '<br>');
 
+  if (locationGridEl) locationGridEl.classList.remove('is-fallback');
   if (addressEl && data.address) addressEl.textContent = data.address;
-  if (hoursEl && data.operating_hours) hoursEl.textContent = data.operating_hours;
+  if (hoursEl && data.operating_hours) hoursEl.innerHTML = formatMultilineHtml(data.operating_hours);
   if (phoneEl && data.phone) phoneEl.textContent = data.phone;
   if (waBtnEl && data.whatsapp_link) waBtnEl.href = data.whatsapp_link;
   if (mapIframeEl && data.maps_embed_url) mapIframeEl.src = data.maps_embed_url;
@@ -272,6 +393,7 @@ export async function loadHomepageAdditionalContent() {
   if (!isHomePage) return;
 
   try {
+    await getManagedSections();
     const resTentang = await fetch(`${siteContentApiBase}/api/page-content?page=tentang&t=${Date.now()}`, { cache: 'no-store' });
     if (resTentang.ok) {
       const payload = await resTentang.json();
@@ -293,11 +415,14 @@ export async function loadHomepageAdditionalContent() {
 }
 
 function applyHomepageTentang(data) {
+  const managedDoctors = injectManagedAssets(data.doctors, managedSectionCache?.['tentang:doctor_profiles'], 'photo_url');
+  const managedCertificates = injectManagedAssets(data.certificates, managedSectionCache?.['tentang:certificates'], 'image_url');
+
   // Doctors (limit 2)
-  if (data.doctors && data.doctors.length > 0) {
+  if (managedDoctors && managedDoctors.length > 0) {
     const doctorsContainer = document.querySelector('.doctor-grid');
     if (doctorsContainer) {
-      const sortedDocs = [...data.doctors].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)).slice(0, 2);
+      const sortedDocs = [...managedDoctors].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)).slice(0, 2);
       const gradients = [
         'linear-gradient(180deg, #FFF4EC 0%, #F7EAE3 100%)',
         'linear-gradient(180deg, #FDF0F4 0%, #F7EAE3 100%)'
@@ -319,10 +444,10 @@ function applyHomepageTentang(data) {
   }
 
   // Certificates
-  if (data.certificates && data.certificates.length > 0) {
+  if (managedCertificates && managedCertificates.length > 0) {
     const certWrapper = document.querySelector('.cert-swiper .swiper-wrapper');
     if (certWrapper) {
-      const sortedCerts = [...data.certificates].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+      const sortedCerts = [...managedCertificates].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
       certWrapper.innerHTML = sortedCerts.map(cert => `
         <div class="swiper-slide">
           <div class="cert-card" data-image="${escapeHtml(cert.image_url || '/assets/images/logo.png')}" data-title="${escapeHtml(cert.name)}">
@@ -497,6 +622,11 @@ export async function loadGlobalContent() {
 }
 
 function applyGlobal(global) {
+  const formatMultilineHtml = (value) =>
+    escapeHtml(String(value ?? ''))
+      .replace(/&lt;br\s*\/?&gt;/gi, '<br>')
+      .replace(/\n/g, '<br>');
+
   // Footer
   const footerDesc = document.querySelector('.footer-desc');
   if (footerDesc && global.footer_description) footerDesc.textContent = global.footer_description;
@@ -508,7 +638,7 @@ function applyGlobal(global) {
   if (footerPhone && global.phone) footerPhone.innerHTML = `📞 ${escapeHtml(global.phone)}`;
 
   const footerHours = document.querySelector('.footer-contact li:nth-child(3)');
-  if (footerHours && global.operating_hours) footerHours.innerHTML = `⏰ ${escapeHtml(global.operating_hours)}`;
+  if (footerHours && global.operating_hours) footerHours.innerHTML = `⏰ ${formatMultilineHtml(global.operating_hours)}`;
 
   const copyrightEl = document.querySelector('.footer-bottom p');
   if (copyrightEl && global.copyright_text) copyrightEl.textContent = global.copyright_text;

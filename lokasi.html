@@ -31,6 +31,24 @@
       align-items: start;
     }
 
+    .location-fallback-note {
+      display: none;
+      max-width: 760px;
+      margin: 0 auto 18px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      background: rgba(247,144,62,0.06);
+      border: 1px solid rgba(247,144,62,0.12);
+      color: var(--text-light);
+      line-height: 1.65;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .location-grid.is-fallback + .location-fallback-note {
+      display: block;
+    }
+
     .contact-card {
       background: var(--white);
       border-radius: var(--radius-lg);
@@ -213,7 +231,7 @@
 
   <section class="location-page">
     <div class="container">
-      <div class="location-grid">
+      <div class="location-grid is-fallback">
         <article class="contact-card animate-on-scroll">
           <h2 class="contact-title">Informasi Kontak</h2>
 
@@ -225,7 +243,7 @@
               </svg>
               <div>
                 <div class="contact-label">Alamat</div>
-                <div class="contact-value" id="lokasi-address">Deoksi Beauty Clinic, Jl. Puncak Borobudur Kav. 6, Kota Malang, Jawa Timur.</div>
+                <div class="contact-value" id="lokasi-address">Deoksi Beauty Clinic, Jl. Puncak Borobudur Kav. 6, Kota Malang, Jawa Timur — sekitar 50 meter di sebelah barat Bundaran Soekarno Hatta.</div>
               </div>
             </div>
 
@@ -237,8 +255,8 @@
               <div>
                 <div class="contact-label">Jam Operasional</div>
                 <div class="contact-value" id="lokasi-hours">
-                  Senin–Sabtu: 09.00–20.00<br>
-                  Minggu: Tutup
+                  Senin–Jumat: 10.30–18.30 WIB<br>
+                  Sabtu–Minggu: 09.00–17.00 WIB
                 </div>
               </div>
             </div>
@@ -263,9 +281,12 @@
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
             allowfullscreen
-            src="https://www.google.com/maps?q=Deoksi+Clinic,+-7.9364532,112.6259121&z=17&output=embed">
+            src="https://www.google.com/maps?q=-7.9364532,112.6259121&z=17&output=embed">
           </iframe>
         </aside>
+      </div>
+      <div class="location-fallback-note">
+        Informasi alamat, jam operasional, dan peta akan menyesuaikan pembaruan terbaru dari sistem. Jika koneksi sedang lambat, tampilan awal ini tetap membantu pengunjung menemukan klinik.
       </div>
     </div>
   </section>

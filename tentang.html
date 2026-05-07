@@ -30,6 +30,24 @@
       margin-top: 32px;
     }
 
+    .about-fallback-note {
+      display: none;
+      max-width: 760px;
+      margin: 18px auto 0;
+      padding: 14px 18px;
+      border-radius: 18px;
+      background: rgba(247,144,62,0.06);
+      border: 1px solid rgba(247,144,62,0.12);
+      color: var(--text-light);
+      line-height: 1.65;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .doctor-grid.is-fallback + .about-fallback-note {
+      display: block;
+    }
+
     .info-card {
       background: var(--white);
       border-radius: var(--radius-lg);
@@ -222,7 +240,7 @@
           <p class="section-desc animate-on-scroll">Ditangani oleh tenaga profesional dengan pendekatan yang aman dan terukur.</p>
         </div>
 
-        <div class="doctor-grid">
+        <div class="doctor-grid is-fallback">
           <article class="doctor-card animate-on-scroll">
             <div class="doctor-photo">
               <img src="/assets/images/doctor1.jpg" alt="dr. Beni Lukandar" loading="lazy">
@@ -255,6 +273,20 @@
               <p class="doctor-desc">Mendampingi pasien sejak konsultasi hingga perawatan lanjutan agar pengalaman perawatan terasa nyaman.</p>
             </div>
           </article>
+
+          <article class="doctor-card animate-on-scroll">
+            <div class="doctor-photo">
+              <img src="/assets/images/service_consult.png" alt="Tim Konsultasi Deoksi" loading="lazy">
+            </div>
+            <div class="doctor-body">
+              <div class="doctor-name">Tim Konsultasi Deoksi</div>
+              <div class="doctor-spec">Koordinator Konsultasi</div>
+              <p class="doctor-desc">Membantu memastikan alur konsultasi awal, edukasi layanan, dan kebutuhan pasien terkoordinasi dengan rapi sebelum treatment dilakukan.</p>
+            </div>
+          </article>
+        </div>
+        <div class="about-fallback-note">
+          Profil tim dokter dan informasi pendamping akan mengikuti pembaruan terbaru dari sistem. Jika koneksi sedang lambat, tampilan awal ini tetap menjaga halaman tetap informatif.
         </div>
       </div>
 

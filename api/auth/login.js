@@ -1,5 +1,5 @@
 import { getDB, hasDatabase } from '../_lib/db.js';
-import { generateToken } from '../_lib/auth.js';
+import { generateToken, hashPassword } from '../_lib/auth.js';
 import { getLocalAdmin } from '../_lib/local-db.js';
 import { handleCors, jsonResponse, errorResponse } from '../_lib/utils.js';
 
@@ -45,11 +45,7 @@ export default async function handler(request) {
     // Verifikasi password (bcrypt hash comparison)
     // Untuk edge runtime, kita gunakan simple hash comparison
     // Password di-hash dengan format: sha256(password + salt)
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password + (process.env.PASSWORD_SALT || 'deoksi2026'));
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    const hashHex = await hashPassword(password);
 
     if (hasDatabase() && hashHex !== user.password_hash) {
       return errorResponse('Username atau password salah.', 401);

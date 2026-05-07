@@ -45,14 +45,50 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+function renderFieldHelper(field) {
+  if (!field?.helper) return '';
+  return `<div class="content-field-helper" style="margin-top:6px;color:var(--admin-text-muted);font-size:0.82rem;line-height:1.45;">${escapeHtml(field.helper)}</div>`;
+}
+
+function normalizeHomepageDataForEditor(data = {}) {
+  return {
+    ...(data.hero || {}),
+    ...(data.hero_benefits || {}),
+    promos: Array.isArray(data.promos) ? data.promos : [],
+  };
+}
+
+function buildHomepagePayload(data = {}) {
+  return {
+    hero: {
+      hero_media: data.hero_media ?? '',
+      hero_badge: data.hero_badge ?? '',
+      headline: data.headline ?? '',
+      highlight_text: data.highlight_text ?? '',
+      description: data.description ?? '',
+      cta_text: data.cta_text ?? '',
+      cta_link: data.cta_link ?? '',
+    },
+    hero_benefits: {
+      bullet_benefit_1: data.bullet_benefit_1 ?? '',
+      bullet_benefit_2: data.bullet_benefit_2 ?? '',
+      bullet_benefit_3: data.bullet_benefit_3 ?? '',
+      consultation_card_title: data.consultation_card_title ?? '',
+      consultation_card_description: data.consultation_card_description ?? '',
+    },
+    promos: Array.isArray(data.promos) ? data.promos : [],
+  };
+}
+
 async function loadPageData(pageKey) {
   setContentLoading(true);
   try {
-    const endpoint = pageKey === 'homepage' ? '/homepage-content' : `/page-content?page=${pageKey}`;
-    const separator = endpoint.includes('?') ? '&' : '?';
-    const res = await apiCall(`${endpoint}${separator}admin=1&t=${Date.now()}`);
+    const endpoint = `/page-content?page=${pageKey}`;
+    const res = await apiCall(`${endpoint}&admin=1&t=${Date.now()}`);
     if (res && res.data) {
-      if (pageKey === 'seo') {
+      if (pageKey === 'homepage') {
+        loadedData[pageKey] = normalizeHomepageDataForEditor(res.data);
+      } else if (pageKey === 'seo') {
         const flatSeo = {};
         for (const [page, tags] of Object.entries(res.data)) {
           for (const [key, value] of Object.entries(tags)) {
@@ -273,6 +309,23 @@ function renderSections(pageKey) {
   
   heroGrid.innerHTML = heroHtml;
   sectionsGrid.innerHTML = gridHtml;
+  focusSectionFromHash();
+}
+
+function focusSectionFromHash() {
+  const hash = window.location.hash;
+  if (!hash || !hash.startsWith('#card-')) return;
+
+  const target = document.querySelector(hash);
+  if (!target) return;
+
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  target.style.outline = '2px solid rgba(249, 115, 22, 0.45)';
+  target.style.outlineOffset = '4px';
+  window.setTimeout(() => {
+    target.style.outline = '';
+    target.style.outlineOffset = '';
+  }, 2200);
 }
 
 window.openEditModal = function(pageKey, sectionId) {
@@ -307,7 +360,7 @@ window.openEditModal = function(pageKey, sectionId) {
         <label for="${field.id}">${field.label}</label>`;
         
       if (field.type === 'textarea') {
-        html += `<textarea class="content-textarea" id="${field.id}" name="${field.id}" required>${escapeHtml(value)}</textarea>`;
+        html += `<textarea class="content-textarea" id="${field.id}" name="${field.id}" placeholder="${escapeHtml(field.placeholder || '')}" required>${escapeHtml(value)}</textarea>`;
       } else if (field.type === 'select') {
         html += `<select class="content-select" id="${field.id}" name="${field.id}">`;
         (field.options || []).forEach(opt => {
@@ -326,8 +379,9 @@ window.openEditModal = function(pageKey, sectionId) {
           </div>
         `;
       } else {
-        html += `<input class="content-input" type="${field.type}" id="${field.id}" name="${field.id}" value="${escapeHtml(value)}" required>`;
+        html += `<input class="content-input" type="${field.type}" id="${field.id}" name="${field.id}" value="${escapeHtml(value)}" placeholder="${escapeHtml(field.placeholder || '')}" required>`;
       }
+      html += renderFieldHelper(field);
       html += `</div>`;
     });
   }
@@ -375,7 +429,7 @@ function renderArrayItems(section) {
         <label>${field.label}</label>`;
       
       if (field.type === 'textarea') {
-        html += `<textarea class="content-textarea" onchange="window.updateArrayItem('${section.id}', ${index}, '${field.id}', this.value)">${escapeHtml(value)}</textarea>`;
+        html += `<textarea class="content-textarea" placeholder="${escapeHtml(field.placeholder || '')}" onchange="window.updateArrayItem('${section.id}', ${index}, '${field.id}', this.value)">${escapeHtml(value)}</textarea>`;
       } else if (field.type === 'checkbox') {
         const checked = value ? 'checked' : '';
         html += `<input type="checkbox" style="width:20px;height:20px;accent-color:var(--admin-primary);" onchange="window.updateArrayItem('${section.id}', ${index}, '${field.id}', this.checked)" ${checked}>`;
@@ -397,9 +451,9 @@ function renderArrayItems(section) {
           </div>
         `;
       } else {
-        html += `<input class="content-input" type="${field.type}" value="${escapeHtml(value)}" onchange="window.updateArrayItem('${section.id}', ${index}, '${field.id}', this.value)">`;
+        html += `<input class="content-input" type="${field.type}" value="${escapeHtml(value)}" placeholder="${escapeHtml(field.placeholder || '')}" onchange="window.updateArrayItem('${section.id}', ${index}, '${field.id}', this.value)">`;
       }
-      
+      html += renderFieldHelper(field);
       html += `</div>`;
     });
     
@@ -604,16 +658,20 @@ async function saveModalContent() {
         }
       });
       payload = seoData;
+    } else if (currentTab === 'homepage') {
+      payload = buildHomepagePayload(fullData);
     }
     
-    const endpoint = currentTab === 'homepage' ? '/homepage-content' : `/page-content?page=${currentTab}`;
+    const endpoint = `/page-content?page=${currentTab}`;
     const res = await apiCall(endpoint, {
       method: 'PUT',
       body: JSON.stringify(payload),
     });
 
     if (res && res.data) {
-      if (currentTab === 'seo') {
+      if (currentTab === 'homepage') {
+        loadedData[currentTab] = normalizeHomepageDataForEditor(res.data);
+      } else if (currentTab === 'seo') {
         const flatSeo = {};
         for (const [page, tags] of Object.entries(res.data)) {
           for (const [key, value] of Object.entries(tags)) {
@@ -659,5 +717,7 @@ async function init() {
   isBootstrapping = false;
   renderSections(currentTab);
 }
+
+window.addEventListener('hashchange', focusSectionFromHash);
 
 init();

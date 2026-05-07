@@ -1,6 +1,30 @@
 import { SignJWT, jwtVerify } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'deoksi-admin-secret-key-2026');
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET;
+  if (!secret && process.env.NODE_ENV === 'test') {
+    return new TextEncoder().encode('test-jwt-secret-for-vitest-only');
+  }
+
+  if (!secret) {
+    throw new Error('JWT_SECRET is required for admin authentication.');
+  }
+
+  return new TextEncoder().encode(secret);
+}
+
+function getPasswordSalt() {
+  const salt = process.env.PASSWORD_SALT;
+  if (!salt && process.env.NODE_ENV === 'test') {
+    return 'test-password-salt';
+  }
+
+  if (!salt) {
+    throw new Error('PASSWORD_SALT is required for password hashing.');
+  }
+
+  return salt;
+}
 
 function getAuthorizationHeader(request) {
   if (!request?.headers) return null;
@@ -19,7 +43,15 @@ export async function generateToken(payload) {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('24h')
-    .sign(JWT_SECRET);
+    .sign(getJwtSecret());
+}
+
+export async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(String(password || '') + getPasswordSalt());
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -33,7 +65,7 @@ export async function verifyToken(request) {
 
   const token = authHeader.split(' ')[1];
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, getJwtSecret());
     return payload;
   } catch {
     return null;

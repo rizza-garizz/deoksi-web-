@@ -1,3 +1,5 @@
+import { normalizeMediaPlacement } from './media-library.js';
+
 export const WEBSITE_CONTENT_SECTIONS = [
   'hero_homepage',
   'promo_section',
@@ -8,6 +10,18 @@ export const WEBSITE_CONTENT_SECTIONS = [
   'article_thumbnail',
   'logo_brand',
   'floating_whatsapp',
+  'beranda:hero_video',
+  'beranda:promo_cards',
+  'galeri:video_gallery',
+  'galeri:photo_gallery',
+  'layanan:service_cards',
+  'produk:product_cards',
+  'berita:article_cover',
+  'tentang:doctor_profiles',
+  'tentang:certificates',
+  'lokasi:location_visual',
+  'promo:promo_banner',
+  'testimoni:testimonial_cards',
 ];
 
 export const WEBSITE_CONTENT_SECTION_DEFINITIONS = {
@@ -107,6 +121,11 @@ export function normalizeWebsiteSection(value) {
 }
 
 export function resolveWebsiteSection(mediaItem = {}) {
+  const normalized = normalizeMediaPlacement(mediaItem);
+  if (normalized.page_key && normalized.section_key) {
+    return `${normalized.page_key}:${normalized.section_key}`;
+  }
+
   return (
     getWebsiteSectionBySlotKey(mediaItem.slot_key) ||
     normalizeWebsiteSection(mediaItem.section_name) ||
@@ -123,23 +142,28 @@ export function normalizeWebsiteAssetType(type) {
 }
 
 export function mapMediaToWebsiteAsset(mediaItem = {}) {
-  const section = resolveWebsiteSection(mediaItem);
+  const normalized = normalizeMediaPlacement(mediaItem);
+  const section = resolveWebsiteSection(normalized);
   if (!section) return null;
-  const publicStatus = mediaItem.status === 'archived'
+  const publicStatus = normalized.status === 'archived'
     ? 'inactive'
-    : (mediaItem.status || 'draft');
+    : (normalized.status || 'draft');
 
   return {
-    id: mediaItem.id,
+    id: normalized.id,
     section,
-    title: mediaItem.title || mediaItem.filename || 'Untitled Asset',
-    type: normalizeWebsiteAssetType(mediaItem.type),
-    url: mediaItem.optimized_url || mediaItem.url || mediaItem.original_url || '',
-    alt_text: mediaItem.alt_text || '',
+    page_key: normalized.page_key || null,
+    section_key: normalized.section_key || null,
+    position_key: normalized.position_key || null,
+    usage_label: normalized.usage_label || '-',
+    title: normalized.title || normalized.filename || 'Untitled Asset',
+    type: normalizeWebsiteAssetType(normalized.type),
+    url: normalized.optimized_url || normalized.url || normalized.original_url || '',
+    alt_text: normalized.alt_text || '',
     status: publicStatus,
-    created_at: mediaItem.uploaded_at || mediaItem.created_at || null,
-    updated_at: mediaItem.updated_at || mediaItem.uploaded_at || mediaItem.created_at || null,
-    slot_key: mediaItem.slot_key || null,
+    created_at: normalized.uploaded_at || normalized.created_at || null,
+    updated_at: normalized.updated_at || normalized.uploaded_at || normalized.created_at || null,
+    slot_key: normalized.slot_key || null,
   };
 }
 
@@ -154,6 +178,9 @@ export function groupWebsiteContentAssets(mediaItems = []) {
   for (const mediaItem of sortedItems) {
     const asset = mapMediaToWebsiteAsset(mediaItem);
     if (!asset || asset.status !== 'active') continue;
+    if (!grouped[asset.section]) {
+      grouped[asset.section] = [];
+    }
     grouped[asset.section].push(asset);
   }
 

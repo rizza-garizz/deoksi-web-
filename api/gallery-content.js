@@ -1,5 +1,6 @@
 import { getDB, hasDatabase } from './_lib/db.js';
-import { getActiveMediaBySlotKeys } from './_lib/local-db.js';
+import { getActiveMediaBySlotKeys, listMedia } from './_lib/local-db.js';
+import { normalizeMediaPlacement } from './_lib/media-library.js';
 import { handleCors, jsonResponse, errorResponse } from './_lib/utils.js';
 
 export const config = { runtime: 'edge' };
@@ -30,7 +31,16 @@ export default async function handler(request) {
 
   try {
     if (!hasDatabase()) {
-      const data = getActiveMediaBySlotKeys(GALLERY_SLOT_KEYS);
+      const allMedia = listMedia({ page: 1, limit: 1000, status: 'active' }).data || [];
+      const legacyData = getActiveMediaBySlotKeys(GALLERY_SLOT_KEYS);
+      const merged = [...allMedia, ...legacyData].reduce((acc, item) => {
+        acc.set(String(item.id), normalizeMediaPlacement(item));
+        return acc;
+      }, new Map());
+      const data = [...merged.values()].filter((item) => (
+        (item.page_key === 'galeri' && (item.section_key === 'video_gallery' || item.section_key === 'photo_gallery'))
+        || GALLERY_SLOT_KEYS.includes(item.slot_key)
+      ));
       return jsonResponse({
         data,
         slots: Object.fromEntries(data.map((item) => [item.slot_key, item])),
@@ -38,11 +48,20 @@ export default async function handler(request) {
     }
 
     const sql = getDB();
-    const rows = await sql`SELECT * FROM media_assets WHERE is_slot_active = true AND status = 'active' AND slot_key = ANY(${GALLERY_SLOT_KEYS}) ORDER BY display_order ASC, updated_at DESC`;
+    const rows = await sql`
+      SELECT * FROM media_assets
+      WHERE status = 'active'
+        AND (
+          (page_key = 'galeri' AND section_key IN ('video_gallery', 'photo_gallery'))
+          OR slot_key = ANY(${GALLERY_SLOT_KEYS})
+        )
+      ORDER BY display_order ASC, updated_at DESC
+    `;
+    const data = rows.map((item) => normalizeMediaPlacement(item));
 
     return jsonResponse({
-      data: rows,
-      slots: Object.fromEntries(rows.map((item) => [item.slot_key, item])),
+      data,
+      slots: Object.fromEntries(data.filter((item) => item.slot_key).map((item) => [item.slot_key, item])),
     });
   } catch (error) {
     console.error('Gallery content API Error:', error);

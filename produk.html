@@ -67,6 +67,24 @@
       gap: 32px;
     }
 
+    .products-empty {
+      display: none;
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 22px 24px;
+      border-radius: 24px;
+      background: rgba(247,144,62,0.06);
+      border: 1px solid rgba(233, 122, 43, 0.12);
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.7;
+      font-weight: 600;
+    }
+
+    .products-empty.is-visible {
+      display: block;
+    }
+
     .product-card {
       background: var(--white);
       border-radius: 32px;
@@ -142,28 +160,58 @@
       line-height: 1.25;
     }
 
+    .product-certifications {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     .bpom-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
+      gap: 8px;
+      padding: 6px 10px 6px 8px;
       border-radius: 999px;
-      background: rgba(255,158,181,0.18);
-      color: var(--dark);
+      background: rgba(29, 78, 216, 0.08);
+      color: #123f84;
       font-weight: 800;
       letter-spacing: 0.4px;
       font-size: 0.72rem;
       text-transform: uppercase;
-      border: 1px solid rgba(255,158,181,0.35);
+      border: 1px solid rgba(29, 78, 216, 0.18);
       white-space: nowrap;
     }
 
-    .bpom-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--secondary-dark);
-      display: inline-block;
+    .bpom-badge img {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    .halal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px 6px 8px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.08);
+      color: #0f5f58;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      border: 1px solid rgba(15, 118, 110, 0.18);
+      white-space: nowrap;
+    }
+
+    .halal-badge img {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      display: block;
     }
 
     .product-price {
@@ -173,6 +221,80 @@
       font-weight: 800;
       margin-bottom: 10px;
       letter-spacing: 0.2px;
+    }
+
+    .products-trust-note {
+      max-width: 760px;
+      margin: 18px auto 0;
+      padding: 12px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(231, 169, 136, 0.22);
+      color: var(--text);
+      font-size: 0.96rem;
+      line-height: 1.6;
+      box-shadow: 0 18px 38px rgba(197, 155, 125, 0.14);
+    }
+
+    .product-trust-block {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.68);
+      border: 1px solid rgba(231, 169, 136, 0.2);
+    }
+
+    .product-trust-label {
+      color: var(--text-light);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+    }
+
+    .product-trust-note {
+      color: var(--dark);
+      font-size: 0.85rem;
+      line-height: 1.45;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .product-benefit {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .product-meta-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .product-meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.65);
+      border: 1px solid rgba(231, 169, 136, 0.2);
+      color: var(--text-light);
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.3;
     }
 
     .rating-row {
@@ -206,6 +328,7 @@
       .products-grid { grid-template-columns: 1fr; }
       .product-card { padding: 18px; }
       .product-top { flex-direction: column; align-items: flex-start; }
+      .product-certifications { justify-content: flex-start; }
     }
   </style>
 </head>
@@ -251,11 +374,15 @@
         <button type="button" class="filter-btn" data-filter="serum">Serum</button>
         <button type="button" class="filter-btn" data-filter="sunscreen">Sunscreen</button>
       </div>
+      <p class="products-trust-note animate-on-scroll">
+        Badge <strong>BPOM</strong> membantu memberi sinyal bahwa produk telah memiliki status registrasi yang dikelola klinik.
+        Jika nomor registrasi tersedia, informasinya dapat ditampilkan langsung pada kartu produk untuk memperkuat kepercayaan pelanggan.
+      </p>
     </div>
   </section>
 
   <!-- Main News Content -->
-  <section class="news-section" style="padding-top: 100px;">
+  <section class="products-page" style="padding-top: 100px;">
     <div class="container">
       <div class="products-grid" data-products-grid>
         <!-- Product 1 -->
@@ -265,7 +392,10 @@
           </div>
           <div class="product-top">
             <h3 class="product-name">Deoksi Facial Wash</h3>
-            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+            <div class="product-certifications">
+              <span class="bpom-badge"><img src="/assets/images/bpom-logo.png" alt="Logo BPOM" loading="lazy"><span>BPOM</span></span>
+              <span class="halal-badge"><img src="/assets/images/halal-mui-logo.png" alt="Logo Halal Indonesia" loading="lazy"><span>Halal MUI</span></span>
+            </div>
           </div>
           <div class="product-price">Rp 85.000</div>
           <div class="rating-row" aria-label="Rating 4.8 dari 5">
@@ -281,7 +411,10 @@
           </div>
           <div class="product-top">
             <h3 class="product-name">Deoksi Gentle Cleanser</h3>
-            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+            <div class="product-certifications">
+              <span class="bpom-badge"><img src="/assets/images/bpom-logo.png" alt="Logo BPOM" loading="lazy"><span>BPOM</span></span>
+              <span class="halal-badge"><img src="/assets/images/halal-mui-logo.png" alt="Logo Halal Indonesia" loading="lazy"><span>Halal MUI</span></span>
+            </div>
           </div>
           <div class="product-price">Rp 95.000</div>
           <div class="rating-row" aria-label="Rating 4.7 dari 5">
@@ -297,7 +430,10 @@
           </div>
           <div class="product-top">
             <h3 class="product-name">Deoksi Glow Serum</h3>
-            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+            <div class="product-certifications">
+              <span class="bpom-badge"><img src="/assets/images/bpom-logo.png" alt="Logo BPOM" loading="lazy"><span>BPOM</span></span>
+              <span class="halal-badge"><img src="/assets/images/halal-mui-logo.png" alt="Logo Halal Indonesia" loading="lazy"><span>Halal MUI</span></span>
+            </div>
           </div>
           <div class="product-price">Rp 150.000</div>
           <div class="rating-row" aria-label="Rating 4.9 dari 5">
@@ -313,7 +449,10 @@
           </div>
           <div class="product-top">
             <h3 class="product-name">Deoksi Barrier Serum</h3>
-            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+            <div class="product-certifications">
+              <span class="bpom-badge"><img src="/assets/images/bpom-logo.png" alt="Logo BPOM" loading="lazy"><span>BPOM</span></span>
+              <span class="halal-badge"><img src="/assets/images/halal-mui-logo.png" alt="Logo Halal Indonesia" loading="lazy"><span>Halal MUI</span></span>
+            </div>
           </div>
           <div class="product-price">Rp 165.000</div>
           <div class="rating-row" aria-label="Rating 4.8 dari 5">
@@ -329,7 +468,10 @@
           </div>
           <div class="product-top">
             <h3 class="product-name">Deoksi Sun Shield SPF 50</h3>
-            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+            <div class="product-certifications">
+              <span class="bpom-badge"><img src="/assets/images/bpom-logo.png" alt="Logo BPOM" loading="lazy"><span>BPOM</span></span>
+              <span class="halal-badge"><img src="/assets/images/halal-mui-logo.png" alt="Logo Halal Indonesia" loading="lazy"><span>Halal MUI</span></span>
+            </div>
           </div>
           <div class="product-price">Rp 95.000</div>
           <div class="rating-row" aria-label="Rating 4.8 dari 5">
@@ -345,7 +487,10 @@
           </div>
           <div class="product-top">
             <h3 class="product-name">Deoksi UV Daily Defense</h3>
-            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+            <div class="product-certifications">
+              <span class="bpom-badge"><img src="/assets/images/bpom-logo.png" alt="Logo BPOM" loading="lazy"><span>BPOM</span></span>
+              <span class="halal-badge"><img src="/assets/images/halal-mui-logo.png" alt="Logo Halal Indonesia" loading="lazy"><span>Halal MUI</span></span>
+            </div>
           </div>
           <div class="product-price">Rp 110.000</div>
           <div class="rating-row" aria-label="Rating 4.7 dari 5">
@@ -361,7 +506,10 @@
           </div>
           <div class="product-top">
             <h3 class="product-name">Deoksi Age Defy</h3>
-            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+            <div class="product-certifications">
+              <span class="bpom-badge"><img src="/assets/images/bpom-logo.png" alt="Logo BPOM" loading="lazy"><span>BPOM</span></span>
+              <span class="halal-badge"><img src="/assets/images/halal-mui-logo.png" alt="Logo Halal Indonesia" loading="lazy"><span>Halal MUI</span></span>
+            </div>
           </div>
           <div class="product-price">Rp 175.000</div>
           <div class="rating-row" aria-label="Rating 4.9 dari 5">
@@ -377,7 +525,10 @@
           </div>
           <div class="product-top">
             <h3 class="product-name">Deoksi Deep Cleanser</h3>
-            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+            <div class="product-certifications">
+              <span class="bpom-badge"><img src="/assets/images/bpom-logo.png" alt="Logo BPOM" loading="lazy"><span>BPOM</span></span>
+              <span class="halal-badge"><img src="/assets/images/halal-mui-logo.png" alt="Logo Halal Indonesia" loading="lazy"><span>Halal MUI</span></span>
+            </div>
           </div>
           <div class="product-price">Rp 88.000</div>
           <div class="rating-row" aria-label="Rating 4.8 dari 5">
@@ -393,7 +544,10 @@
           </div>
           <div class="product-top">
             <h3 class="product-name">Deoksi Hydrating Toner</h3>
-            <span class="bpom-badge"><span class="bpom-dot"></span>BPOM</span>
+            <div class="product-certifications">
+              <span class="bpom-badge"><img src="/assets/images/bpom-logo.png" alt="Logo BPOM" loading="lazy"><span>BPOM</span></span>
+              <span class="halal-badge"><img src="/assets/images/halal-mui-logo.png" alt="Logo Halal Indonesia" loading="lazy"><span>Halal MUI</span></span>
+            </div>
           </div>
           <div class="product-price">Rp 125.000</div>
           <div class="rating-row" aria-label="Rating 4.8 dari 5">
@@ -402,6 +556,9 @@
           </div>
         </article>
       </div>
+      <div class="products-empty" data-products-empty aria-live="polite">
+        Produk pada kategori ini belum tersedia saat ini. Silakan pilih kategori lain atau lihat semua produk.
+      </div>
     </div>
   </section>
 
@@ -409,25 +566,94 @@
   <footer class="footer" data-footer></footer>
 
   <script>
-    // Filter produk
-    const filterButtons = document.querySelectorAll('[data-filter]');
-    const productCards = document.querySelectorAll('[data-category]');
+    const filterRow = document.querySelector('[data-filter-row]');
+    const productsEmpty = document.querySelector('[data-products-empty]');
 
-    const applyFilter = (category) => {
-      productCards.forEach(card => {
+    const formatFilterLabel = (value) => {
+      if (!value || value === 'all') return 'Semua';
+      return String(value)
+        .replace(/[-_]+/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    };
+
+    const syncProductFilterButtons = () => {
+      if (!filterRow) return [];
+
+      const productCards = Array.from(document.querySelectorAll('[data-category]'));
+      const categories = [...new Set(productCards.map((card) => card.getAttribute('data-category')).filter(Boolean))];
+
+      filterRow.querySelectorAll('[data-filter]').forEach((button) => {
+        const category = button.getAttribute('data-filter');
+        if (category === 'all' || categories.includes(category)) {
+          button.hidden = false;
+          button.disabled = false;
+          return;
+        }
+
+        button.hidden = true;
+        button.disabled = true;
+        button.classList.remove('is-active');
+      });
+
+      categories.forEach((category) => {
+        const existing = filterRow.querySelector(`[data-filter="${category}"]`);
+        if (existing) {
+          existing.hidden = false;
+          existing.disabled = false;
+          return;
+        }
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-btn';
+        button.setAttribute('data-filter', category);
+        button.textContent = formatFilterLabel(category);
+        filterRow.appendChild(button);
+      });
+
+      return categories;
+    };
+
+    const applyProductFilter = (category = 'all') => {
+      const productCards = Array.from(document.querySelectorAll('[data-category]'));
+      const filterButtons = Array.from(filterRow?.querySelectorAll('[data-filter]') || []);
+      let visibleCount = 0;
+
+      productCards.forEach((card) => {
         const cardCategory = card.getAttribute('data-category');
         const show = category === 'all' || cardCategory === category;
         card.classList.toggle('is-hidden', !show);
+        if (show) visibleCount += 1;
       });
+
+      filterButtons.forEach((button) => {
+        button.classList.toggle('is-active', button.getAttribute('data-filter') === category);
+      });
+
+      if (productsEmpty) {
+        productsEmpty.classList.toggle('is-visible', visibleCount === 0);
+      }
     };
 
-    filterButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterButtons.forEach(b => b.classList.remove('is-active'));
-        btn.classList.add('is-active');
-        applyFilter(btn.getAttribute('data-filter'));
+    const initProductFilter = () => {
+      const activeButton = filterRow?.querySelector('.filter-btn.is-active');
+      const activeCategory = activeButton?.getAttribute('data-filter') || 'all';
+      const categories = syncProductFilterButtons();
+      const effectiveCategory = activeCategory === 'all' || categories.includes(activeCategory) ? activeCategory : 'all';
+      applyProductFilter(effectiveCategory);
+    };
+
+    if (filterRow && !filterRow.dataset.bound) {
+      filterRow.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-filter]');
+        if (!button || button.disabled) return;
+        applyProductFilter(button.getAttribute('data-filter') || 'all');
       });
-    });
+      filterRow.dataset.bound = 'true';
+    }
+
+    window.__deoksiInitProductFilter = initProductFilter;
+    initProductFilter();
   </script>
 
   <script type="module" src="/src/js/main.js"></script>

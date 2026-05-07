@@ -159,12 +159,12 @@
         {
           "type": "address",
           "label": "Alamat",
-          "value": "Jl. Puncak Borobudur Kav. 6, Kota Malang"
+          "value": "Jl. Puncak Borobudur Kav. 6, Kota Malang — sekitar 50 meter di sebelah barat Bundaran Soekarno Hatta"
         },
         {
           "type": "hours",
           "label": "Jam Pelayanan Klinik",
-          "value": "Senin - Sabtu : 09.00 - 20.00"
+          "value": "Senin - Jumat : 10.30 - 18.30 WIB\nSabtu - Minggu : 09.00 - 17.00 WIB"
         },
         {
           "type": "phone",

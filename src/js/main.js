@@ -1,5 +1,6 @@
 import '../css/style.css';
-import { initContent } from './render.js';
+import { HOMEPAGE_PROMO_LIMIT, initContent, renderPromoGrid } from './render.js';
+import { mergeHomepagePromos, shouldApplyHomepageHeroMedia } from './homepage-sync.js';
 import { loadAndApplyPageContent, loadGlobalContent, loadTestimoniContent, loadHomepageAdditionalContent } from './page-renderer.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -10,6 +11,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const siteContentApiBase = '';
   const previewMediaId = new URLSearchParams(window.location.search).get('preview_media_id');
+  let managedSectionsCache = {};
+  let managedSlotsCache = {};
 
   function getManagedSiteContentRequest() {
     const url = new URL(`${siteContentApiBase}/api/site-content`, window.location.origin);
@@ -65,6 +68,59 @@ document.addEventListener('DOMContentLoaded', async () => {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  }
+
+  function extractWhatsappNumber(value) {
+    if (!value) return '';
+
+    try {
+      const url = new URL(value, window.location.origin);
+      if (url.hostname.includes('wa.me')) {
+        return url.pathname.replace(/\//g, '');
+      }
+
+      if (url.hostname.includes('whatsapp.com')) {
+        return url.searchParams.get('phone') || '';
+      }
+    } catch {
+      return '';
+    }
+
+    return '';
+  }
+
+  function buildContextualWhatsappLink(baseHref, message) {
+    const number = extractWhatsappNumber(baseHref);
+    if (!number) return '#';
+    return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+  }
+
+  function getPositionIndex(positionKey = '') {
+    const match = String(positionKey).match(/(\d+)$/);
+    return match ? Number(match[1]) : 1;
+  }
+
+  function injectManagedAssets(items = [], assets = [], fieldKey = 'image_url') {
+    if (!Array.isArray(items) || !items.length || !Array.isArray(assets) || !assets.length) {
+      return items;
+    }
+
+    const assetMap = [...assets]
+      .filter((asset) => asset.status === 'active' && asset.url)
+      .sort((a, b) => getPositionIndex(a.position_key) - getPositionIndex(b.position_key))
+      .reduce((acc, asset) => {
+        acc.set(getPositionIndex(asset.position_key), asset);
+        return acc;
+      }, new Map());
+
+    return items.map((item, index) => {
+      const asset = assetMap.get(index + 1);
+      if (!asset) return item;
+      return {
+        ...item,
+        [fieldKey]: asset.url,
+      };
+    });
   }
 
   function applyHomepageTextContent(content) {
@@ -127,46 +183,89 @@ document.addEventListener('DOMContentLoaded', async () => {
       cardDescriptionEl.textContent = content.consultation_card_description;
     }
 
-    if (content.hero_media) {
-      const videoEl = document.querySelector('.hero-video-wrapper video');
-      if (videoEl) {
-        videoEl.src = content.hero_media;
-      }
+    if (shouldApplyHomepageHeroMedia(content.hero_media, managedSlotsCache)) {
+      applyHomepageContentHeroMedia(content.hero_media);
     }
 
     if (content.promos && Array.isArray(content.promos)) {
       const promoGrid = document.getElementById('promo-grid');
       if (promoGrid) {
-        const visiblePromos = content.promos.filter(p => p.is_visible !== false);
+        const managedPromoAssets = managedSectionsCache['beranda:promo_cards'] || [];
+        const mergedPromos = mergeHomepagePromos(content.promos, managedPromoAssets);
+        const visiblePromos = mergedPromos
+          .filter(p => p.is_visible !== false)
+          .slice(0, HOMEPAGE_PROMO_LIMIT);
         if (visiblePromos.length > 0) {
-          promoGrid.innerHTML = visiblePromos.map((item, index) => {
-            const mediaTag = item.image_url?.match(/\.(mp4|webm)$/i)
-              ? `<video class="video-hover-media" src="${escapeHtml(item.image_url)}" preload="metadata" muted loop playsinline></video>`
-              : `<img src="${escapeHtml(item.image_url || '/assets/images/service_products.png')}" alt="${escapeHtml(item.title)}" loading="lazy" width="200" height="250">`;
-
-            return `
-              <a href="${escapeHtml(item.cta_link || '#')}" class="promo-card animate-on-scroll visible" target="_blank" rel="noopener noreferrer" style="--delay: ${index * 0.1}s">
-                <div class="promo-content">
-                  <span class="promo-label">SPECIAL OFFER</span>
-                  <h3 class="promo-title">${escapeHtml(item.title)}</h3>
-                  <p class="promo-subtitle">${escapeHtml(item.description)}</p>
-                  <p class="promo-price" style="font-weight:bold; margin-bottom: 10px; color: var(--color-primary);">${escapeHtml(item.price)}</p>
-                  <div class="promo-btn">
-                    Ambil Promo
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-                <div class="promo-image">
-                  ${mediaTag}
-                </div>
-                <div class="promo-bg-shape" style="background: var(--color-primary)"></div>
-              </a>
-            `;
-          }).join('');
+          const fallbackWhatsAppBase = content.cta_link || ctaEl?.href || document.querySelector('.wa-link')?.href || '';
+          renderPromoGrid(
+            promoGrid,
+            visiblePromos.map((item) => {
+              const isVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(item.image_url || '');
+              return {
+                title: item.title,
+                subtitle: item.description,
+                price: item.price,
+                image: isVideo ? '/assets/images/service_products.png' : (item.image_url || '/assets/images/service_products.png'),
+                video: isVideo ? item.image_url : '',
+                link: item.cta_link,
+                color: 'var(--color-primary, var(--primary))',
+              };
+            }),
+            {
+              isFlyer: true,
+              resolveLink: (item) => item.link || buildContextualWhatsappLink(
+                fallbackWhatsAppBase,
+                `Halo Deoksi Clinic, saya tertarik dengan promo: ${item.title}. Mohon info lebih lanjut.`,
+              ),
+            },
+          );
         }
       }
+    }
+  }
+
+  function applyHomepageContentHeroMedia(mediaUrl) {
+    if (!mediaUrl) return;
+
+    const heroShell = document.querySelector('.hero-science__image-shell');
+    if (!heroShell) return;
+
+    const badge = heroShell.querySelector('.hero-science__badge');
+    const existingMedia = heroShell.querySelector('video, img');
+    const isVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(mediaUrl);
+    let nextMedia = existingMedia;
+
+    if (isVideo) {
+      if (!existingMedia || existingMedia.tagName !== 'VIDEO') {
+        nextMedia = document.createElement('video');
+        nextMedia.className = 'hero-science__video';
+        nextMedia.autoplay = true;
+        nextMedia.muted = true;
+        nextMedia.loop = true;
+        nextMedia.playsInline = true;
+        nextMedia.preload = 'metadata';
+        existingMedia?.replaceWith(nextMedia);
+      }
+
+      nextMedia.setAttribute('aria-label', 'Hero video Deoksi Clinic');
+      nextMedia.poster = mediaUrl;
+      nextMedia.innerHTML = `<source src="${escapeHtml(mediaUrl)}" type="video/mp4">`;
+      nextMedia.load();
+    } else {
+      if (!existingMedia || existingMedia.tagName !== 'IMG') {
+        nextMedia = document.createElement('img');
+        nextMedia.className = 'hero-science__image';
+        existingMedia?.replaceWith(nextMedia);
+      }
+
+      nextMedia.src = mediaUrl;
+      nextMedia.alt = 'Hero image Deoksi Clinic';
+      nextMedia.loading = 'eager';
+      nextMedia.setAttribute('fetchpriority', 'high');
+    }
+
+    if (badge) {
+      heroShell.appendChild(badge);
     }
   }
 
@@ -178,6 +277,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const payload = await response.json();
       const slots = payload?.slots || {};
+      managedSlotsCache = slots;
+      managedSectionsCache = payload?.sections || {};
 
       applyManagedLogo(slots.logo_brand);
       applyManagedFloatingWhatsapp(slots.floating_whatsapp);

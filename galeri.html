@@ -140,11 +140,37 @@
       background: linear-gradient(180deg, #FFFFFF 0%, #F9E0E8 100%);
     }
 
+    .journal-shell {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      display: grid;
+      gap: clamp(34px, 5vw, 56px);
+    }
+
     .gallery-highlight {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: clamp(15px, 3vw, 30px);
-      margin-bottom: 60px;
+      margin-bottom: 0;
+      align-items: stretch;
+    }
+
+    .gallery-managed-note {
+      display: none;
+      max-width: 840px;
+      margin: 0 auto 26px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      background: rgba(247,144,62,0.06);
+      border: 1px solid rgba(233, 122, 43, 0.12);
+      color: #6e5a52;
+      line-height: 1.7;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .journal-shell.is-fallback .gallery-managed-note {
+      display: block;
     }
 
     .highlight-card {
@@ -154,18 +180,24 @@
       box-shadow: var(--shadow-md);
       border: 1px solid rgba(0,0,0,0.05);
       height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
 
     .highlight-card strong {
       display: block;
       margin-bottom: 10px;
       color: var(--primary);
-      font-size: 1.1rem;
+      font-size: 1.08rem;
+      line-height: 1.35;
+      letter-spacing: -0.01em;
     }
 
     .highlight-card p {
-      font-size: 0.9rem;
-      line-height: 1.6;
+      font-size: 0.94rem;
+      line-height: 1.75;
+      color: #6e5a52;
     }
 
     /* Cinema Band */
@@ -173,7 +205,13 @@
       display: grid;
       grid-template-columns: 1.5fr 1fr;
       gap: clamp(20px, 4vw, 40px);
-      margin-bottom: clamp(60px, 10vh, 100px);
+      margin-bottom: 0;
+      padding: clamp(22px, 3vw, 32px);
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(233, 122, 43, 0.10);
+      border-radius: clamp(28px, 4vw, 40px);
+      box-shadow: 0 18px 48px rgba(62, 42, 34, 0.07);
+      backdrop-filter: blur(10px);
     }
 
     .cinema-frame {
@@ -223,8 +261,10 @@
     }
 
     .cinema-copy h2 {
-      font-size: clamp(1.2rem, 3vw, 1.8rem);
-      line-height: 1.3;
+      font-size: clamp(1.28rem, 3vw, 1.92rem);
+      line-height: 1.22;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
       text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
 
@@ -236,6 +276,15 @@
       font-weight: 700;
       margin-bottom: 10px;
       display: inline-block;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .cinema-copy p {
+      font-size: 0.98rem;
+      line-height: 1.72;
+      color: rgba(255,255,255,0.92);
+      max-width: 38ch;
     }
 
     .insight-stack {
@@ -253,18 +302,32 @@
     }
 
     .insight-card p {
-      font-size: 0.9rem;
-      margin-top: 5px;
+      font-size: 0.95rem;
+      line-height: 1.72;
+      color: #6e5a52;
+      margin-top: 7px;
+    }
+
+    .insight-card strong {
+      display: block;
+      font-size: 1.06rem;
+      line-height: 1.35;
+      color: #2d1e17;
+      letter-spacing: -0.01em;
     }
 
     /* Theme Sections */
     .theme-section {
-      padding: clamp(60px, 10vh, 100px) 0;
+      padding: clamp(38px, 5vw, 58px);
       background: linear-gradient(180deg, #F4E6DE 0%, #EDE0D7 100%);
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: clamp(30px, 6vw, 60px);
       align-items: center;
+      border-radius: clamp(30px, 5vw, 42px);
+      border: 1px solid rgba(233, 122, 43, 0.10);
+      box-shadow: 0 18px 48px rgba(62, 42, 34, 0.06);
+      overflow: hidden;
     }
 
     .theme-section--reverse {
@@ -279,24 +342,40 @@
     .theme-kicker {
       color: var(--primary);
       font-weight: 800;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       margin-bottom: 12px;
       display: block;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.12em;
     }
 
     .theme-copy h2 {
       font-family: var(--font-display);
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      margin-bottom: 20px;
-      line-height: 1.15;
+      font-size: clamp(1.92rem, 4vw, 2.95rem);
+      margin-bottom: 18px;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: #2d1e17;
     }
 
     .theme-copy p {
       font-size: 1rem;
-      line-height: 1.7;
+      line-height: 1.78;
       margin-bottom: 24px;
+      color: #5f4d45;
+    }
+
+    .theme-copy ul {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .theme-copy li {
+      line-height: 1.72;
+      color: #4f3e37;
+      font-size: 0.97rem;
     }
 
     .theme-grid {
@@ -325,17 +404,20 @@
 
     /* Journey Section */
     .journey-section {
-      padding: clamp(60px, 10vh, 100px) 20px;
+      padding: clamp(48px, 6vw, 76px) clamp(22px, 4vw, 36px);
       background: linear-gradient(180deg, #FFD7BE 0%, #F7903E 100%);
       border-radius: clamp(30px, 5vw, 60px);
       overflow: hidden;
       color: var(--white);
-      margin: 40px 0;
+      margin: 0;
+      box-shadow: 0 24px 56px rgba(233, 122, 43, 0.22);
     }
 
     .journey-section .section-title {
       color: var(--white);
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-size: clamp(1.95rem, 4vw, 2.7rem);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
     }
 
     .journey-section .section-tag {
@@ -390,23 +472,49 @@
     }
 
     .journey-body p {
-      font-size: 0.9rem;
-      line-height: 1.6;
+      font-size: 0.95rem;
+      line-height: 1.72;
+      color: #6a584f;
+    }
+
+    .journey-body strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.08rem;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    .journey-body small {
+      display: block;
+      margin-top: 10px;
+      color: #8a7467;
+      line-height: 1.5;
+      font-size: 0.82rem;
     }
 
     /* Quote Band */
     .quote-band {
-      margin-top: clamp(40px, 8vh, 80px);
-      padding: clamp(40px, 8vw, 60px);
+      padding: clamp(46px, 8vw, 66px);
       background: linear-gradient(135deg, #FFC192 0%, #E97C98 100%);
       border-radius: clamp(30px, 5vw, 40px);
       text-align: center;
       color: var(--white);
+      box-shadow: 0 20px 46px rgba(233, 124, 152, 0.20);
     }
 
     .quote-band h2 {
-      font-size: clamp(1.5rem, 3vw, 2.2rem);
-      margin-bottom: 15px;
+      font-size: clamp(1.62rem, 3vw, 2.35rem);
+      margin-bottom: 16px;
+      line-height: 1.16;
+      letter-spacing: -0.02em;
+    }
+
+    .quote-band p {
+      max-width: 52ch;
+      margin: 0 auto;
+      line-height: 1.78;
+      color: rgba(255,255,255,0.94);
     }
 
     /* Responsive Adjustments */
@@ -419,18 +527,23 @@
       .gallery-highlight {
         grid-template-columns: 1fr;
       }
+      .journal-shell {
+        width: min(100%, calc(100% - 22px));
+        gap: 26px;
+      }
       .story-points {
         grid-template-columns: 1fr;
         gap: 15px;
-      }
-      .journey-section {
-        margin: 20px 0;
       }
     }
 
     @media (max-width: 600px) {
       .gallery-story {
         padding-top: 140px;
+      }
+      .journal-shell {
+        width: min(100%, calc(100% - 16px));
+        gap: 22px;
       }
       .theme-grid {
         grid-template-columns: 1fr;
@@ -534,7 +647,10 @@
   <!-- Showcase berbeda dari beranda -->
   <section class="gallery-page">
     <div class="container">
-      <div class="journal-shell">
+      <div class="journal-shell is-fallback">
+        <div class="gallery-managed-note">
+          Visual galeri akan mengikuti pembaruan terbaru dari sistem media. Jika koneksi sedang lambat atau aset terkelola belum termuat, halaman tetap menampilkan showcase bawaan agar pengalaman pengunjung tetap nyaman.
+        </div>
         <div class="gallery-highlight">
           <article class="highlight-card animate-on-scroll">
             <strong>Bukan preview beranda</strong>
@@ -749,7 +865,7 @@
   <!-- FOOTER (template) -->
   <footer class="footer" data-footer></footer>
 
-
+  <script>
     // Lightbox sederhana
     const lightbox = document.querySelector('[data-lightbox]');
     const lightboxImg = document.querySelector('[data-lightbox-img]');
@@ -780,8 +896,13 @@
 
     const attachOpen = (card) => {
       const img = card.querySelector('img');
-      const caption = card.querySelector('.photo-caption');
-      const title = caption ? caption.textContent.trim() : (img ? img.alt : 'Foto');
+      const titleSource =
+        card.querySelector('.theme-caption strong') ||
+        card.querySelector('.journey-body strong') ||
+        card.querySelector('.photo-caption') ||
+        card.querySelector('figcaption') ||
+        img;
+      const title = titleSource ? titleSource.textContent.trim() : 'Foto';
       const src = img ? img.currentSrc || img.src : '';
       if (!src) return;
       openLightbox(src, title);
@@ -827,10 +948,69 @@
     });
 
     const galleryApiBase = window.location.port === '3001' ? '' : 'http://localhost:3001';
+    const galleryShell = document.querySelector('.journal-shell');
+
+    const gallerySlotSelectorMap = {
+      gallery_image_1: '[data-gallery-slot="gallery_zone_1_primary"]',
+      gallery_image_2: '[data-gallery-slot="gallery_zone_1_secondary"]',
+      gallery_image_3: '[data-gallery-slot="gallery_zone_1_tertiary"]',
+    };
+
+    const gallerySlotMetaMap = {
+      gallery_zone_1_primary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_1_secondary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_1_tertiary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_2_primary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_2_secondary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_2_tertiary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_3_primary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_3_secondary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_3_tertiary: { titleSelector: '.theme-caption strong' },
+      gallery_journey_consult: { titleSelector: '.journey-body strong' },
+      gallery_journey_treatment: { titleSelector: '.journey-body strong' },
+      gallery_journey_aftercare: { titleSelector: '.journey-body strong' },
+    };
+
+    function applyManagedGallerySlot(slotKey, item) {
+      const targetSelector = gallerySlotSelectorMap[slotKey] || `[data-gallery-slot="${slotKey}"]`;
+      const img = document.querySelector(targetSelector);
+      if (!img || !(item?.optimized_url || item?.url)) return;
+
+      const resolvedUrl = item.optimized_url || item.url;
+      img.src = resolvedUrl;
+      img.alt = item.alt_text || item.title || img.alt;
+
+      const metaConfig = gallerySlotMetaMap[slotKey];
+      if (!metaConfig?.titleSelector || !item.title) return;
+
+      const card = img.closest('[data-gallery-item], .journey-card');
+      const titleEl = card?.querySelector(metaConfig.titleSelector);
+      if (titleEl) {
+        titleEl.textContent = item.title;
+      }
+    }
+
+    function getManagedGalleryVideo(slots = {}) {
+      if (slots.gallery_highlight_video) {
+        return slots.gallery_highlight_video;
+      }
+
+      return Object.entries(slots)
+        .filter(([slotKey, item]) => slotKey.startsWith('video_gallery__') && item?.url)
+        .sort((a, b) => {
+          const getIndex = (key) => {
+            const match = String(key).match(/(\d+)$/);
+            return match ? Number(match[1]) : 1;
+          };
+          return getIndex(a[0]) - getIndex(b[0]);
+        })
+        .map(([, item]) => item)[0] || null;
+    }
 
     async function loadManagedGalleryContent() {
       const videoEl = document.querySelector('[data-gallery-video]');
       const videoToggle = document.querySelector('[data-gallery-video-toggle]');
+      let appliedManagedContent = false;
 
       if (videoToggle && videoEl && !videoToggle.dataset.bound) {
         const syncVideoToggleLabel = () => {
@@ -867,29 +1047,29 @@
         if (!response.ok) return;
         const payload = await response.json();
         const slots = payload?.slots || {};
-        const gallerySlotSelectorMap = {
-          gallery_image_1: '[data-gallery-slot="gallery_zone_1_primary"]',
-          gallery_image_2: '[data-gallery-slot="gallery_zone_1_secondary"]',
-          gallery_image_3: '[data-gallery-slot="gallery_zone_1_tertiary"]',
-        };
 
         Object.entries(slots).forEach(([slotKey, item]) => {
-          const img = document.querySelector(
-            gallerySlotSelectorMap[slotKey] || `[data-gallery-slot="${slotKey}"]`
-          );
-          if (img && (item.optimized_url || item.url)) {
-            img.src = item.optimized_url || item.url;
-            img.alt = item.alt_text || item.title || img.alt;
+          const beforeSrc = document.querySelector(gallerySlotSelectorMap[slotKey] || `[data-gallery-slot="${slotKey}"]`)?.getAttribute('src') || '';
+          applyManagedGallerySlot(slotKey, item);
+          const afterSrc = document.querySelector(gallerySlotSelectorMap[slotKey] || `[data-gallery-slot="${slotKey}"]`)?.getAttribute('src') || '';
+          if (beforeSrc !== afterSrc && afterSrc) {
+            appliedManagedContent = true;
           }
         });
 
-        const videoItem = slots.gallery_highlight_video;
+        const videoItem = getManagedGalleryVideo(slots);
         if (videoEl && videoItem && (videoItem.optimized_url || videoItem.url)) {
           const source = videoEl.querySelector('source');
           if (source) {
             source.src = videoItem.optimized_url || videoItem.url;
+            videoEl.poster = videoItem.thumb_url || videoItem.optimized_url || videoItem.url;
             videoEl.load();
+            appliedManagedContent = true;
           }
+        }
+
+        if (galleryShell && appliedManagedContent) {
+          galleryShell.classList.remove('is-fallback');
         }
       } catch (error) {
         console.warn('Gallery managed content fallback active.', error);
