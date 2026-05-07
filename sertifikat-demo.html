@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carousel Sertifikat | Deoksi Beauty Clinic</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+  <style>
+    :root {
+      --primary: #eb7223;
+      --primary-dark: #cc5c14;
+      --cream: #fff9f5;
+      --dark: #2d2a26;
+      --text-light: #666;
+      --white: #ffffff;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-display: 'Playfair Display', serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      margin: 0;
+      padding: 0;
+      background-color: var(--white);
+      color: var(--dark);
+    }
+
+    /* Section Styling */
+    .certificate-section {
+      padding: 80px 0;
+      background: linear-gradient(180deg, var(--white) 0%, var(--cream) 100%);
+      overflow: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(235, 114, 35, 0.1);
+      color: var(--primary);
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 0 0 16px 0;
+    }
+
+    .section-desc {
+      font-size: 1rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Swiper Styling */
+    .cert-swiper {
+      padding: 20px 10px 60px 10px; /* space for shadow and pagination */
+    }
+
+    .swiper-slide {
+      transition: all 0.4s ease;
+      opacity: 0.5;
+      transform: scale(0.9);
+    }
+
+    .swiper-slide-active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Certificate Card */
+    .cert-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 30px; /* Increased padding */
+      box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+      border: 1px solid rgba(235, 114, 35, 0.12);
+      cursor: zoom-in;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .cert-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border: 2px solid transparent;
+      border-radius: 16px;
+      transition: 0.3s ease;
+      pointer-events: none;
+    }
+
+    .cert-card:hover::before {
+      border-color: var(--primary);
+    }
+
+    .cert-image-wrapper {
+      position: relative;
+      border-radius: 8px; /* Slightly sharper */
+      overflow: hidden;
+      aspect-ratio: 3/2; /* Professional 3:2 ratio */
+      background: #f8f8f8;
+      margin-bottom: 25px;
+    }
+
+    .cert-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .cert-card:hover .cert-image {
+      transform: scale(1.05);
+    }
+
+    .cert-zoom-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: rgba(255,255,255,0.9);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      opacity: 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .cert-card:hover .cert-zoom-icon {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .cert-info {
+      text-align: center;
+      padding-bottom: 8px;
+    }
+
+    .cert-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 0 0 8px 0;
+    }
+
+    .cert-issuer {
+      font-size: 0.85rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin: 0;
+    }
+
+    /* Navigation & Pagination */
+    .cert-navigation {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .swiper-button-next,
+    .swiper-button-prev {
+      position: static;
+      width: 48px;
+      height: 48px;
+      background: var(--white);
+      border-radius: 50%;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border: 1px solid rgba(0,0,0,0.05);
+      color: var(--dark);
+      margin: 0;
+      transition: all 0.3s ease;
+    }
+
+    .swiper-button-next:hover,
+    .swiper-button-prev:hover {
+      background: var(--primary);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    .swiper-button-next::after,
+    .swiper-button-prev::after {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .swiper-pagination {
+      position: static;
+      width: auto !important;
+    }
+
+    .swiper-pagination-bullet {
+      width: 10px;
+      height: 10px;
+      background: #ccc;
+      opacity: 1;
+      transition: all 0.3s ease;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: var(--primary);
+      width: 24px;
+      border-radius: 5px;
+    }
+
+    /* Lightbox Modal */
+    .cert-lightbox {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .cert-lightbox.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .lightbox-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 90vh;
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+    }
+
+    .cert-lightbox.active .lightbox-content {
+      transform: scale(1);
+    }
+
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 85vh;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      border: 4px solid var(--white);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -40px;
+      right: -10px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .lightbox-close:hover {
+      color: var(--primary);
+    }
+
+    .lightbox-caption {
+      color: white;
+      text-align: center;
+      margin-top: 16px;
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+      .section-title { font-size: 2rem; }
+      .cert-image-wrapper { aspect-ratio: 1; } /* More square on mobile */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mock Section Profil Dokter -- (Hanya untuk preview posisi) -->
+  <section style="padding: 80px 0; background: var(--white); text-align: center; border-bottom: 1px solid #f0f0f0;">
+    <div class="container">
+      <span class="section-tag" style="background:#f0f0f0; color:#666">Preview Sebelumnya</span>
+      <h2 style="font-family: var(--font-display); font-size: 2rem; color: #ccc;">Section Profil Dokter</h2>
+      <p style="color: #999;">Ini adalah akhir dari section profil dokter yang sudah ada.</p>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <!-- CAROUSEL SERTIFIKAT SECTION MULAI DARI SINI      -->
+  <!-- ============================================== -->
+  <section class="certificate-section" id="sertifikat">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Kompetensi & Legalitas</span>
+        <h2 class="section-title">Sertifikasi & Penghargaan</h2>
+        <p class="section-desc">Klinik dan tenaga medis kami memiliki sertifikasi resmi dan telah mengikuti berbagai pelatihan estetika bertaraf internasional untuk menjamin hasil perawatan yang aman dan maksimal.</p>
+      </div>
+
+      <!-- Swiper Container -->
+      <div class="swiper cert-swiper">
+        <div class="swiper-wrapper">
+          
+          <!-- Slide 1 -->
+          <div class="swiper-slide">
+            <div class="cert-card" onclick="openLightbox(this)" data-image="https://images.unsplash.com/photo-1589330694653-def6df2735f4?auto=format&fit=crop&q=80&w=1200" data-title="Advanced Aesthetic Derma Certification">
+              <div class="cert-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1589330694653-def6df2735f4?auto=format&fit=crop&q=80&w=600" alt="Sertifikat 1" class="cert-image" loading="lazy">
+                <div class="cert-zoom-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                </div>
+              </div>
+              <div class="cert-info">
+                <h3 class="cert-title">Advanced Aesthetic Derma</h3>
+                <p class="cert-issuer">Korean Academy of Aesthetic</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="swiper-slide">
+            <div class="cert-card" onclick="openLightbox(this)" data-image="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&q=80&w=1200" data-title="Masterclass Slow Aging Rejuvenation">
+              <div class="cert-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&q=80&w=600" alt="Sertifikat 2" class="cert-image" loading="lazy">
+                <div class="cert-zoom-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                </div>
+              </div>
+              <div class="cert-info">
+                <h3 class="cert-title">Slow Aging Rejuvenation</h3>
+                <p class="cert-issuer">International Derma Society</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="swiper-slide">
+            <div class="cert-card" onclick="openLightbox(this)" data-image="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=1200" data-title="Certificate of Good Clinical Practice">
+              <div class="cert-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=600" alt="Sertifikat 3" class="cert-image" loading="lazy">
+                <div class="cert-zoom-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                </div>
+              </div>
+              <div class="cert-info">
+                <h3 class="cert-title">Good Clinical Practice</h3>
+                <p class="cert-issuer">Kementerian Kesehatan RI</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4 -->
+          <div class="swiper-slide">
+            <div class="cert-card" onclick="openLightbox(this)" data-image="https://images.unsplash.com/photo-1589330694653-def6df2735f4?auto=format&fit=crop&q=80&w=1200" data-title="Laser Therapy Master Certification">
+              <div class="cert-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1589330694653-def6df2735f4?auto=format&fit=crop&q=80&w=600" alt="Sertifikat 4" class="cert-image" loading="lazy">
+                <div class="cert-zoom-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                </div>
+              </div>
+              <div class="cert-info">
+                <h3 class="cert-title">Laser Therapy M-Certification</h3>
+                <p class="cert-issuer">Euro Medical Laser Inst.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5 -->
+          <div class="swiper-slide">
+            <div class="cert-card" onclick="openLightbox(this)" data-image="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&q=80&w=1200" data-title="Botox & Filler Specialist">
+              <div class="cert-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&q=80&w=600" alt="Sertifikat 5" class="cert-image" loading="lazy">
+                <div class="cert-zoom-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                </div>
+              </div>
+              <div class="cert-info">
+                <h3 class="cert-title">Filler & Contour Specialist</h3>
+                <p class="cert-issuer">Aesthetic Medicine Board</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Navigation Arrows & Dots under slider -->
+      <div class="cert-navigation">
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+      </div>
+
+    </div>
+  </section>
+  <!-- ============================================== -->
+  <!-- AKHIR CAROUSEL SERTIFIKAT                        -->
+  <!-- ============================================== -->
+
+  <!-- Lightbox Modal -->
+  <div class="cert-lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <div class="lightbox-content" id="lightbox-content">
+      <button class="lightbox-close" aria-label="Tutup">&times;</button>
+      <img src="" alt="Sertifikat Zoom" class="lightbox-img" id="lightbox-img">
+      <div class="lightbox-caption" id="lightbox-caption">Judul Sertifikat</div>
+    </div>
+  </div>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"></script> <!-- Wait, this is css. Correct script below -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+  <!-- Initialize Logic -->
+  <script>
+    // Initialize Swiper
+    const swiper = new Swiper('.cert-swiper', {
+      effect: 'coverflow',
+      grabCursor: true,
+      centeredSlides: true,
+      slidesPerView: 'auto',
+      loop: true,
+      coverflowEffect: {
+        rotate: 0,
+        stretch: 0,
+        depth: 100,
+        modifier: 2,
+        slideShadows: false,
+      },
+      breakpoints: {
+        320: {
+          slidesPerView: 1.1,
+          spaceBetween: 15
+        },
+        768: {
+          slidesPerView: 2,
+          spaceBetween: 25
+        },
+        1024: {
+          slidesPerView: 2.5,
+          spaceBetween: 35
+        }
+      },
+      navigation: {
+        nextEl: '.cert-navigation .swiper-button-next',
+        prevEl: '.cert-navigation .swiper-button-prev',
+      },
+      pagination: {
+        el: '.cert-navigation .swiper-pagination',
+        clickable: true,
+      },
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
+      speed: 1000,
+    });
+
+    // Lightbox Logic
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+
+    function openLightbox(element) {
+      const imgUrl = element.getAttribute('data-image');
+      const title = element.getAttribute('data-title');
+      
+      lightboxImg.src = imgUrl;
+      lightboxCaption.textContent = title;
+      
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Prevent scrolling
+    }
+
+    function closeLightbox(event) {
+      // Close if clicked outside the image or on the close button
+      if (event.target.id === 'lightbox' || event.target.className === 'lightbox-close') {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+        
+        // Clear src after transition to avoid flicker on next open
+        setTimeout(() => {
+          if(!lightbox.classList.contains('active')){
+            lightboxImg.src = '';
+          }
+        }, 300);
+      }
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+        closeLightbox({target: lightbox}); // simulate click on background
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/assets/images/logo.png" />
+  <title>Galeri - Deoksi Beauty Clinic Malang</title>
+  <meta name="description" content="Galeri Deoksi Clinic: fasilitas, hasil treatment, dan event." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/src/css/style.css">
+
+  <style>
+    /* Gallery Specific Styles */
+    .gallery-story {
+      padding: clamp(120px, 15vh, 180px) 0 clamp(60px, 10vh, 100px);
+      background: 
+        radial-gradient(circle at top left, rgba(233, 122, 43, 0.45), transparent 45%),
+        linear-gradient(180deg, #ffdecc 0%, #f7903e 100%);
+      text-align: center;
+      color: #241915;
+      overflow: hidden;
+    }
+
+    .gallery-story .section-title {
+      color: #241915;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+
+    .gallery-story .section-tag {
+      background: rgba(233, 122, 43, 0.12);
+      color: var(--primary-dark);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(233, 122, 43, 0.2);
+    }
+
+    .gallery-story p {
+      color: #6e5a52;
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+    }
+
+    .gallery-story-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: clamp(30px, 5vw, 60px);
+      align-items: center;
+      text-align: left;
+      margin-top: 60px;
+    }
+
+    /* Story Points */
+    .story-points {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .story-point strong {
+      display: block;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: #241915;
+      margin-bottom: 8px;
+    }
+
+    .story-point span {
+      font-size: 0.85rem;
+      color: #6e5a52;
+      line-height: 1.4;
+    }
+
+    /* Aside Cards */
+    .story-card {
+      padding: clamp(24px, 4vw, 40px);
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(12px);
+      border-radius: 30px;
+      border: 1px solid rgba(233, 122, 43, 0.15);
+      margin-bottom: 20px;
+    }
+
+    .story-label {
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .story-card h2 {
+      font-family: var(--font-display);
+      margin-bottom: 15px;
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+      line-height: 1.2;
+      color: #241915;
+    }
+
+    .story-card p {
+      color: #6e5a52;
+    }
+
+    .story-mini {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .mini-panel {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 20px;
+      border: 1px solid rgba(233, 122, 43, 0.1);
+      backdrop-filter: blur(8px);
+    }
+
+    .mini-panel strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #241915;
+    }
+
+    .mini-panel span {
+      font-size: 0.8rem;
+      color: #6e5a52;
+    }
+
+    /* Gallery Page Sections */
+    .gallery-page {
+      padding: clamp(60px, 8vh, 100px) 0;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F9E0E8 100%);
+    }
+
+    .journal-shell {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      display: grid;
+      gap: clamp(34px, 5vw, 56px);
+    }
+
+    .gallery-highlight {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(15px, 3vw, 30px);
+      margin-bottom: 0;
+      align-items: stretch;
+    }
+
+    .gallery-managed-note {
+      display: none;
+      max-width: 840px;
+      margin: 0 auto 26px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      background: rgba(247,144,62,0.06);
+      border: 1px solid rgba(233, 122, 43, 0.12);
+      color: #6e5a52;
+      line-height: 1.7;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .journal-shell.is-fallback .gallery-managed-note {
+      display: block;
+    }
+
+    .highlight-card {
+      padding: clamp(20px, 3vw, 30px);
+      background: var(--white);
+      border-radius: 25px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(0,0,0,0.05);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .highlight-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--primary);
+      font-size: 1.08rem;
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+    }
+
+    .highlight-card p {
+      font-size: 0.94rem;
+      line-height: 1.75;
+      color: #6e5a52;
+    }
+
+    /* Cinema Band */
+    .cinema-band {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: clamp(20px, 4vw, 40px);
+      margin-bottom: 0;
+      padding: clamp(22px, 3vw, 32px);
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(233, 122, 43, 0.10);
+      border-radius: clamp(28px, 4vw, 40px);
+      box-shadow: 0 18px 48px rgba(62, 42, 34, 0.07);
+      backdrop-filter: blur(10px);
+    }
+
+    .cinema-frame {
+      position: relative;
+      border-radius: clamp(24px, 4vw, 40px);
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      background: var(--dark);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .cinema-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-hover-play {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .video-hover-play-badge {
+      width: clamp(50px, 8vw, 70px);
+      height: clamp(50px, 8vw, 70px);
+      background: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .cinema-copy {
+      position: absolute;
+      bottom: clamp(20px, 4vw, 40px);
+      left: clamp(20px, 4vw, 40px);
+      right: clamp(20px, 4vw, 40px);
+      color: var(--white);
+      z-index: 5;
+    }
+
+    .cinema-copy h2 {
+      font-size: clamp(1.28rem, 3vw, 1.92rem);
+      line-height: 1.22;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .cinema-copy span {
+      background: var(--primary);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: inline-block;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .cinema-copy p {
+      font-size: 0.98rem;
+      line-height: 1.72;
+      color: rgba(255,255,255,0.92);
+      max-width: 38ch;
+    }
+
+    .insight-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .insight-card {
+      padding: 24px;
+      background: var(--white);
+      border-radius: 20px;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .insight-card p {
+      font-size: 0.95rem;
+      line-height: 1.72;
+      color: #6e5a52;
+      margin-top: 7px;
+    }
+
+    .insight-card strong {
+      display: block;
+      font-size: 1.06rem;
+      line-height: 1.35;
+      color: #2d1e17;
+      letter-spacing: -0.01em;
+    }
+
+    /* Theme Sections */
+    .theme-section {
+      padding: clamp(38px, 5vw, 58px);
+      background: linear-gradient(180deg, #F4E6DE 0%, #EDE0D7 100%);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(30px, 6vw, 60px);
+      align-items: center;
+      border-radius: clamp(30px, 5vw, 42px);
+      border: 1px solid rgba(233, 122, 43, 0.10);
+      box-shadow: 0 18px 48px rgba(62, 42, 34, 0.06);
+      overflow: hidden;
+    }
+
+    .theme-section--reverse {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F0CCD8 100%);
+      direction: rtl;
+    }
+
+    .theme-section--reverse .theme-copy {
+      direction: ltr;
+    }
+
+    .theme-kicker {
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 0.82rem;
+      margin-bottom: 12px;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .theme-copy h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.92rem, 4vw, 2.95rem);
+      margin-bottom: 18px;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: #2d1e17;
+    }
+
+    .theme-copy p {
+      font-size: 1rem;
+      line-height: 1.78;
+      margin-bottom: 24px;
+      color: #5f4d45;
+    }
+
+    .theme-copy ul {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .theme-copy li {
+      line-height: 1.72;
+      color: #4f3e37;
+      font-size: 0.97rem;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .theme-card {
+      border-radius: 25px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      box-shadow: var(--shadow-md);
+    }
+
+    .theme-card.is-large {
+      grid-column: span 2;
+      aspect-ratio: 16/10;
+    }
+
+    .theme-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Journey Section */
+    .journey-section {
+      padding: clamp(48px, 6vw, 76px) clamp(22px, 4vw, 36px);
+      background: linear-gradient(180deg, #FFD7BE 0%, #F7903E 100%);
+      border-radius: clamp(30px, 5vw, 60px);
+      overflow: hidden;
+      color: var(--white);
+      margin: 0;
+      box-shadow: 0 24px 56px rgba(233, 122, 43, 0.22);
+    }
+
+    .journey-section .section-title {
+      color: var(--white);
+      font-size: clamp(1.95rem, 4vw, 2.7rem);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+    }
+
+    .journey-section .section-tag {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--white);
+    }
+
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(20px, 4vw, 30px);
+      margin-top: 50px;
+    }
+
+    .journey-card {
+      background: var(--white);
+      border-radius: 30px;
+      overflow: hidden;
+      color: var(--dark);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .journey-media {
+      height: clamp(200px, 25vh, 250px);
+      position: relative;
+    }
+
+    .journey-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .journey-step {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: var(--primary);
+      color: var(--white);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .journey-body {
+      padding: clamp(20px, 3vw, 30px);
+    }
+
+    .journey-body p {
+      font-size: 0.95rem;
+      line-height: 1.72;
+      color: #6a584f;
+    }
+
+    .journey-body strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.08rem;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    .journey-body small {
+      display: block;
+      margin-top: 10px;
+      color: #8a7467;
+      line-height: 1.5;
+      font-size: 0.82rem;
+    }
+
+    /* Quote Band */
+    .quote-band {
+      padding: clamp(46px, 8vw, 66px);
+      background: linear-gradient(135deg, #FFC192 0%, #E97C98 100%);
+      border-radius: clamp(30px, 5vw, 40px);
+      text-align: center;
+      color: var(--white);
+      box-shadow: 0 20px 46px rgba(233, 124, 152, 0.20);
+    }
+
+    .quote-band h2 {
+      font-size: clamp(1.62rem, 3vw, 2.35rem);
+      margin-bottom: 16px;
+      line-height: 1.16;
+      letter-spacing: -0.02em;
+    }
+
+    .quote-band p {
+      max-width: 52ch;
+      margin: 0 auto;
+      line-height: 1.78;
+      color: rgba(255,255,255,0.94);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+      .gallery-story-grid, .cinema-band, .theme-section, .journey-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .theme-section--reverse { direction: ltr; }
+      .gallery-highlight {
+        grid-template-columns: 1fr;
+      }
+      .journal-shell {
+        width: min(100%, calc(100% - 22px));
+        gap: 26px;
+      }
+      .story-points {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .gallery-story {
+        padding-top: 140px;
+      }
+      .journal-shell {
+        width: min(100%, calc(100% - 16px));
+        gap: 22px;
+      }
+      .theme-grid {
+        grid-template-columns: 1fr;
+      }
+      .theme-card.is-large {
+        aspect-ratio: 1;
+      }
+      .cinema-copy h2 {
+        font-size: 1.1rem;
+      }
+    }
+
+    /* Navbar Unification for Gallery (Global) - Perfect Match */
+    .navbar {
+      background: transparent !important;
+      box-shadow: none !important;
+      border-bottom: none !important;
+      backdrop-filter: none !important;
+    }
+
+    .navbar.scrolled {
+      background: rgba(255, 255, 255, 0.98) !important;
+      backdrop-filter: blur(12px) !important;
+      box-shadow: 0 4px 24px rgba(107, 70, 55, 0.08) !important;
+      border-bottom: 1px solid rgba(233, 122, 43, 0.05) !important;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER (template) -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="brand-logo" id="nav-logo">
+        <div class="brand-title">
+          <span class="brand-orange">DEOKSI</span><span class="brand-dark">Clinic</span>
+        </div>
+        <div class="brand-subtitle">BEAUTY CENTER</div>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="/" class="nav-link">Beranda</a></li>
+        <li><a href="/layanan.html" class="nav-link">Layanan</a></li>
+        <li><a href="/produk.html" class="nav-link">Produk</a></li>
+        <li><a href="/berita.html" class="nav-link">Berita</a></li>
+        <li><a href="/galeri.html" class="nav-link active">Galeri</a></li>
+        <li><a href="/tentang.html" class="nav-link">Tentang</a></li>
+        <li><a href="/lokasi.html" class="nav-link">Lokasi</a></li>
+        <li><a href="/konsultasi.html" class="nav-link">Konsultasi</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero berbeda dari beranda -->
+  <section class="gallery-story">
+    <div class="container">
+      <div class="gallery-story-grid">
+        <div class="story-copy">
+          <h1 class="section-title animate-on-scroll">Ruang, Hasil, dan Momen yang Membentuk Pengalaman Deoksi</h1>
+          <p class="animate-on-scroll">Galeri ini menampilkan suasana klinik, hasil perawatan, dan aktivitas Deoksi Clinic agar Anda dapat mengenal kualitas layanan kami dengan lebih dekat.</p>
+          <div class="story-points">
+            <div class="story-point animate-on-scroll">
+              <strong>3 Zona</strong>
+              <span>Fasilitas, hasil treatment, dan event dipisah agar lebih mudah dijelajahi.</span>
+            </div>
+            <div class="story-point animate-on-scroll">
+              <strong>Kurasi</strong>
+              <span>Komposisi visual dibuat seperti editorial board, bukan grid homepage.</span>
+            </div>
+            <div class="story-point animate-on-scroll">
+              <strong>Paging</strong>
+              <span>Navigasi halaman dibuat terpisah agar galeri memiliki ritme penjelajahan tersendiri.</span>
+            </div>
+          </div>
+        </div>
+        <div class="story-aside">
+          <div class="story-card animate-on-scroll">
+            <span class="story-label">Visual Archive</span>
+            <h2>Galeri yang berdiri sendiri, bukan salinan beranda.</h2>
+            <p>Setiap foto disusun sebagai showcase dengan ritme dan fokus visual yang lebih tenang, lebih imersif, dan lebih kuratorial.</p>
+          </div>
+          <div class="story-mini">
+            <div class="mini-panel animate-on-scroll">
+              <strong>Tampilan editorial</strong>
+              <span>Card besar-kecil dibuat bervariasi untuk memberi rasa pameran visual.</span>
+            </div>
+            <div class="mini-panel animate-on-scroll">
+              <strong>Browsing bertahap</strong>
+              <span>Konten dibagi per kategori dan pagination agar tidak terasa seperti slider homepage.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Showcase berbeda dari beranda -->
+  <section class="gallery-page">
+    <div class="container">
+      <div class="journal-shell is-fallback">
+        <div class="gallery-managed-note">
+          Visual galeri akan mengikuti pembaruan terbaru dari sistem media. Jika koneksi sedang lambat atau aset terkelola belum termuat, halaman tetap menampilkan showcase bawaan agar pengalaman pengunjung tetap nyaman.
+        </div>
+        <div class="gallery-highlight">
+          <article class="highlight-card animate-on-scroll">
+            <strong>Bukan preview beranda</strong>
+            <p>Halaman ini disusun sebagai showcase visual yang lebih tenang dan lebih kuratorial, bukan rangkuman section homepage.</p>
+          </article>
+          <article class="highlight-card animate-on-scroll">
+            <strong>Fokus pada pengalaman</strong>
+            <p>Setiap blok menampilkan nuansa ruang, proses perawatan, dan momen komunitas agar calon pasien bisa memahami atmosfer klinik.</p>
+          </article>
+          <article class="highlight-card animate-on-scroll">
+            <strong>Ritme baca berbeda</strong>
+            <p>Struktur galeri dibagi per tema, sehingga user menjelajah seperti membaca visual journal, bukan sekadar men-scroll card seragam.</p>
+          </article>
+        </div>
+
+        <section class="cinema-band">
+          <div class="cinema-frame video-hover-surface video-hover-surface--interactive animate-on-scroll" data-gallery-video-toggle role="button" tabindex="0" aria-label="Putar atau jeda video highlight galeri">
+            <video class="video-hover-media" autoplay muted loop playsinline preload="metadata" poster="/assets/images/hero_clinic.png" data-gallery-video>
+              <source src="/assets/videos/hover-utama.mp4" type="video/mp4">
+            </video>
+            <span class="video-hover-tint" aria-hidden="true"></span>
+            <span class="video-hover-play" aria-hidden="true">
+              <span class="video-hover-play-badge">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M8 6.5v11l9-5.5-9-5.5Z"></path>
+                </svg>
+              </span>
+            </span>
+            <div class="cinema-copy">
+              <span>Highlight Visual</span>
+              <h2>Potongan suasana klinik yang terasa lebih hidup daripada sekadar deretan foto statis.</h2>
+              <p>Video pembuka ini memberi kesan yang lebih imersif dan langsung membedakan galeri dari beranda. User bisa menangkap atmosfer brand hanya dalam beberapa detik pertama.</p>
+            </div>
+          </div>
+          <div class="insight-stack">
+            <article class="insight-card animate-on-scroll">
+              <strong>Visual lebih meyakinkan</strong>
+              <p>Gerak halus dari video membantu membangun kesan klinik yang aktif, modern, dan profesional.</p>
+            </article>
+            <article class="insight-card animate-on-scroll">
+              <strong>Karakter halaman lebih kuat</strong>
+              <p>Galeri terasa seperti halaman showcase tersendiri, bukan kompilasi ulang blok-blok dari homepage.</p>
+            </article>
+            <article class="insight-card animate-on-scroll">
+              <strong>Lebih cocok untuk trust building</strong>
+              <p>Calon pasien dapat melihat atmosfer ruang dan pelayanan secara lebih natural sebelum mereka lanjut ke konsultasi.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="theme-section">
+          <div class="theme-copy animate-on-scroll">
+            <div>
+              <span class="theme-kicker">Zona 01</span>
+              <h2>Suasana klinik yang dibuat nyaman, tenang, dan meyakinkan sejak langkah pertama.</h2>
+              <p>Alih-alih menumpuk semua foto dalam satu grid, bagian ini menonjolkan atmosfer ruang yang bersih, terang, dan tertata rapi agar calon pasien bisa membayangkan pengalaman kunjungan secara utuh.</p>
+            </div>
+            <ul>
+              <li>Ruang tunggu dirancang terasa premium namun tetap hangat.</li>
+              <li>Area treatment ditampilkan dengan fokus pada kenyamanan dan kebersihan.</li>
+              <li>Sudut interior dipilih untuk menunjukkan karakter visual Deoksi Clinic.</li>
+            </ul>
+          </div>
+          <div class="theme-grid">
+            <figure class="theme-card is-large animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/gallery_one.png" alt="Ruang tunggu premium Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_1_primary">
+              <figcaption class="theme-caption"><span>Fasilitas</span><strong>Ruang tunggu premium untuk pengalaman awal yang lebih nyaman</strong></figcaption>
+            </figure>
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/gallery_two.png" alt="Ruang treatment Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_1_secondary">
+              <figcaption class="theme-caption"><span>Fasilitas</span><strong>Ruang treatment yang terasa bersih dan tenang</strong></figcaption>
+            </figure>
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/hero_clinic.png" alt="Interior klinik Deoksi" loading="lazy" data-gallery-slot="gallery_zone_1_tertiary">
+              <figcaption class="theme-caption"><span>Interior</span><strong>Detail interior yang menjaga kesan rapi dan profesional</strong></figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="theme-section theme-section--reverse">
+          <div class="theme-grid">
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/service_aging.png" alt="Perawatan wajah slow aging" loading="lazy" data-gallery-slot="gallery_zone_2_secondary">
+              <figcaption class="theme-caption"><span>Perawatan</span><strong>Visual treatment dengan pendekatan yang lembut dan terukur</strong></figcaption>
+            </figure>
+            <figure class="theme-card is-large animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/service_consult.png" alt="Konsultasi perawatan kulit di Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_2_primary">
+              <figcaption class="theme-caption"><span>Konsultasi</span><strong>Diskusi personal untuk memahami kebutuhan kulit sebelum tindakan dilakukan</strong></figcaption>
+            </figure>
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/service_products.png" alt="Rangkaian produk perawatan kulit Deoksi" loading="lazy" data-gallery-slot="gallery_zone_2_tertiary">
+              <figcaption class="theme-caption"><span>Produk</span><strong>Rangkaian pendamping perawatan untuk menjaga hasil tetap optimal</strong></figcaption>
+            </figure>
+          </div>
+          <div class="theme-copy animate-on-scroll">
+            <div>
+              <span class="theme-kicker">Zona 02</span>
+              <h2>Galeri perawatan dibuat seperti cerita proses, bukan sekadar daftar layanan.</h2>
+              <p>Section ini menekankan perjalanan pasien: mulai dari konsultasi, tindakan yang relevan, sampai dukungan produk pendamping. Dengan begitu, galeri terasa lebih hidup dan lebih meyakinkan.</p>
+            </div>
+            <ul>
+              <li>Menonjolkan proses konsultasi agar klinik terasa edukatif, bukan agresif.</li>
+              <li>Memberi gambaran visual tentang kualitas perawatan dan pendampingannya.</li>
+              <li>Membangun kepercayaan melalui storytelling, bukan hanya katalog gambar.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="journey-section">
+          <div class="journey-header">
+            <div class="journey-header-copy animate-on-scroll">
+              <span>Perjalanan Treatment</span>
+              <h2>Galeri yang menunjukkan alur pengalaman pasien, bukan sekadar kumpulan visual acak.</h2>
+              <p>Section ini memberi struktur yang lebih naratif: mulai dari konsultasi, masuk ke tindakan yang relevan, lalu dilanjutkan ke perawatan pendamping. Dengan pendekatan ini, halaman galeri terasa lebih informatif dan lebih meyakinkan.</p>
+            </div>
+            <div class="journey-note animate-on-scroll">
+              Visual ini merepresentasikan alur pengalaman treatment di klinik, bukan klaim before-after spesifik pasien tertentu.
+            </div>
+          </div>
+          <div class="journey-grid">
+            <article class="journey-card animate-on-scroll">
+              <div class="journey-media">
+                <span class="journey-step">01</span>
+                <img src="/assets/images/service_consult.png" alt="Tahap konsultasi perawatan kulit" loading="lazy" data-gallery-slot="gallery_journey_consult">
+              </div>
+              <div class="journey-body">
+                <strong>Konsultasi Awal</strong>
+                <p>Kebutuhan kulit dipahami lebih dulu agar rekomendasi treatment terasa relevan, aman, dan tidak berlebihan.</p>
+                <small>Fokus: edukasi, analisis, kenyamanan pasien</small>
+              </div>
+            </article>
+
+            <article class="journey-card animate-on-scroll">
+              <div class="journey-media">
+                <span class="journey-step">02</span>
+                <img src="/assets/images/service_aging.png" alt="Tahap treatment slow aging di klinik" loading="lazy" data-gallery-slot="gallery_journey_treatment">
+              </div>
+              <div class="journey-body">
+                <strong>Treatment Terarah</strong>
+                <p>Proses tindakan ditampilkan sebagai pengalaman yang bersih, tertata, dan didampingi oleh tenaga profesional.</p>
+                <small>Fokus: ketelitian, kebersihan, pendekatan terukur</small>
+              </div>
+            </article>
+
+            <article class="journey-card animate-on-scroll">
+              <div class="journey-media">
+                <span class="journey-step">03</span>
+                <img src="/assets/images/service_products.png" alt="Tahap perawatan lanjutan dan produk pendamping" loading="lazy" data-gallery-slot="gallery_journey_aftercare">
+              </div>
+              <div class="journey-body">
+                <strong>Perawatan Lanjutan</strong>
+                <p>Hasil treatment dijaga dengan rutinitas dan produk pendamping yang membantu kulit tetap terawat setelah kunjungan.</p>
+                <small>Fokus: kesinambungan hasil, kebiasaan perawatan, after-visit care</small>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="theme-section">
+          <div class="theme-copy animate-on-scroll">
+            <div>
+              <span class="theme-kicker">Zona 03</span>
+              <h2>Momen komunitas dan interaksi hangat yang membuat brand terasa dekat.</h2>
+              <p>Berbeda dari homepage yang fokus pada section penjualan, blok ini memperlihatkan sisi brand yang lebih human: edukasi, interaksi tim, dan momen yang membuat klinik terasa ramah sekaligus terpercaya.</p>
+            </div>
+            <ul>
+              <li>Menegaskan bahwa Deoksi Clinic bukan hanya tempat treatment, tetapi juga tempat edukasi.</li>
+              <li>Membantu calon pasien melihat suasana tim dan hubungan dengan pelanggan.</li>
+              <li>Memberi variasi visual agar halaman galeri punya ritme sendiri.</li>
+            </ul>
+          </div>
+          <div class="theme-grid">
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/doctor1.jpg" alt="Tim dokter Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_3_primary">
+              <figcaption class="theme-caption"><span>Tim</span><strong>Dokter dan tim yang hadir dengan pendekatan profesional dan hangat</strong></figcaption>
+            </figure>
+            <figure class="theme-card animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/doctor2.jpg" alt="Sesi edukasi bersama dokter Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_3_secondary">
+              <figcaption class="theme-caption"><span>Edukasi</span><strong>Momen edukasi yang membuat informasi perawatan lebih mudah dipahami</strong></figcaption>
+            </figure>
+            <figure class="theme-card is-large animate-on-scroll" data-gallery-item tabindex="0">
+              <img src="/assets/images/gallery_one.png" alt="Interaksi hangat di Deoksi Clinic" loading="lazy" data-gallery-slot="gallery_zone_3_tertiary">
+              <figcaption class="theme-caption"><span>Pengalaman</span><strong>Interaksi yang dirancang agar setiap kunjungan terasa nyaman dan personal</strong></figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="quote-band animate-on-scroll">
+          <div>
+            <h2>Galeri ini dirancang untuk membangun rasa percaya, bukan sekadar menampilkan foto.</h2>
+            <p>Jika Anda ingin mengetahui treatment yang paling sesuai, tim Deoksi Clinic siap membantu melalui konsultasi yang lebih personal.</p>
+          </div>
+          <a href="/konsultasi.html" class="btn">Lanjut ke Konsultasi</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox sederhana -->
+  <div class="simple-lightbox" data-lightbox role="dialog" aria-modal="true" aria-label="Tampilan foto besar">
+    <div class="lightbox-panel" data-lightbox-panel>
+      <div class="lightbox-topbar">
+        <div class="lightbox-title" data-lightbox-title>Foto</div>
+        <button type="button" class="lightbox-close" data-lightbox-close aria-label="Tutup">Tutup</button>
+      </div>
+      <div class="lightbox-media">
+        <img data-lightbox-img alt="" />
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER (template) -->
+  <footer class="footer" data-footer></footer>
+
+  <script>
+    // Lightbox sederhana
+    const lightbox = document.querySelector('[data-lightbox]');
+    const lightboxImg = document.querySelector('[data-lightbox-img]');
+    const lightboxTitle = document.querySelector('[data-lightbox-title]');
+    const lightboxClose = document.querySelector('[data-lightbox-close]');
+    const lightboxPanel = document.querySelector('[data-lightbox-panel]');
+    const galleryItems = document.querySelectorAll('[data-gallery-item]');
+    let lastFocusEl = null;
+
+    const openLightbox = (src, title) => {
+      if (!lightbox || !lightboxImg || !lightboxTitle) return;
+      lastFocusEl = document.activeElement;
+      lightboxImg.src = src;
+      lightboxImg.alt = title || 'Foto galeri';
+      lightboxTitle.textContent = title || 'Foto';
+      lightbox.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      if (lightboxClose) lightboxClose.focus();
+    };
+
+    const closeLightbox = () => {
+      if (!lightbox || !lightboxImg) return;
+      lightbox.classList.remove('is-open');
+      lightboxImg.src = '';
+      document.body.style.overflow = '';
+      if (lastFocusEl && typeof lastFocusEl.focus === 'function') lastFocusEl.focus();
+    };
+
+    const attachOpen = (card) => {
+      const img = card.querySelector('img');
+      const titleSource =
+        card.querySelector('.theme-caption strong') ||
+        card.querySelector('.journey-body strong') ||
+        card.querySelector('.photo-caption') ||
+        card.querySelector('figcaption') ||
+        img;
+      const title = titleSource ? titleSource.textContent.trim() : 'Foto';
+      const src = img ? img.currentSrc || img.src : '';
+      if (!src) return;
+      openLightbox(src, title);
+    };
+
+    galleryItems.forEach(card => {
+      card.addEventListener('click', () => attachOpen(card));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          attachOpen(card);
+        }
+      });
+    });
+
+    if (lightboxClose) {
+      lightboxClose.addEventListener('click', closeLightbox);
+    }
+
+    if (lightbox) {
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox && lightbox.classList.contains('is-open')) {
+        closeLightbox();
+      }
+      if (e.key === 'Tab' && lightbox && lightbox.classList.contains('is-open') && lightboxPanel) {
+        const focusables = lightboxPanel.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    const galleryApiBase = window.location.port === '3001' ? '' : 'http://localhost:3001';
+    const galleryShell = document.querySelector('.journal-shell');
+
+    const gallerySlotSelectorMap = {
+      gallery_image_1: '[data-gallery-slot="gallery_zone_1_primary"]',
+      gallery_image_2: '[data-gallery-slot="gallery_zone_1_secondary"]',
+      gallery_image_3: '[data-gallery-slot="gallery_zone_1_tertiary"]',
+    };
+
+    const gallerySlotMetaMap = {
+      gallery_zone_1_primary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_1_secondary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_1_tertiary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_2_primary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_2_secondary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_2_tertiary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_3_primary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_3_secondary: { titleSelector: '.theme-caption strong' },
+      gallery_zone_3_tertiary: { titleSelector: '.theme-caption strong' },
+      gallery_journey_consult: { titleSelector: '.journey-body strong' },
+      gallery_journey_treatment: { titleSelector: '.journey-body strong' },
+      gallery_journey_aftercare: { titleSelector: '.journey-body strong' },
+    };
+
+    function applyManagedGallerySlot(slotKey, item) {
+      const targetSelector = gallerySlotSelectorMap[slotKey] || `[data-gallery-slot="${slotKey}"]`;
+      const img = document.querySelector(targetSelector);
+      if (!img || !(item?.optimized_url || item?.url)) return;
+
+      const resolvedUrl = item.optimized_url || item.url;
+      img.src = resolvedUrl;
+      img.alt = item.alt_text || item.title || img.alt;
+
+      const metaConfig = gallerySlotMetaMap[slotKey];
+      if (!metaConfig?.titleSelector || !item.title) return;
+
+      const card = img.closest('[data-gallery-item], .journey-card');
+      const titleEl = card?.querySelector(metaConfig.titleSelector);
+      if (titleEl) {
+        titleEl.textContent = item.title;
+      }
+    }
+
+    function getManagedGalleryVideo(slots = {}) {
+      if (slots.gallery_highlight_video) {
+        return slots.gallery_highlight_video;
+      }
+
+      return Object.entries(slots)
+        .filter(([slotKey, item]) => slotKey.startsWith('video_gallery__') && item?.url)
+        .sort((a, b) => {
+          const getIndex = (key) => {
+            const match = String(key).match(/(\d+)$/);
+            return match ? Number(match[1]) : 1;
+          };
+          return getIndex(a[0]) - getIndex(b[0]);
+        })
+        .map(([, item]) => item)[0] || null;
+    }
+
+    async function loadManagedGalleryContent() {
+      const videoEl = document.querySelector('[data-gallery-video]');
+      const videoToggle = document.querySelector('[data-gallery-video-toggle]');
+      let appliedManagedContent = false;
+
+      if (videoToggle && videoEl && !videoToggle.dataset.bound) {
+        const syncVideoToggleLabel = () => {
+          const isPaused = videoEl.paused;
+          videoToggle.setAttribute('aria-label', isPaused ? 'Putar video highlight galeri' : 'Jeda video highlight galeri');
+        };
+
+        const toggleVideoPlayback = () => {
+          if (videoEl.paused) {
+            videoEl.play().catch(() => {});
+          } else {
+            videoEl.pause();
+          }
+          syncVideoToggleLabel();
+        };
+
+        syncVideoToggleLabel();
+        videoToggle.addEventListener('click', toggleVideoPlayback);
+        videoToggle.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleVideoPlayback();
+          }
+        });
+        videoEl.addEventListener('play', syncVideoToggleLabel);
+        videoEl.addEventListener('pause', syncVideoToggleLabel);
+        videoToggle.dataset.bound = 'true';
+      }
+
+      try {
+        const response = await fetch(`${galleryApiBase}/api/site-content?section=gallery_page&t=${Date.now()}`, {
+          cache: 'no-store',
+        });
+        if (!response.ok) return;
+        const payload = await response.json();
+        const slots = payload?.slots || {};
+
+        Object.entries(slots).forEach(([slotKey, item]) => {
+          const beforeSrc = document.querySelector(gallerySlotSelectorMap[slotKey] || `[data-gallery-slot="${slotKey}"]`)?.getAttribute('src') || '';
+          applyManagedGallerySlot(slotKey, item);
+          const afterSrc = document.querySelector(gallerySlotSelectorMap[slotKey] || `[data-gallery-slot="${slotKey}"]`)?.getAttribute('src') || '';
+          if (beforeSrc !== afterSrc && afterSrc) {
+            appliedManagedContent = true;
+          }
+        });
+
+        const videoItem = getManagedGalleryVideo(slots);
+        if (videoEl && videoItem && (videoItem.optimized_url || videoItem.url)) {
+          const source = videoEl.querySelector('source');
+          if (source) {
+            source.src = videoItem.optimized_url || videoItem.url;
+            videoEl.poster = videoItem.thumb_url || videoItem.optimized_url || videoItem.url;
+            videoEl.load();
+            appliedManagedContent = true;
+          }
+        }
+
+        if (galleryShell && appliedManagedContent) {
+          galleryShell.classList.remove('is-fallback');
+        }
+      } catch (error) {
+        console.warn('Gallery managed content fallback active.', error);
+      }
+    }
+
+    loadManagedGalleryContent();
+  </script>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

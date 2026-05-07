@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Manager - Admin Deoksi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/css/admin.css">
+    <style>
+        .media-shell {
+            display: grid;
+            grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+            gap: 24px;
+        }
+
+        .panel-card {
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-border);
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+        }
+
+        .panel-head {
+            padding: 22px 24px 16px;
+            border-bottom: 1px solid var(--admin-border);
+        }
+
+        .panel-head h2,
+        .panel-head h3,
+        .panel-head p {
+            margin: 0;
+        }
+
+        .panel-head p {
+            margin-top: 8px;
+            color: var(--admin-text-muted);
+            font-size: 0.92rem;
+        }
+
+        .panel-body {
+            padding: 24px;
+        }
+
+        .mode-switch {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            border: 1px solid var(--admin-border);
+            background: #fff;
+            border-radius: 14px;
+            padding: 14px 16px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .mode-btn strong,
+        .mode-btn span {
+            display: block;
+        }
+
+        .mode-btn span {
+            margin-top: 4px;
+            color: var(--admin-text-muted);
+            font-size: 0.84rem;
+        }
+
+        .mode-btn.is-active {
+            border-color: var(--admin-primary);
+            background: rgba(249, 115, 22, 0.08);
+            box-shadow: 0 10px 20px rgba(249, 115, 22, 0.12);
+        }
+
+        .info-strip {
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.12), rgba(251, 191, 36, 0.12));
+            padding: 14px 16px;
+            font-size: 0.88rem;
+            color: var(--admin-text);
+            margin-bottom: 18px;
+        }
+
+        .info-strip strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .info-strip ul {
+            margin: 10px 0 0;
+            padding-left: 18px;
+        }
+
+        .info-strip li + li {
+            margin-top: 4px;
+        }
+
+        .media-form {
+            display: grid;
+            gap: 14px;
+        }
+
+        .form-field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .form-field label {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--admin-text);
+        }
+
+        .source-switch {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .source-option {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 14px 16px;
+            border: 1px solid var(--admin-border);
+            border-radius: 14px;
+            background: #fff;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .source-option input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .source-option strong {
+            font-size: 0.92rem;
+            color: var(--admin-text);
+        }
+
+        .source-option span {
+            font-size: 0.82rem;
+            color: var(--admin-text-muted);
+        }
+
+        .source-option:has(input:checked) {
+            border-color: var(--admin-primary);
+            background: rgba(249, 115, 22, 0.08);
+            box-shadow: 0 10px 20px rgba(249, 115, 22, 0.12);
+        }
+
+        .field-note {
+            font-size: 0.78rem;
+            color: var(--admin-text-muted);
+            line-height: 1.5;
+        }
+
+        .field-note.is-success {
+            color: #166534;
+        }
+
+        .field-note.is-error {
+            color: #b91c1c;
+        }
+
+        .inline-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .readonly-output {
+            background: #f8fafc !important;
+            color: #334155;
+        }
+
+        .media-form input,
+        .media-form select,
+        .media-form textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--admin-border);
+            border-radius: 12px;
+            font: inherit;
+            background: #fff;
+        }
+
+        .media-form textarea {
+            min-height: 88px;
+            resize: vertical;
+        }
+
+        .preview-box {
+            border-radius: 16px;
+            border: 1px dashed var(--admin-border);
+            background: var(--admin-surface-2);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: var(--admin-text-muted);
+        }
+
+        .preview-box img,
+        .preview-box video {
+            width: 100%;
+            max-height: 280px;
+            object-fit: cover;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: minmax(220px, 1fr) repeat(2, minmax(160px, 220px)) auto;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .filter-row input,
+        .filter-row select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--admin-border);
+            border-radius: 12px;
+            font: inherit;
+            background: #fff;
+        }
+
+        .summary-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .summary-chip {
+            border-radius: 999px;
+            padding: 8px 12px;
+            background: var(--admin-surface-2);
+            color: var(--admin-text-muted);
+            font-size: 0.84rem;
+        }
+
+        .media-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .media-card {
+            border: 1px solid var(--admin-border);
+            border-radius: 18px;
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 108px minmax(0, 1fr) auto;
+            gap: 16px;
+            align-items: start;
+            background: #fff;
+        }
+
+        .media-thumb {
+            width: 108px;
+            height: 108px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--admin-surface-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--admin-text-muted);
+            font-size: 0.82rem;
+            text-align: center;
+        }
+
+        .media-thumb img,
+        .media-thumb video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .media-meta h3 {
+            margin: 0 0 6px;
+            font-size: 1rem;
+        }
+
+        .meta-line {
+            color: var(--admin-text-muted);
+            font-size: 0.86rem;
+            margin-top: 5px;
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .mini-badge {
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            background: var(--admin-surface-2);
+        }
+
+        .mini-badge.status-active {
+            background: rgba(16, 185, 129, 0.12);
+            color: #047857;
+        }
+
+        .mini-badge.status-archived {
+            background: rgba(107, 114, 128, 0.14);
+            color: #4b5563;
+        }
+
+        .mini-badge.status-draft {
+            background: rgba(59, 130, 246, 0.12);
+            color: #1d4ed8;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .btn-lite {
+            border: 1px solid var(--admin-border);
+            background: #fff;
+            border-radius: 12px;
+            padding: 10px 12px;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .empty-state {
+            border: 1px dashed var(--admin-border);
+            border-radius: 18px;
+            padding: 42px 24px;
+            text-align: center;
+            color: var(--admin-text-muted);
+            background: #fff;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 1120px) {
+            .media-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .filter-row,
+            .media-card {
+                grid-template-columns: 1fr;
+            }
+
+            .media-thumb {
+                width: 100%;
+                height: 180px;
+            }
+
+            .card-actions {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body class="admin-body">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+                <h1 class="page-title">Media Website</h1>
+            </div>
+            <div class="header-right">
+                <button class="btn-admin" id="new-media-btn">+ Tambah Media</button>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <div class="media-shell">
+                <section class="panel-card">
+                    <div class="panel-head">
+                        <h2>Sidebar Media</h2>
+                        <p>Pisahkan video Cloudinary dan foto website agar admin selalu tahu media dipakai di halaman mana.</p>
+                    </div>
+                    <div class="panel-body">
+                        <div class="mode-switch">
+                            <button class="mode-btn is-active" type="button" data-mode="video_cloudinary">
+                                <strong>Video Cloudinary</strong>
+                                <span>Hero Beranda dan Video Gallery</span>
+                            </button>
+                            <button class="mode-btn" type="button" data-mode="website_photo">
+                                <strong>Foto Website</strong>
+                                <span>Upload, edit, aktifkan, dan arsipkan foto</span>
+                            </button>
+                        </div>
+
+                        <div class="info-strip" id="mode-info">
+                            Hero Video Beranda hanya boleh punya 1 video aktif. Video Gallery boleh punya banyak video aktif.
+                        </div>
+
+                        <div class="info-strip">
+                            <strong>Aturan slot resmi</strong>
+                            Gunakan halaman ini hanya untuk frame media terstruktur.
+                            <ul>
+                                <li>Foto website wajib memakai link Google Drive.</li>
+                                <li>Video website wajib memakai link Cloudinary.</li>
+                                <li>Jika yang diubah adalah isi halaman editorial seperti hero konten, promo item, artikel, dokter, atau galeri naratif, lebih aman edit dari <code>admin/content.html</code>.</li>
+                            </ul>
+                        </div>
+
+                        <form class="media-form" id="media-form">
+                            <input type="hidden" id="media-id">
+                            <input type="hidden" id="media-kind">
+
+                            <div class="form-field">
+                                <label for="title-input">Judul Media</label>
+                                <input id="title-input" type="text" placeholder="Contoh: Hero Video April 2026">
+                            </div>
+
+                            <div class="form-field hidden" id="photo-source-field">
+                                <label>Sumber Foto</label>
+                                <div class="field-note">Foto website sekarang memakai link Google Drive publik agar tidak bergantung pada upload dashboard.</div>
+                            </div>
+
+                            <div class="form-field" id="url-field">
+                                <label for="url-input" id="url-label">Cloudinary URL</label>
+                                <input id="url-input" type="url" placeholder="https://drive.google.com/file/d/FILE_ID/view?usp=sharing">
+                                <div class="field-note" id="url-note">Masukkan URL Cloudinary video yang akan dipakai di website.</div>
+                                <div class="field-note hidden" id="url-helper"></div>
+                                <div class="inline-actions hidden" id="drive-actions">
+                                    <button class="btn-lite" type="button" id="check-drive-btn">Cek Link Drive</button>
+                                    <button class="btn-lite" type="button" id="copy-direct-url-btn">Salin Direct URL</button>
+                                </div>
+                            </div>
+
+                            <div class="form-field hidden" id="direct-url-field">
+                                <label for="direct-url-output">Direct URL Frontend</label>
+                                <input id="direct-url-output" class="readonly-output" type="text" readonly placeholder="Direct URL hasil konversi Google Drive akan tampil di sini">
+                                <div class="field-note">Field ini menunjukkan URL final yang dipakai website untuk render gambar.</div>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="page-select">Halaman</label>
+                                <select id="page-select"></select>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="section-select">Section</label>
+                                <select id="section-select"></select>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="position-select">Posisi / Frame</label>
+                                <select id="position-select"></select>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="status-select">Status</label>
+                                <select id="status-select">
+                                    <option value="draft">Draft</option>
+                                    <option value="active">Active</option>
+                                    <option value="archived">Archived</option>
+                                </select>
+                            </div>
+
+                            <div class="form-field" id="alt-field">
+                                <label for="alt-input">Alt Text</label>
+                                <input id="alt-input" type="text" placeholder="Deskripsi singkat untuk aksesibilitas">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="notes-input">Catatan</label>
+                                <textarea id="notes-input" placeholder="Catatan internal untuk tim admin"></textarea>
+                            </div>
+
+                            <div class="form-field">
+                                <label>Preview</label>
+                                <div class="preview-box" id="preview-box">Preview media akan tampil di sini</div>
+                            </div>
+
+                            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                <button class="btn-admin" type="submit" id="save-btn">Simpan Media</button>
+                                <button class="btn-admin btn-admin--secondary" type="button" id="reset-btn">Reset Form</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <section class="panel-card">
+                    <div class="panel-head">
+                        <h3>Daftar Media Aktif dan Arsip</h3>
+                        <p>Setiap item menunjukkan halaman, section, dan posisi pemakaian agar admin non-teknis tetap aman saat mengganti media.</p>
+                    </div>
+                    <div class="panel-body">
+                        <div class="summary-row" id="summary-row"></div>
+
+                        <div class="filter-row">
+                            <input type="text" id="search-input" placeholder="Cari judul, halaman, section, atau posisi">
+                            <select id="filter-page">
+                                <option value="">Semua Halaman</option>
+                            </select>
+                            <select id="filter-status">
+                                <option value="">Semua Status</option>
+                                <option value="active">Active</option>
+                                <option value="draft">Draft</option>
+                                <option value="archived">Archived</option>
+                            </select>
+                            <button class="btn-lite" type="button" id="refresh-btn">Refresh</button>
+                        </div>
+
+                        <div class="media-list" id="media-list"></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="/admin/js/media-manager.js"></script>
+</body>
+</html>

@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/assets/images/logo.png" />
+  <title>Konsultasi - Deoksi Beauty Clinic Malang</title>
+  <meta name="description" content="Konsultasi gratis Deoksi Clinic: isi formulir untuk jadwal dan keluhan kulit." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    .navbar .brand-dark,
+    .navbar .brand-subtitle,
+    .navbar .nav-link:not([href="/konsultasi.html"]) {
+      color: var(--dark);
+    }
+
+    .consult-page {
+      padding: 40px 0 95px;
+      background: var(--gradient-cream);
+    }
+
+    .consult-shell {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .form-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(247,144,62,0.10);
+      box-shadow: var(--shadow-sm);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 0%, rgba(247,144,62,0.10), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.35s var(--ease-out);
+      pointer-events: none;
+    }
+
+    .form-card:hover::before {
+      opacity: 1;
+    }
+
+    .form-header {
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-title {
+      margin-bottom: 8px;
+      /* Typography inherited from style.css h2/section-title */
+    }
+
+    .form-subtitle {
+      margin-bottom: 0;
+    }
+
+    .input:focus {
+      border-color: rgba(247,144,62,0.42);
+      box-shadow: 0 0 0 4px rgba(247,144,62,0.14);
+      background: var(--white);
+    }
+
+    .field.is-invalid .input,
+    .input.is-invalid {
+      border-color: rgba(220, 38, 38, 0.42);
+      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.10);
+      background: rgba(255, 248, 248, 0.98);
+    }
+
+    .field-error {
+      display: none;
+      margin-top: 8px;
+      color: #b42318;
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .field.is-invalid .field-error,
+    .field-error.is-visible {
+      display: block;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .checkbox-box {
+      border: 1px solid rgba(247,144,62,0.18);
+      background: rgba(250,243,239,0.65);
+      border-radius: 14px;
+      padding: 14px 14px 10px;
+    }
+
+    .checkbox-box.is-invalid,
+    .privacy-field.is-invalid {
+      border-color: rgba(220, 38, 38, 0.28);
+      background: rgba(255, 246, 246, 0.95);
+      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.06);
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 14px;
+      margin-top: 10px;
+    }
+
+    .check {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .check input {
+      margin-top: 2px;
+      accent-color: var(--primary);
+      width: 18px;
+      height: 18px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: center;
+      margin-top: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .service-hours {
+      display: grid;
+      gap: 4px;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(247,144,62,0.06);
+      border: 1px solid rgba(247,144,62,0.14);
+      color: var(--text);
+    }
+
+    .service-hours__title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--dark);
+    }
+
+    .service-hours__desc {
+      margin: 0;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      line-height: 1.55;
+      font-weight: 500;
+    }
+
+    .submit-helper {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 11px 13px;
+      border-radius: 14px;
+      background: rgba(22,29,45,0.04);
+      border: 1px solid rgba(22,29,45,0.08);
+      color: var(--text);
+      transition: background 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+    }
+
+    .submit-helper__icon {
+      flex: 0 0 auto;
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: rgba(247,144,62,0.14);
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .submit-helper__text {
+      margin: 0;
+      color: var(--text-light);
+      font-size: 0.88rem;
+      line-height: 1.55;
+      font-weight: 600;
+    }
+
+    .submit-helper.is-ready {
+      background: rgba(32, 161, 98, 0.08);
+      border-color: rgba(32, 161, 98, 0.16);
+    }
+
+    .submit-helper.is-ready .submit-helper__icon {
+      background: rgba(32, 161, 98, 0.16);
+      color: #177245;
+    }
+
+    .submit-helper.is-ready .submit-helper__text {
+      color: var(--dark);
+    }
+
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: var(--gradient-primary);
+      border: 1px solid rgba(247,144,62,0.38);
+      color: var(--white);
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(247,144,62,0.20);
+      transition: transform 0.25s var(--ease-out), filter 0.25s var(--ease-out);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(0.98);
+    }
+
+    .form-error {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(230, 90, 120, 0.10);
+      border: 1px solid rgba(230, 90, 120, 0.22);
+      color: var(--dark);
+      font-weight: 800;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-error.is-visible {
+      display: block;
+    }
+
+    .form-success {
+      display: grid;
+      gap: 16px;
+      text-align: center;
+      padding: 28px 12px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .form-success__icon {
+      width: 78px;
+      height: 78px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(247,144,62,0.16), rgba(247,144,62,0.08));
+      border: 1px solid rgba(247,144,62,0.18);
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .form-success__title {
+      margin: 0;
+    }
+
+    .form-success__desc {
+      margin: 0;
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+
+    .form-success__summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .form-success__summary-item {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(247,144,62,0.05);
+      border: 1px solid rgba(247,144,62,0.12);
+      text-align: left;
+    }
+
+    .form-success__summary-label {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text-light);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .form-success__summary-value {
+      color: var(--dark);
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .form-success__card {
+      display: grid;
+      gap: 10px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,252,0.98));
+      border: 1px solid rgba(247,144,62,0.14);
+      box-shadow: 0 14px 28px rgba(247,144,62,0.08);
+    }
+
+    .form-success__note {
+      margin: 0 auto;
+      max-width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(247,144,62,0.08);
+      border: 1px solid rgba(247,144,62,0.16);
+      color: var(--dark);
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.55;
+    }
+
+    .form-success__steps {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(22, 29, 45, 0.03);
+      border: 1px solid rgba(22, 29, 45, 0.08);
+      text-align: left;
+      list-style: none;
+    }
+
+    .form-success__steps li {
+      color: var(--text);
+      font-size: 0.9rem;
+      line-height: 1.55;
+      font-weight: 600;
+    }
+
+    .form-success__meta {
+      margin: 0;
+      color: var(--text-light);
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .privacy-field {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(247,144,62,0.15);
+    }
+
+    .privacy-text {
+      font-weight: 500;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      line-height: 1.4;
+    }
+
+    .privacy-label {
+      cursor: pointer;
+    }
+
+    @media (max-width: 720px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .checkbox-grid { grid-template-columns: 1fr; }
+      .form-card { padding: 20px; }
+      .form-success__summary { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER (template) -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="brand-logo" id="nav-logo">
+        <div class="brand-title">
+          <span class="brand-orange">DEOKSI</span><span class="brand-dark">Clinic</span>
+        </div>
+        <div class="brand-subtitle">BEAUTY CENTER</div>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="/" class="nav-link">Beranda</a></li>
+        <li><a href="/layanan.html" class="nav-link">Layanan</a></li>
+        <li><a href="/produk.html" class="nav-link">Produk</a></li>
+        <li><a href="/berita.html" class="nav-link">Berita</a></li>
+        <li><a href="/galeri.html" class="nav-link">Galeri</a></li>
+        <li><a href="/tentang.html" class="nav-link">Tentang</a></li>
+        <li><a href="/lokasi.html" class="nav-link">Lokasi</a></li>
+        <li><a href="/konsultasi.html" class="nav-link active">Konsultasi</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero kecil -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-tag animate-on-scroll">Langkah Awal</span>
+      <h1 class="section-title animate-on-scroll">Konsultasi Awal dengan Dokter</h1>
+      <p class="animate-on-scroll">Silakan lengkapi formulir berikut. Tim Deoksi Clinic akan menghubungi Anda melalui WhatsApp atau telepon untuk konfirmasi jadwal konsultasi.</p>
+    </div>
+  </section>
+
+  <section class="consult-page">
+    <div class="container">
+      <div class="consult-shell">
+        <div class="form-card animate-on-scroll">
+          <div class="form-header">
+            <div class="form-title">Formulir Konsultasi</div>
+            <div class="form-subtitle">Mohon lengkapi seluruh data berikut dan pilih minimal satu keluhan atau kebutuhan perawatan.</div>
+          </div>
+
+          <form data-consult-form novalidate>
+            <div class="grid-2">
+              <div class="field">
+                <label for="name">Nama Lengkap</label>
+                <input class="input" type="text" id="name" name="name" autocomplete="name" required placeholder="Masukkan nama lengkap Anda">
+                <div class="field-error" data-error-for="name"></div>
+              </div>
+
+              <div class="field">
+                <label for="wa">Nomor WhatsApp</label>
+                <input class="input" type="tel" id="wa" name="wa" inputmode="tel" autocomplete="tel"
+                  required placeholder="Contoh: 0823xxxxxxx atau +62823xxxxxxx">
+                <div class="field-error" data-error-for="wa"></div>
+              </div>
+
+              <div class="field">
+                <label for="gender">Jenis Kelamin</label>
+                <select class="input" id="gender" name="gender" required>
+                  <option value="">Pilih jenis kelamin</option>
+                  <option value="Perempuan">Perempuan</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                </select>
+                <div class="field-error" data-error-for="gender"></div>
+              </div>
+
+              <div class="field">
+                <label for="age">Usia</label>
+                <input class="input" type="number" id="age" name="age" min="10" max="90" required placeholder="Masukkan usia Anda">
+                <div class="field-error" data-error-for="age"></div>
+              </div>
+
+              <div class="field">
+                <label for="date">Tanggal Konsultasi</label>
+                <input class="input" type="date" id="date" name="date" required>
+                <div class="field-error" data-error-for="date"></div>
+              </div>
+
+              <div class="field full" data-concerns-field>
+                <label>Keluhan atau Kebutuhan Perawatan</label>
+                <div class="checkbox-box">
+                  <div class="checkbox-grid" data-problem-grid>
+                    <label class="check"><input type="checkbox" name="problems" value="Jerawat"> Jerawat</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Bruntusan / Komedo"> Bruntusan / Komedo</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Bekas Jerawat"> Bekas Jerawat</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Flek / Hiperpigmentasi / Melasma"> Flek / Hiperpigmentasi / Melasma</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Kemerahan / Rosacea"> Kemerahan / Rosacea</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Kulit Sensitif / Iritasi"> Kulit Sensitif / Iritasi</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Kerutan / Tanda Penuaan Dini"> Kerutan / Tanda Penuaan Dini</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Kulit Kusam / Tekstur Tidak Merata"> Kulit Kusam / Tekstur Tidak Merata</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Pori Besar"> Pori Besar</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Benang Hidung"> Benang Hidung</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Implan Rambut"> Implan Rambut</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Penyuburan Rambut"> Penyuburan Rambut</label>
+                    <label class="check"><input type="checkbox" name="problems" value="Lainnya"> Lainnya</label>
+                  </div>
+                </div>
+                <div class="field-error" data-error-for="concerns"></div>
+              </div>
+            <div class="field full privacy-field" data-privacy-field>
+              <label class="check privacy-label">
+                <input type="checkbox" id="privacy" name="privacy" required>
+                <span class="privacy-text">Saya menyetujui penggunaan data di atas untuk keperluan penjadwalan konsultasi, dan data tersebut akan dijaga kerahasiaannya sesuai kebijakan privasi Deoksi Clinic.</span>
+              </label>
+              <div class="field-error" data-error-for="privacy"></div>
+            </div>
+            </div>
+
+            <div class="service-hours" aria-live="polite">
+              <span class="service-hours__title">Informasi Customer Care</span>
+              <p class="service-hours__desc">Customer care Deoksi Clinic melayani konfirmasi konsultasi pada hari Senin sampai Jumat, pukul 10.30 - 18.30 WIB, serta Sabtu dan Minggu pukul 09.00 - 17.00 WIB. Permintaan yang masuk di luar jam operasional akan kami tindak lanjuti pada jam kerja berikutnya.</p>
+            </div>
+
+            <div class="submit-helper" data-submit-helper aria-live="polite">
+              <span class="submit-helper__icon" data-submit-helper-icon>i</span>
+              <p class="submit-helper__text" data-submit-helper-text>Mohon pastikan seluruh kolom wajib, pilihan keluhan, dan persetujuan privasi telah dilengkapi sebelum mengirim formulir.</p>
+            </div>
+
+            <div class="actions">
+              <button class="submit-btn" type="submit">
+                Kirim Permintaan Konsultasi
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="form-error" data-form-error role="alert" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER (template) -->
+  <footer class="footer" data-footer></footer>
+
+  <script>
+    const form = document.querySelector('[data-consult-form]');
+    const errorEl = document.querySelector('[data-form-error]');
+    const problemGrid = document.querySelector('[data-problem-grid]');
+    const submitBtn = form?.querySelector('.submit-btn');
+    const concernsField = form?.querySelector('[data-concerns-field]');
+    const privacyField = form?.querySelector('[data-privacy-field]');
+    const dateInput = form?.querySelector('#date');
+    const submitHelper = form?.querySelector('[data-submit-helper]');
+    const submitHelperText = form?.querySelector('[data-submit-helper-text]');
+    const submitHelperIcon = form?.querySelector('[data-submit-helper-icon]');
+
+    const showError = (msg) => {
+      if (!errorEl) return;
+      errorEl.textContent = msg;
+      errorEl.classList.add('is-visible');
+    };
+
+    const clearError = () => {
+      if (!errorEl) return;
+      errorEl.textContent = '';
+      errorEl.classList.remove('is-visible');
+    };
+
+    const setFieldError = (input, message) => {
+      if (!input) return;
+      const field = input.closest('.field');
+      const errorTarget = field?.querySelector(`[data-error-for="${input.id || input.name}"]`);
+      input.classList.add('is-invalid');
+      input.setAttribute('aria-invalid', 'true');
+      field?.classList.add('is-invalid');
+      if (errorTarget) {
+        errorTarget.textContent = message;
+        errorTarget.classList.add('is-visible');
+      }
+    };
+
+    const setGroupError = (field, key, message) => {
+      if (!field) return;
+      const box = field.querySelector('.checkbox-box') || field;
+      const errorTarget = field.querySelector(`[data-error-for="${key}"]`);
+      field.classList.add('is-invalid');
+      box.classList.add('is-invalid');
+      if (errorTarget) {
+        errorTarget.textContent = message;
+        errorTarget.classList.add('is-visible');
+      }
+    };
+
+    const clearFieldState = (field) => {
+      if (!field) return;
+      field.classList.remove('is-invalid');
+      field.querySelectorAll('.input').forEach((input) => {
+        input.classList.remove('is-invalid');
+        input.removeAttribute('aria-invalid');
+      });
+      field.querySelectorAll('.checkbox-box').forEach((box) => box.classList.remove('is-invalid'));
+      field.querySelectorAll('.field-error').forEach((error) => {
+        error.textContent = '';
+        error.classList.remove('is-visible');
+      });
+    };
+
+    const clearValidationState = () => {
+      form?.querySelectorAll('.field').forEach(clearFieldState);
+    };
+
+    const normalizePhone = (value) => {
+      const digits = String(value || '').replace(/\D/g, '');
+      if (!digits) return '';
+      if (digits.startsWith('62')) return `+${digits}`;
+      if (digits.startsWith('0')) return digits;
+      return digits;
+    };
+
+    const isValidIndonesiaPhone = (value) => {
+      const normalized = normalizePhone(value);
+      if (!normalized) return false;
+      const digits = normalized.replace(/\D/g, '');
+      if (normalized.startsWith('+62')) {
+        return digits.length >= 11 && digits.length <= 14;
+      }
+      if (normalized.startsWith('0')) {
+        return digits.length >= 10 && digits.length <= 13;
+      }
+      return false;
+    };
+
+    const normalizeFullName = (value) => String(value || '').trim().replace(/\s+/g, ' ');
+
+    const isValidFullName = (value) => {
+      const normalized = normalizeFullName(value);
+      if (normalized.length < 3) return false;
+      if (/^\d+$/.test(normalized.replace(/\s+/g, ''))) return false;
+      const lettersOnly = normalized.replace(/[^A-Za-zÀ-ÿ]/g, '');
+      if (lettersOnly.length < 2) return false;
+      return /^[A-Za-zÀ-ÿ0-9'`. -]+$/.test(normalized);
+    };
+
+    const isValidPreferredDate = (value) => {
+      if (!value) return false;
+      const parsed = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(parsed.getTime())) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return parsed >= today;
+    };
+
+    const formatDisplayDate = (value) => {
+      if (!value) return '-';
+      const parsed = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(parsed.getTime())) return value;
+      return new Intl.DateTimeFormat('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }).format(parsed);
+    };
+
+    const getResponseTimeMessage = () => {
+      const now = new Date();
+      const day = now.getDay();
+      const hour = now.getHours();
+      const minute = now.getMinutes();
+      const currentMinutes = (hour * 60) + minute;
+      const openMinutes = 9 * 60;
+      const closeMinutes = 20 * 60;
+      const isOperationalDay = day >= 1 && day <= 6;
+
+      if (isOperationalDay && currentMinutes >= openMinutes && currentMinutes < closeMinutes) {
+        return 'Permintaan yang masuk pada jam operasional akan kami respons secepatnya pada hari yang sama.';
+      }
+
+      if (day === 6 && currentMinutes >= closeMinutes) {
+        return 'Permintaan Anda akan kami tindak lanjuti pada hari Senin mulai pukul 09.00 WIB.';
+      }
+
+      if (day === 0) {
+        return 'Permintaan Anda akan kami tindak lanjuti pada hari Senin mulai pukul 09.00 WIB.';
+      }
+
+      if (currentMinutes < openMinutes) {
+        return 'Permintaan Anda akan kami tindak lanjuti mulai pukul 09.00 WIB pada jam operasional hari ini.';
+      }
+
+      return 'Permintaan Anda akan kami tindak lanjuti pada jam operasional berikutnya mulai pukul 09.00 WIB.';
+    };
+
+    const maskPhone = (value) => {
+      const normalized = normalizePhone(value);
+      if (!normalized) return '-';
+      const digits = normalized.replace(/\D/g, '');
+      if (digits.length <= 4) return normalized;
+      const visibleTail = digits.slice(-4);
+      const hiddenLength = Math.max(digits.length - 4, 4);
+      const hidden = '•'.repeat(hiddenLength);
+      if (normalized.startsWith('+62')) {
+        return `+62 ${hidden}${visibleTail}`;
+      }
+      return `${hidden}${visibleTail}`;
+    };
+
+    const hasCheckedProblem = () => {
+      if (!problemGrid) return false;
+      return Array.from(problemGrid.querySelectorAll('input[type="checkbox"]')).some(c => c.checked);
+    };
+
+    const updateSubmitHelper = () => {
+      if (!form || !submitHelper || !submitHelperText || !submitHelperIcon) return;
+
+      const nameValue = form.querySelector('#name')?.value || '';
+      const phoneValue = form.querySelector('#wa')?.value || '';
+      const genderValue = form.querySelector('#gender')?.value || '';
+      const ageValue = form.querySelector('#age')?.value || '';
+      const dateValue = form.querySelector('#date')?.value || '';
+      const privacyChecked = !!form.querySelector('#privacy')?.checked;
+
+      const isReady =
+        isValidFullName(nameValue) &&
+        isValidIndonesiaPhone(phoneValue) &&
+        !!genderValue &&
+        Number(ageValue) >= 10 &&
+        Number(ageValue) <= 90 &&
+        isValidPreferredDate(dateValue) &&
+        hasCheckedProblem() &&
+        privacyChecked;
+
+      if (isReady) {
+        submitHelper.classList.add('is-ready');
+        submitHelperIcon.textContent = '✓';
+        submitHelperText.textContent = 'Formulir Anda siap dikirim. Tim Deoksi Clinic akan menindaklanjuti permintaan konsultasi ini pada jam operasional.';
+        return;
+      }
+
+      submitHelper.classList.remove('is-ready');
+      submitHelperIcon.textContent = 'i';
+      submitHelperText.textContent = 'Mohon pastikan seluruh kolom wajib, pilihan keluhan, dan persetujuan privasi telah dilengkapi sebelum mengirim formulir.';
+    };
+
+    if (form) {
+      updateSubmitHelper();
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearError();
+        clearValidationState();
+
+        const requiredInputs = form.querySelectorAll('[required]');
+        for (const input of requiredInputs) {
+          if (input.type === 'checkbox') {
+            if (!input.checked) {
+              setGroupError(privacyField, 'privacy', 'Mohon berikan persetujuan privasi sebelum formulir dikirim.');
+              showError('Mohon berikan persetujuan privasi agar kami dapat memproses permintaan konsultasi Anda.');
+              input.focus();
+              return;
+            }
+            continue;
+          }
+
+          if (!String(input.value || '').trim()) {
+            setFieldError(input, 'Kolom ini masih perlu dilengkapi.');
+            showError(`Mohon lengkapi kolom ${input.previousElementSibling ? input.previousElementSibling.innerText : 'yang wajib diisi'} agar formulir dapat diproses.`);
+            input.focus();
+            return;
+          }
+        }
+
+        const ageInput = form.querySelector('#age');
+        const ageValue = Number(ageInput?.value || 0);
+        if (ageInput && (!Number.isFinite(ageValue) || ageValue < 10 || ageValue > 90)) {
+          setFieldError(ageInput, 'Mohon isi usia pada rentang 10 sampai 90 tahun.');
+          showError('Mohon periksa kembali usia yang Anda isi agar sesuai dengan format yang kami perlukan.');
+          ageInput.focus();
+          return;
+        }
+
+        const nameInput = form.querySelector('#name');
+        if (nameInput && !isValidFullName(nameInput.value)) {
+          setFieldError(nameInput, 'Mohon isi nama lengkap dengan format yang wajar dan mudah dikenali.');
+          showError('Mohon periksa kembali nama lengkap Anda agar dapat kami identifikasi dengan baik.');
+          nameInput.focus();
+          return;
+        }
+
+        if (dateInput && !isValidPreferredDate(dateInput.value)) {
+          setFieldError(dateInput, 'Mohon pilih tanggal hari ini atau setelahnya.');
+          showError('Mohon pilih jadwal konsultasi yang masih berlaku, yaitu hari ini atau tanggal setelahnya.');
+          dateInput.focus();
+          return;
+        }
+
+        const phoneInput = form.querySelector('#wa');
+        if (phoneInput && !isValidIndonesiaPhone(phoneInput.value)) {
+          setFieldError(phoneInput, 'Mohon gunakan nomor Indonesia yang valid, misalnya 08... atau +62...');
+          showError('Mohon periksa kembali nomor WhatsApp Anda agar tim kami dapat menghubungi Anda dengan tepat.');
+          phoneInput.focus();
+          return;
+        }
+
+        if (!hasCheckedProblem()) {
+          setGroupError(concernsField, 'concerns', 'Mohon pilih minimal 1 keluhan atau kebutuhan perawatan.');
+          showError('Mohon pilih minimal satu keluhan atau kebutuhan perawatan agar tim kami dapat memahami kebutuhan Anda.');
+          return;
+        }
+
+        // Prepare data
+        const formData = new FormData(form);
+        const concerns = Array.from(form.querySelectorAll('input[name="problems"]:checked')).map(cb => cb.value);
+        
+        const payload = {
+          full_name: normalizeFullName(formData.get('name')),
+          phone: normalizePhone(formData.get('wa')),
+          gender: formData.get('gender'),
+          age: parseInt(formData.get('age')),
+          preferred_date: formData.get('date'),
+          concerns: concerns,
+          privacy_agreed: !!formData.get('privacy')
+        };
+
+        if (!submitBtn) {
+          showError('Terjadi kendala pada formulir. Mohon muat ulang halaman dan coba kembali.');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span>⏳ Mengirim...</span>';
+
+        try {
+          const response = await fetch('/api/customers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) throw new Error(result.error || 'Terjadi kesalahan saat mengirim data.');
+
+          form.innerHTML = `
+            <div class="form-success">
+              <div class="form-success__icon">✅</div>
+              <div class="form-success__card">
+                <h2 class="section-title form-success__title">Terima kasih, ${payload.full_name}.</h2>
+                <p class="form-success__desc">Permintaan konsultasi Anda telah berhasil kami terima dan sedang kami tindak lanjuti.</p>
+                <div class="form-success__summary">
+                  <div class="form-success__summary-item">
+                    <span class="form-success__summary-label">Nomor WhatsApp</span>
+                    <span class="form-success__summary-value">${maskPhone(payload.phone)}</span>
+                  </div>
+                  <div class="form-success__summary-item">
+                    <span class="form-success__summary-label">Tanggal Konsultasi</span>
+                    <span class="form-success__summary-value">${formatDisplayDate(payload.preferred_date)}</span>
+                  </div>
+                </div>
+                <p class="form-success__note">Tim customer care Deoksi Clinic akan segera menghubungi Anda melalui WhatsApp atau telepon untuk konfirmasi jadwal konsultasi.</p>
+                <ul class="form-success__steps">
+                  <li>1. Tim kami akan meninjau permintaan konsultasi Anda pada jam operasional.</li>
+                  <li>2. Customer care akan menghubungi Anda untuk memastikan kebutuhan perawatan dan ketersediaan jadwal.</li>
+                  <li>3. Setelah jadwal disepakati, kami akan mengonfirmasi kunjungan Anda.</li>
+                </ul>
+                <p class="form-success__meta">${getResponseTimeMessage()} Mohon pastikan nomor yang Anda cantumkan tetap aktif agar proses konfirmasi dapat berjalan dengan lancar.</p>
+              </div>
+              <a href="/" class="btn btn-primary">Kembali ke Beranda</a>
+            </div>
+          `;
+          window.scrollTo({ top: form.offsetTop - 100, behavior: 'smooth' });
+
+        } catch (err) {
+          showError(err.message || 'Permintaan konsultasi Anda belum berhasil dikirim. Mohon coba kembali dalam beberapa saat.');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      });
+
+      form.addEventListener('input', (event) => {
+        if (errorEl && errorEl.classList.contains('is-visible')) clearError();
+        const field = event.target.closest('.field');
+        if (field) clearFieldState(field);
+        if (event.target.matches('input[name="problems"]') && concernsField) {
+          clearFieldState(concernsField);
+        }
+        if (event.target.id === 'privacy' && privacyField) {
+          clearFieldState(privacyField);
+        }
+        updateSubmitHelper();
+      });
+
+      if (dateInput) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        dateInput.min = `${yyyy}-${mm}-${dd}`;
+      }
+
+      form.addEventListener('change', updateSubmitHelper);
+    }
+  </script>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

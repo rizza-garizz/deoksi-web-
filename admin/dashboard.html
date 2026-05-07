@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Deoksi Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+  <style>
+    .dashboard-alert {
+      display: none;
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+      font-size: 0.92rem;
+    }
+    .dashboard-alert.is-visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+    <main class="admin-main">
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-desc">Selamat datang di panel admin Deoksi Beauty Clinic.</p>
+      <div class="dashboard-alert" id="dashboard-error"></div>
+
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card stat-card--primary">
+          <div class="stat-label">Total Pelanggan</div>
+          <div class="stat-value" id="stat-customers">—</div>
+        </div>
+        <div class="stat-card stat-card--info">
+          <div class="stat-label">Leads Baru</div>
+          <div class="stat-value" id="stat-new">—</div>
+        </div>
+        <div class="stat-card stat-card--success">
+          <div class="stat-label">Artikel Published</div>
+          <div class="stat-value" id="stat-articles">—</div>
+        </div>
+        <div class="stat-card stat-card--warning">
+          <div class="stat-label">Media Assets</div>
+          <div class="stat-value" id="stat-media">—</div>
+        </div>
+      </div>
+
+      <!-- Recent Customers -->
+      <div class="admin-table-wrap">
+        <div class="admin-toolbar">
+          <h3 style="font-size:1.1rem; font-weight:700;">Pelanggan Terbaru</h3>
+          <a href="/admin/customers.html" class="btn-admin btn-admin--secondary btn-admin--sm">Lihat Semua →</a>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Telepon</th>
+              <th>Keluhan</th>
+              <th>Status</th>
+              <th>Tanggal</th>
+            </tr>
+          </thead>
+          <tbody id="recent-customers">
+            <tr><td colspan="5" class="admin-empty"><div class="admin-empty-icon">📊</div>Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="/admin/js/admin.js"></script>
+  <script type="module">
+    if (!requireLogin()) throw new Error('redirect');
+    renderSidebar('dashboard');
+
+    function showDashboardError(message) {
+      const errorEl = document.getElementById('dashboard-error');
+      errorEl.textContent = message;
+      errorEl.classList.add('is-visible');
+    }
+
+    /**
+     * Safely call an API endpoint, returning null on failure
+     * instead of throwing so one broken endpoint doesn't crash everything.
+     */
+    async function safeFetch(endpoint) {
+      console.log(`[Dashboard] 🔄 Fetching: ${endpoint}`);
+      const t0 = performance.now();
+      try {
+        const result = await apiCall(endpoint);
+        const ms = (performance.now() - t0).toFixed(0);
+        console.log(`[Dashboard] ✅ OK: ${endpoint} (${ms}ms)`, {
+          hasData: Boolean(result?.data),
+          total: result?.pagination?.total ?? 'N/A',
+        });
+        return result;
+      } catch (err) {
+        const ms = (performance.now() - t0).toFixed(0);
+        console.error(`[Dashboard] ❌ FAIL: ${endpoint} (${ms}ms)`, {
+          errorMessage: err.message,
+          errorType: err.name,
+        });
+        return null;
+      }
+    }
+
+    async function loadDashboard() {
+      console.log('[Dashboard] 🚀 Loading dashboard...');
+      console.log('[Dashboard] API_BASE:', '/api');
+      console.log('[Dashboard] Token present:', Boolean(getToken()));
+      const startTime = performance.now();
+      let failures = 0;
+      const totalCalls = 4;
+
+      // --- 1. Load customers + recent list ---
+      const custData = await safeFetch('/customers?limit=5');
+      if (custData && custData.pagination) {
+        document.getElementById('stat-customers').textContent = custData.pagination.total;
+        const tbody = document.getElementById('recent-customers');
+        if (!custData.data || custData.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="admin-empty"><div class="admin-empty-icon">📭</div>Belum ada data pelanggan.</td></tr>';
+        } else {
+          tbody.innerHTML = custData.data.map(c => `
+            <tr>
+              <td><strong>${c.full_name || '-'}</strong></td>
+              <td>${c.phone || '-'}</td>
+              <td>${(c.concerns || []).slice(0, 2).join(', ') || '-'}</td>
+              <td>${statusBadge(c.status)}</td>
+              <td>${formatDate(c.created_at)}</td>
+            </tr>
+          `).join('');
+        }
+      } else {
+        failures++;
+        document.getElementById('stat-customers').textContent = '0';
+        document.getElementById('recent-customers').innerHTML =
+          '<tr><td colspan="5" class="admin-empty"><div class="admin-empty-icon">📭</div>Belum ada data pelanggan.</td></tr>';
+      }
+
+      // --- 2. Count new leads ---
+      const newData = await safeFetch('/customers?status=new&limit=1');
+      if (newData && newData.pagination) {
+        document.getElementById('stat-new').textContent = newData.pagination.total;
+      } else {
+        failures++;
+        document.getElementById('stat-new').textContent = '0';
+      }
+
+      // --- 3. Load articles count ---
+      const artData = await safeFetch('/articles?admin=true&limit=1');
+      if (artData && artData.pagination) {
+        document.getElementById('stat-articles').textContent = artData.pagination.total;
+      } else {
+        failures++;
+        document.getElementById('stat-articles').textContent = '0';
+      }
+
+      // --- 4. Load media count ---
+      const mediaData = await safeFetch('/media?limit=1');
+      if (mediaData && mediaData.pagination) {
+        document.getElementById('stat-media').textContent = mediaData.pagination.total;
+      } else {
+        failures++;
+        document.getElementById('stat-media').textContent = '0';
+      }
+
+      // Show warning only if some or all calls failed
+      if (failures > 0 && failures < totalCalls) {
+        showDashboardError('Sebagian data dashboard gagal dimuat. Data yang tampil mungkin belum lengkap.');
+      } else if (failures === totalCalls) {
+        showDashboardError('Koneksi ke server gagal. Pastikan server API berjalan, lalu refresh halaman.');
+      }
+
+      // 🔍 DEBUG: Summary
+      const totalMs = (performance.now() - startTime).toFixed(0);
+      console.log(`[Dashboard] 🏁 Load complete in ${totalMs}ms — ${failures}/${totalCalls} failed`, {
+        customers: document.getElementById('stat-customers').textContent,
+        newLeads: document.getElementById('stat-new').textContent,
+        articles: document.getElementById('stat-articles').textContent,
+        media: document.getElementById('stat-media').textContent,
+        status: failures === 0 ? '✅ ALL OK' : failures === totalCalls ? '❌ ALL FAILED' : '⚠️ PARTIAL',
+      });
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/galeri"
+  to = "/galeri.html"
+  status = 200
+
+[[redirects]]
+  from = "/galeri/"
+  to = "/galeri.html"
+  status = 200
+
+[[redirects]]
+  from = "/layanan"
+  to = "/layanan.html"
+  status = 200
+
+[[redirects]]
+  from = "/layanan/"
+  to = "/layanan.html"
+  status = 200
+
+[[redirects]]
+  from = "/produk"
+  to = "/produk.html"
+  status = 200
+
+[[redirects]]
+  from = "/produk/"
+  to = "/produk.html"
+  status = 200
+
+[[redirects]]
+  from = "/tentang"
+  to = "/tentang.html"
+  status = 200
+
+[[redirects]]
+  from = "/tentang/"
+  to = "/tentang.html"
+  status = 200
+
+[[redirects]]
+  from = "/lokasi"
+  to = "/lokasi.html"
+  status = 200
+
+[[redirects]]
+  from = "/lokasi/"
+  to = "/lokasi.html"
+  status = 200
+
+[[redirects]]
+  from = "/konsultasi"
+  to = "/konsultasi.html"
+  status = 200
+
+[[redirects]]
+  from = "/konsultasi/"
+  to = "/konsultasi.html"
+  status = 200

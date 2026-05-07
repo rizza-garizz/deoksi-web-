@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pelanggan | Deoksi Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+  <style>
+    .customers-table th:nth-child(1),
+    .customers-table td:nth-child(1) {
+      white-space: nowrap;
+      width: 108px;
+    }
+
+    .customers-sort-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-transform: inherit;
+      letter-spacing: inherit;
+      cursor: pointer;
+    }
+
+    .customers-sort-btn:hover {
+      color: var(--admin-text);
+    }
+
+    .customers-sort-btn__meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--admin-text-muted);
+      font-size: 0.74rem;
+      letter-spacing: 0.02em;
+      text-transform: none;
+    }
+
+    .customers-table th:nth-child(4),
+    .customers-table td:nth-child(4) {
+      width: 170px;
+    }
+
+    .customers-name {
+      font-weight: 700;
+      color: var(--admin-text);
+      line-height: 1.45;
+    }
+
+    .customers-name__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .customers-status-cell {
+      min-width: 150px;
+    }
+
+    .customers-status-select {
+      min-width: 140px;
+      padding: 8px 12px !important;
+      font-size: 0.84rem !important;
+      font-weight: 700;
+      border-radius: 12px;
+      border-color: rgba(249, 115, 22, 0.18);
+      background: rgba(255, 255, 255, 0.98);
+      color: #111827;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      color-scheme: light;
+    }
+
+    .customers-status-select option {
+      color: #111827;
+      background: #ffffff;
+    }
+
+    .customers-date {
+      color: var(--admin-text);
+      font-weight: 600;
+      line-height: 1.45;
+      white-space: nowrap;
+    }
+
+    .customers-report-summary {
+      margin: 0 0 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--admin-border);
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(249, 250, 251, 0.94));
+      color: var(--admin-text);
+    }
+
+    .customers-report-summary__title {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .customers-report-summary__meta {
+      margin: 6px 0 0;
+      color: var(--admin-text-muted);
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .customers-report-debug {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(15, 23, 42, 0.08);
+      color: #667085;
+      font-size: 0.8rem;
+      line-height: 1.55;
+    }
+
+    .customers-report-debug strong {
+      color: var(--admin-text);
+      font-weight: 700;
+    }
+
+    .customers-report-debug__actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .customers-report-cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 16px;
+    }
+
+    .customers-report-card {
+      padding: 14px 16px;
+      border: 1px solid var(--admin-border);
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .customers-report-card__label {
+      margin: 0;
+      color: var(--admin-text-muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .customers-report-card__value {
+      margin: 8px 0 0;
+      color: var(--admin-text);
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .customers-date__main {
+      display: block;
+    }
+
+    .customers-date__meta {
+      display: block;
+      margin-top: 2px;
+      color: var(--admin-text-muted);
+      font-size: 0.76rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .customers-concern {
+      max-width: 180px;
+      color: var(--admin-text);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-word;
+      cursor: help;
+    }
+
+    .customer-detail {
+      display: grid;
+      gap: 16px;
+    }
+
+    .customer-detail__hero {
+      display: grid;
+      gap: 10px;
+      padding: 18px 20px;
+      border: 1px solid rgba(249, 115, 22, 0.12);
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(255, 249, 245, 0.98), rgba(248, 250, 252, 0.96));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.58);
+    }
+
+    .customer-detail__eyebrow {
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .customer-detail__name {
+      margin: 0;
+      font-size: 1.24rem;
+      font-weight: 800;
+      color: #111827;
+      line-height: 1.3;
+    }
+
+    .customer-detail__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .customer-detail__meta .badge {
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-transform: none;
+      line-height: 1;
+    }
+
+    .customer-detail__meta .badge--new {
+      background: rgba(37, 99, 235, 0.1);
+      color: #2563eb;
+    }
+
+    .customer-detail__meta .badge--contacted {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+    }
+
+    .customer-detail__meta .badge--scheduled {
+      background: rgba(234, 88, 12, 0.1);
+      color: #c2410c;
+    }
+
+    .customer-detail__meta .badge--done {
+      background: rgba(22, 163, 74, 0.1);
+      color: #15803d;
+    }
+
+    .customer-detail__stamp {
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .customer-detail__grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .customer-detail__section-title {
+      grid-column: 1 / -1;
+      margin: 2px 0 -2px;
+      color: #4b5563;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .customer-detail__field {
+      display: grid;
+      gap: 8px;
+      padding: 15px 16px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(252, 253, 255, 0.98), rgba(247, 249, 252, 0.95));
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.035);
+    }
+
+    .customer-detail__field--full {
+      grid-column: 1 / -1;
+    }
+
+    .customer-detail .form-label {
+      margin-bottom: 0;
+      color: #667085;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .customer-detail__value {
+      color: #0f172a;
+      font-weight: 500;
+      line-height: 1.58;
+      word-break: break-word;
+    }
+
+    .customer-detail__value--message {
+      white-space: pre-wrap;
+      font-weight: 500;
+    }
+
+    .customer-identity-form {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(250, 250, 252, 0.96), rgba(246, 248, 251, 0.94));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.58);
+    }
+
+    .customer-identity-form__title {
+      margin: 0;
+      color: var(--admin-text);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .customer-identity-form__desc {
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .customer-identity-form__helper {
+      margin: -2px 0 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.72);
+      color: #5b6473;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+    }
+
+    .customer-identity-form__grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .customer-identity-form__grid .settings-field {
+      gap: 6px;
+    }
+
+    .customer-identity-form__grid .settings-field label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+
+    .customer-identity-form__grid input,
+    .customer-identity-form__grid select,
+    .customer-identity-form__grid textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.98);
+      color: #111827;
+      font: inherit;
+    }
+
+    .customer-identity-form__grid textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .customer-identity-form__grid .customer-identity-form__full {
+      grid-column: 1 / -1;
+    }
+
+    .customer-identity-form__toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--admin-text);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .customer-identity-form__toggle input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--admin-primary);
+    }
+
+    #detail-modal.admin-modal-overlay {
+      background: rgba(2, 6, 23, 0.58);
+      backdrop-filter: blur(2px);
+    }
+
+    #detail-modal .admin-modal {
+      max-width: 640px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(28, 32, 45, 0.98), rgba(26, 30, 42, 0.98));
+      box-shadow: 0 28px 72px rgba(2, 6, 23, 0.42);
+    }
+
+    #detail-modal .admin-modal-header,
+    #detail-modal .admin-modal-footer {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    #detail-modal .admin-modal-body {
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(245, 247, 250, 0.98), rgba(241, 244, 248, 0.98));
+    }
+
+    @media (max-width: 640px) {
+      .customers-report-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .customer-detail__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+    <main class="admin-main">
+      <h1 class="page-title">Data Pelanggan</h1>
+      <p class="page-desc">Kelola data pasien dan leads konsultasi dari website.</p>
+
+      <div class="admin-table-wrap">
+        <div class="admin-toolbar">
+          <input type="text" class="admin-search" id="search-input" placeholder="🔍  Cari nama atau telepon...">
+          <div class="admin-filter-group">
+            <select class="admin-select" id="period-filter">
+              <option value="">Semua Periode</option>
+              <option value="week">Laporan Mingguan</option>
+              <option value="month">Laporan Bulanan</option>
+            </select>
+            <select class="admin-select" id="customer-type-filter">
+              <option value="">Semua Pelanggan</option>
+              <option value="new">Pelanggan Baru</option>
+              <option value="existing">Pelanggan Lama</option>
+              <option value="pending_identity">Identitas Belum Lengkap</option>
+            </select>
+            <select class="admin-select" id="status-filter">
+              <option value="">Semua Status</option>
+              <option value="new">Baru</option>
+              <option value="contacted">Dihubungi</option>
+              <option value="scheduled">Terjadwal</option>
+              <option value="done">Selesai</option>
+            </select>
+            <button class="btn-admin btn-admin--secondary btn-admin--sm" id="export-btn">📥 Export CSV</button>
+          </div>
+        </div>
+        <div class="customers-report-summary" id="report-summary">
+          <p class="customers-report-summary__title">Memuat ringkasan laporan...</p>
+          <p class="customers-report-summary__meta">Sistem sedang menghitung data pelanggan untuk periode aktif.</p>
+        </div>
+        <div class="customers-report-cards" id="report-cards">
+          <div class="customers-report-card">
+            <p class="customers-report-card__label">Total Lead</p>
+            <p class="customers-report-card__value">—</p>
+          </div>
+          <div class="customers-report-card">
+            <p class="customers-report-card__label">Baru</p>
+            <p class="customers-report-card__value">—</p>
+          </div>
+          <div class="customers-report-card">
+            <p class="customers-report-card__label">Dihubungi</p>
+            <p class="customers-report-card__value">—</p>
+          </div>
+          <div class="customers-report-card">
+            <p class="customers-report-card__label">Selesai</p>
+            <p class="customers-report-card__value">—</p>
+          </div>
+        </div>
+        <table class="customers-table">
+          <thead>
+            <tr>
+              <th>
+                <button class="customers-sort-btn" type="button" onclick="toggleDateSort()">
+                  <span>Tanggal</span>
+                  <span class="customers-sort-btn__meta" id="date-sort-label">Terbaru ↓</span>
+                </button>
+              </th>
+              <th>Nama</th>
+              <th>Telepon</th>
+              <th>Status</th>
+              <th>Keluhan</th>
+              <th>Email</th>
+              <th>Gender</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="customers-tbody">
+            <tr><td colspan="8" class="admin-empty"><div class="admin-empty-icon">📊</div>Memuat data...</td></tr>
+          </tbody>
+        </table>
+        <div class="admin-pagination" id="pagination"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="admin-modal-overlay" id="detail-modal">
+    <div class="admin-modal">
+      <div class="admin-modal-header">
+        <span class="admin-modal-title">Detail Pelanggan</span>
+        <button class="admin-modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="admin-modal-body" id="detail-body"></div>
+      <div class="admin-modal-footer">
+        <button class="btn-admin btn-admin--secondary" onclick="closeModal()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/admin/js/admin.js"></script>
+  <script type="module">
+    if (!requireLogin()) throw new Error('redirect');
+    renderSidebar('customers');
+
+    let currentPage = 1;
+    const limit = 15;
+    let allData = [];
+    let currentTotal = 0;
+    let currentSummary = null;
+    let dateSortDirection = 'desc';
+    let activeCustomerId = null;
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderConcernCell(concerns) {
+      const text = (concerns || []).join(', ') || '-';
+      return `<div class="customers-concern" title="${escapeHtml(text)}">${escapeHtml(text)}</div>`;
+    }
+
+    function renderCustomerTypeBadge(customerType) {
+      if (customerType === 'existing') {
+        return '<span class="badge badge--scheduled">Pelanggan Lama</span>';
+      }
+      return '<span class="badge badge--new">Pelanggan Baru</span>';
+    }
+
+    function renderIdentityBadge(customer = {}) {
+      if (customer.customer_type !== 'existing') {
+        return '<span class="badge" style="background: rgba(15, 23, 42, 0.08); color: var(--admin-text); text-transform: none; letter-spacing: 0;">Tanpa validasi identitas</span>';
+      }
+
+      if (customer.identity_verified) {
+        return '<span class="badge badge--done">Identitas Tervalidasi</span>';
+      }
+
+      return '<span class="badge badge--contacted">Identitas Belum Lengkap</span>';
+    }
+
+    function syncIdentityFormVisibility() {
+      const typeInput = document.getElementById('identity-customer-type');
+      const fields = document.querySelectorAll('[data-identity-required]');
+      const toggle = document.getElementById('identity-verified');
+      const helper = document.getElementById('identity-form-helper');
+      const submitButton = document.getElementById('identity-submit-btn');
+      if (!typeInput || !fields.length) return;
+
+      const isExisting = typeInput.value === 'existing';
+      fields.forEach((field) => {
+        field.style.display = isExisting ? '' : 'none';
+      });
+      if (!isExisting && toggle) {
+        toggle.checked = false;
+      }
+      if (helper) {
+        helper.textContent = isExisting
+          ? 'Untuk pelanggan lama, mohon lengkapi NIK 16 digit dan alamat lengkap sebelum data disimpan.'
+          : 'Untuk pelanggan baru, data dapat langsung disimpan tanpa NIK dan alamat.';
+      }
+      if (submitButton) {
+        submitButton.textContent = isExisting
+          ? 'Simpan Data Identitas Pelanggan'
+          : 'Simpan Kategori Pelanggan Baru';
+      }
+    }
+
+    async function updateCustomerIdentity(id) {
+      const customerType = document.getElementById('identity-customer-type')?.value || 'new';
+      const nik = document.getElementById('identity-nik')?.value || '';
+      const address = document.getElementById('identity-address')?.value || '';
+      const identityVerified = Boolean(document.getElementById('identity-verified')?.checked);
+      const currentCustomer = allData.find((item) => item.id === id);
+
+      if (!currentCustomer) {
+        return showToast('Data pelanggan tidak ditemukan.', 'error');
+      }
+
+      const normalizedNik = nik.replace(/\D/g, '');
+      const normalizedAddress = address.trim();
+      const nextPayload = {
+        customer_type: customerType,
+        nik: customerType === 'existing' ? normalizedNik : '',
+        address: customerType === 'existing' ? normalizedAddress : '',
+        identity_verified: customerType === 'existing' ? identityVerified : false,
+      };
+      const currentPayload = {
+        customer_type: currentCustomer.customer_type || 'new',
+        nik: currentCustomer.nik || '',
+        address: (currentCustomer.address || '').trim(),
+        identity_verified: Boolean(currentCustomer.identity_verified),
+      };
+
+      if (JSON.stringify(nextPayload) === JSON.stringify(currentPayload)) {
+        return showToast('Belum ada perubahan data pelanggan yang disimpan.', 'info');
+      }
+
+      if (customerType === 'existing') {
+        if (!normalizedNik) {
+          return showToast('Isi NIK 16 digit untuk pelanggan lama.', 'error');
+        }
+        if (normalizedNik.length !== 16) {
+          return showToast('NIK pelanggan lama harus terdiri dari 16 digit angka.', 'error');
+        }
+        if (!normalizedAddress || normalizedAddress.length < 10) {
+          return showToast('Alamat pelanggan lama perlu diisi lebih lengkap.', 'error');
+        }
+      }
+
+      try {
+        await apiCall(`/customers?id=${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify(nextPayload),
+        });
+        showToast('Data pelanggan berhasil diperbarui.');
+        await loadCustomers();
+        showDetail(id);
+      } catch (error) {
+        const fallbackMessage = customerType === 'existing'
+          ? 'Data pelanggan lama belum lengkap atau belum valid.'
+          : 'Gagal memperbarui data pelanggan.';
+        showToast(error.message || fallbackMessage, 'error');
+      }
+    }
+
+    function getPeriodLabel(period) {
+      if (period === 'week') return '7 hari terakhir';
+      if (period === 'month') return 'bulan ini';
+      return 'semua periode';
+    }
+
+    function getStatusLabel(status) {
+      const map = {
+        new: 'Baru',
+        contacted: 'Dihubungi',
+        scheduled: 'Terjadwal',
+        done: 'Selesai',
+      };
+      return map[status] || 'Semua Status';
+    }
+
+    function getCustomerSegmentLabel(value) {
+      if (value === 'new') return 'Pelanggan Baru';
+      if (value === 'existing') return 'Pelanggan Lama';
+      if (value === 'pending_identity') return 'Identitas Belum Lengkap';
+      return 'Semua Pelanggan';
+    }
+
+    function buildCustomersEndpoint({ page = currentPage, limit: nextLimit = limit } = {}) {
+      const search = document.getElementById('search-input').value.trim();
+      const status = document.getElementById('status-filter').value;
+      const period = document.getElementById('period-filter').value;
+      const customerType = document.getElementById('customer-type-filter').value;
+
+      let endpoint = `/customers?page=${page}&limit=${nextLimit}`;
+      if (search) endpoint += `&search=${encodeURIComponent(search)}`;
+      if (status) endpoint += `&status=${status}`;
+      if (period) endpoint += `&period=${period}`;
+      if (customerType === 'new' || customerType === 'existing') {
+        endpoint += `&customer_type=${customerType}`;
+      }
+      if (customerType === 'pending_identity') {
+        endpoint += '&customer_type=existing&identity_status=pending';
+      }
+      return endpoint;
+    }
+
+    let hasAttemptedLocalCustomerRestore = false;
+
+    function isDefaultCustomerView() {
+      const period = document.getElementById('period-filter').value || 'semua';
+      const status = document.getElementById('status-filter').value || 'semua';
+      const customerType = document.getElementById('customer-type-filter').value || 'semua';
+      const search = document.getElementById('search-input').value.trim() || '-';
+      return period === 'semua' && status === 'semua' && customerType === 'semua' && search === '-';
+    }
+
+    function renderReportSummary(total) {
+      const reportSummary = document.getElementById('report-summary');
+      if (!reportSummary) return;
+
+      const period = document.getElementById('period-filter').value;
+      const status = document.getElementById('status-filter').value;
+      const customerType = document.getElementById('customer-type-filter').value;
+      const search = document.getElementById('search-input').value.trim();
+      const title = period === 'week'
+        ? 'Laporan Mingguan Aktif'
+        : period === 'month'
+          ? 'Laporan Bulanan Aktif'
+          : 'Ringkasan Pelanggan';
+
+      const meta = total === 0
+        ? [
+            `Belum ada data pelanggan yang cocok untuk ${getPeriodLabel(period)}.`,
+            `Segmen: ${getCustomerSegmentLabel(customerType)}.`,
+            `Status: ${getStatusLabel(status)}.`,
+            search ? `Pencarian aktif: "${search}".` : 'Tidak ada kata kunci pencarian aktif.',
+          ].join(' ')
+        : [
+            `${total} data pelanggan ditemukan untuk ${getPeriodLabel(period)}.`,
+            `Segmen: ${getCustomerSegmentLabel(customerType)}.`,
+            `Status: ${getStatusLabel(status)}.`,
+            search ? `Pencarian: "${search}".` : 'Tanpa kata kunci pencarian.',
+          ].join(' ');
+
+      reportSummary.innerHTML = `
+        <p class="customers-report-summary__title">${escapeHtml(title)}</p>
+        <p class="customers-report-summary__meta">${escapeHtml(meta)}</p>
+      `;
+    }
+
+    function renderReportDebug(summary, options = {}) {
+      const reportSummary = document.getElementById('report-summary');
+      if (!reportSummary) return;
+
+      const period = document.getElementById('period-filter').value || 'semua';
+      const status = document.getElementById('status-filter').value || 'semua';
+      const customerType = document.getElementById('customer-type-filter').value || 'semua';
+      const search = document.getElementById('search-input').value.trim() || '-';
+      const {
+        isError = false,
+        errorMessage = '',
+      } = options;
+
+      const total = Number(summary?.total || 0);
+      if (!isError && total > 0) {
+        return;
+      }
+
+      const debugText = isError
+        ? `Filter aktif -> periode: ${period}, status: ${status}, segmen: ${customerType}, pencarian: ${search}. Status runtime: ${errorMessage || 'gagal memuat data pelanggan'}.`
+        : `Filter aktif -> periode: ${period}, status: ${status}, segmen: ${customerType}, pencarian: ${search}. Summary API -> total: ${total}, baru: ${Number(summary?.new || 0)}, dihubungi: ${Number(summary?.contacted || 0)}, terjadwal: ${Number(summary?.scheduled || 0)}, selesai: ${Number(summary?.done || 0)}.`;
+
+      const shouldShowReset = (isError || total === 0) && period === 'semua' && status === 'semua' && customerType === 'semua' && search === '-';
+
+      reportSummary.insertAdjacentHTML('beforeend', `
+        <div class="customers-report-debug">
+          <strong>Debug Ringkas:</strong> ${escapeHtml(debugText)}
+          ${shouldShowReset ? `
+            <div class="customers-report-debug__actions">
+              <button class="btn-admin btn-admin--secondary btn-admin--sm" type="button" onclick="restoreLocalCustomerSamples()">Pulihkan Data Contoh Lokal</button>
+            </div>
+          ` : ''}
+        </div>
+      `);
+    }
+
+    async function restoreLocalCustomerSamples(options = {}) {
+      const { silent = false } = options;
+      try {
+        const response = await apiCall('/admin/customers-reset', {
+          method: 'POST',
+        });
+        hasAttemptedLocalCustomerRestore = true;
+        if (!silent) {
+          showToast(response?.message || 'Data pelanggan contoh berhasil dipulihkan.');
+        }
+        currentPage = 1;
+        await loadCustomers();
+      } catch (error) {
+        if (!silent) {
+          showToast(error.message || 'Gagal memulihkan data pelanggan contoh.', 'error');
+        }
+      }
+    }
+
+    function renderReportCards(summary, options = {}) {
+      const container = document.getElementById('report-cards');
+      if (!container) return;
+
+      const { isError = false } = options;
+
+      if (isError) {
+        container.innerHTML = `
+          <div class="customers-report-card">
+            <p class="customers-report-card__label">Total Lead</p>
+            <p class="customers-report-card__value">—</p>
+          </div>
+          <div class="customers-report-card">
+            <p class="customers-report-card__label">Baru</p>
+            <p class="customers-report-card__value">—</p>
+          </div>
+          <div class="customers-report-card">
+            <p class="customers-report-card__label">Dihubungi</p>
+            <p class="customers-report-card__value">—</p>
+          </div>
+          <div class="customers-report-card">
+            <p class="customers-report-card__label">Selesai</p>
+            <p class="customers-report-card__value">—</p>
+          </div>
+        `;
+        return;
+      }
+
+      const normalized = {
+        total: Number(summary?.total || 0),
+        new: Number(summary?.new || 0),
+        contacted: Number(summary?.contacted || 0),
+        done: Number(summary?.done || 0),
+      };
+
+      container.innerHTML = `
+        <div class="customers-report-card">
+          <p class="customers-report-card__label">Total Lead</p>
+          <p class="customers-report-card__value">${normalized.total}</p>
+        </div>
+        <div class="customers-report-card">
+          <p class="customers-report-card__label">Baru</p>
+          <p class="customers-report-card__value">${normalized.new}</p>
+        </div>
+        <div class="customers-report-card">
+          <p class="customers-report-card__label">Dihubungi</p>
+          <p class="customers-report-card__value">${normalized.contacted}</p>
+        </div>
+        <div class="customers-report-card">
+          <p class="customers-report-card__label">Selesai</p>
+          <p class="customers-report-card__value">${normalized.done}</p>
+        </div>
+      `;
+    }
+
+    function getRelativeDateLabel(dateStr) {
+      if (!dateStr) return 'Tanpa waktu';
+
+      const target = new Date(dateStr);
+      if (Number.isNaN(target.getTime())) return 'Tanpa waktu';
+
+      const now = new Date();
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const startOfTarget = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+      const diffDays = Math.round((startOfToday - startOfTarget) / 86400000);
+
+      if (diffDays === 0) return 'Hari ini';
+      if (diffDays === 1) return 'Kemarin';
+      if (diffDays > 1 && diffDays < 7) return `${diffDays} hari lalu`;
+
+      return new Intl.DateTimeFormat('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(target);
+    }
+
+    function renderDateCell(dateStr) {
+      return `
+        <div class="customers-date" title="${escapeHtml(formatDateTime(dateStr))}">
+          <span class="customers-date__main">${escapeHtml(formatDate(dateStr))}</span>
+          <span class="customers-date__meta">${escapeHtml(getRelativeDateLabel(dateStr))}</span>
+        </div>
+      `;
+    }
+
+    function sortCustomersByDate(data) {
+      return [...data].sort((a, b) => {
+        const left = new Date(a.created_at || 0).getTime();
+        const right = new Date(b.created_at || 0).getTime();
+        return dateSortDirection === 'asc' ? left - right : right - left;
+      });
+    }
+
+    function updateDateSortLabel() {
+      const label = document.getElementById('date-sort-label');
+      if (!label) return;
+      label.textContent = dateSortDirection === 'asc' ? 'Terlama ↑' : 'Terbaru ↓';
+    }
+
+    function toggleDateSort() {
+      dateSortDirection = dateSortDirection === 'asc' ? 'desc' : 'asc';
+      updateDateSortLabel();
+      renderTable(allData);
+    }
+
+    async function loadCustomers() {
+      const reportSummary = document.getElementById('report-summary');
+      try {
+        if (reportSummary) {
+          reportSummary.innerHTML = `
+            <p class="customers-report-summary__title">Memuat ringkasan pelanggan...</p>
+            <p class="customers-report-summary__meta">Sistem sedang mengambil data pelanggan terbaru dari server.</p>
+          `;
+        }
+        const result = await apiCall(buildCustomersEndpoint());
+        if (!result) return;
+
+        allData = result.data;
+        currentTotal = result.pagination?.total || result.data.length || 0;
+        currentSummary = result.summary || null;
+
+        if (!hasAttemptedLocalCustomerRestore && currentTotal === 0 && isDefaultCustomerView()) {
+          await restoreLocalCustomerSamples({ silent: true });
+          return;
+        }
+
+        renderTable(result.data);
+        renderPagination(result.pagination);
+        renderReportSummary(currentTotal);
+        renderReportDebug(currentSummary);
+        renderReportCards(currentSummary);
+      } catch (err) {
+        console.error(err);
+        if (reportSummary) {
+          reportSummary.innerHTML = `
+            <p class="customers-report-summary__title">Ringkasan pelanggan belum tersedia</p>
+            <p class="customers-report-summary__meta">Data pelanggan belum berhasil dimuat. Mohon periksa koneksi atau login admin Anda, lalu muat ulang halaman ini.</p>
+          `;
+        }
+        renderReportDebug(null, {
+          isError: true,
+          errorMessage: err?.message || 'gagal memuat data pelanggan',
+        });
+        renderReportCards(null, { isError: true });
+      }
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('customers-tbody');
+      const sortedData = sortCustomersByDate(data);
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="admin-empty"><div class="admin-empty-icon">📭</div>Tidak ada data pelanggan.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = sortedData.map(c => `
+        <tr>
+          <td>${renderDateCell(c.created_at)}</td>
+          <td>
+            <div class="customers-name">${escapeHtml(c.full_name)}</div>
+            <div class="customers-name__meta">
+              ${renderCustomerTypeBadge(c.customer_type)}
+              ${renderIdentityBadge(c)}
+            </div>
+          </td>
+          <td>${escapeHtml(c.phone || '-')}</td>
+          <td class="customers-status-cell">
+            <select class="admin-select customers-status-select" onchange="updateStatus(${c.id}, this.value)">
+              <option value="new" ${c.status === 'new' ? 'selected' : ''}>Baru</option>
+              <option value="contacted" ${c.status === 'contacted' ? 'selected' : ''}>Dihubungi</option>
+              <option value="scheduled" ${c.status === 'scheduled' ? 'selected' : ''}>Terjadwal</option>
+              <option value="done" ${c.status === 'done' ? 'selected' : ''}>Selesai</option>
+            </select>
+          </td>
+          <td>${renderConcernCell(c.concerns)}</td>
+          <td>${escapeHtml(c.email || '-')}</td>
+          <td>${escapeHtml(c.gender || '-')}</td>
+          <td>
+            <div class="table-actions">
+              <button class="btn-admin btn-admin--secondary btn-admin--sm" type="button" onclick="showDetail(${c.id})" title="Lihat detail pelanggan" aria-label="Lihat detail pelanggan">👁️</button>
+              <button class="btn-admin btn-admin--danger btn-admin--sm" type="button" onclick='deleteCustomer(${c.id}, ${JSON.stringify(c.full_name || "")})' title="Hapus data pelanggan" aria-label="Hapus data pelanggan">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderPagination(pg) {
+      const div = document.getElementById('pagination');
+      const totalPages = Math.ceil(pg.total / pg.limit);
+      div.innerHTML = `
+        <span class="admin-pagination-info">Menampilkan ${(pg.page - 1) * pg.limit + 1}–${Math.min(pg.page * pg.limit, pg.total)} dari ${pg.total}</span>
+        <div class="admin-pagination-btns">
+          <button class="btn-admin btn-admin--secondary btn-admin--sm" ${pg.page <= 1 ? 'disabled' : ''} onclick="goPage(${pg.page - 1})">← Prev</button>
+          <button class="btn-admin btn-admin--secondary btn-admin--sm" ${pg.page >= totalPages ? 'disabled' : ''} onclick="goPage(${pg.page + 1})">Next →</button>
+        </div>
+      `;
+    }
+
+    function goPage(page) {
+      currentPage = page;
+      loadCustomers();
+    }
+
+    async function updateStatus(id, status) {
+      try {
+        await apiCall(`/customers?id=${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status }),
+        });
+        showToast('Status berhasil diupdate!');
+      } catch (err) {}
+    }
+
+    async function deleteCustomer(id, name) {
+      const confirmed = await showConfirm(`Yakin ingin menghapus data <strong>${name}</strong>?`);
+      if (!confirmed) return;
+
+      try {
+        await apiCall(`/customers?id=${id}`, { method: 'DELETE' });
+        showToast('Data berhasil dihapus.');
+        loadCustomers();
+      } catch (err) {}
+    }
+
+    function showDetail(id) {
+      const c = allData.find(x => x.id === id);
+      if (!c) return;
+      activeCustomerId = id;
+
+      document.getElementById('detail-body').innerHTML = `
+        <div class="customer-detail">
+          <div class="customer-detail__hero">
+            <p class="customer-detail__eyebrow">Ringkasan Pelanggan</p>
+            <h3 class="customer-detail__name">${escapeHtml(c.full_name || '-')}</h3>
+            <div class="customer-detail__meta">
+              ${statusBadge(c.status)}
+              ${renderCustomerTypeBadge(c.customer_type)}
+              ${renderIdentityBadge(c)}
+            </div>
+            <p class="customer-detail__stamp">Masuk ${escapeHtml(formatDateTime(c.created_at))}</p>
+          </div>
+          <div class="customer-detail__grid">
+            <div class="customer-detail__section-title">Kontak Dasar</div>
+            <div class="customer-detail__field">
+              <span class="form-label">Telepon</span>
+              <div class="customer-detail__value">${escapeHtml(c.phone || '-')}</div>
+            </div>
+            <div class="customer-detail__field">
+              <span class="form-label">Email</span>
+              <div class="customer-detail__value">${escapeHtml(c.email || '-')}</div>
+            </div>
+            <div class="customer-detail__field">
+              <span class="form-label">Gender</span>
+              <div class="customer-detail__value">${escapeHtml(c.gender || '-')}</div>
+            </div>
+            <div class="customer-detail__field">
+              <span class="form-label">Usia</span>
+              <div class="customer-detail__value">${escapeHtml(c.age_range || '-')}</div>
+            </div>
+            <div class="customer-detail__section-title">Identitas Pelanggan</div>
+            <div class="customer-detail__field">
+              <span class="form-label">NIK</span>
+              <div class="customer-detail__value">${escapeHtml(c.nik || '-')}</div>
+            </div>
+            <div class="customer-detail__field">
+              <span class="form-label">Status Verifikasi</span>
+              <div class="customer-detail__value">${escapeHtml(c.identity_status === 'verified' ? 'Terverifikasi' : c.identity_status === 'pending' ? 'Belum Lengkap' : 'Tidak Diperlukan')}</div>
+            </div>
+            <div class="customer-detail__field customer-detail__field--full">
+              <span class="form-label">Alamat</span>
+              <div class="customer-detail__value">${escapeHtml(c.address || '-')}</div>
+            </div>
+            <div class="customer-detail__field customer-detail__field--full">
+              <span class="form-label">Keluhan / Kebutuhan</span>
+              <div class="customer-detail__value">${escapeHtml((c.concerns || []).join(', ') || '-')}</div>
+            </div>
+            <div class="customer-detail__field customer-detail__field--full">
+              <span class="form-label">Pesan</span>
+              <div class="customer-detail__value customer-detail__value--message">${escapeHtml(c.message || '-')}</div>
+            </div>
+          </div>
+          <div class="customer-identity-form">
+            <h4 class="customer-identity-form__title">Kelola Data Pelanggan</h4>
+            <p class="customer-identity-form__desc">Gunakan form ini untuk menetapkan kategori pelanggan serta melengkapi data identitas pelanggan lama bila diperlukan.</p>
+            <p class="customer-identity-form__helper" id="identity-form-helper">Untuk pelanggan baru, data dapat langsung disimpan tanpa NIK dan alamat.</p>
+            <div class="customer-identity-form__grid">
+              <div class="settings-field">
+                <label for="identity-customer-type">Jenis Pelanggan</label>
+                <select id="identity-customer-type" onchange="syncIdentityFormVisibility()">
+                  <option value="new" ${c.customer_type === 'new' ? 'selected' : ''}>Pelanggan Baru</option>
+                  <option value="existing" ${c.customer_type === 'existing' ? 'selected' : ''}>Pelanggan Lama</option>
+                </select>
+              </div>
+              <div class="settings-field" data-identity-required>
+                <label for="identity-nik">NIK</label>
+                <input id="identity-nik" type="text" inputmode="numeric" maxlength="16" value="${escapeHtml(c.nik || '')}" placeholder="16 digit NIK">
+              </div>
+              <div class="settings-field customer-identity-form__full" data-identity-required>
+                <label for="identity-address">Alamat Lengkap</label>
+                <textarea id="identity-address" placeholder="Alamat lengkap pelanggan lama">${escapeHtml(c.address || '')}</textarea>
+              </div>
+              <label class="customer-identity-form__toggle customer-identity-form__full" data-identity-required>
+                <input id="identity-verified" type="checkbox" ${c.identity_verified ? 'checked' : ''}>
+                Data NIK dan alamat telah diverifikasi
+              </label>
+            </div>
+            <div class="settings-actions" style="margin-top: 0;">
+              <button class="btn-admin" id="identity-submit-btn" type="button" onclick="updateCustomerIdentity(${c.id})">Simpan Kategori Pelanggan Baru</button>
+            </div>
+          </div>
+        </div>
+      `;
+      syncIdentityFormVisibility();
+      document.getElementById('detail-modal').classList.add('is-visible');
+    }
+
+    function closeModal() {
+      document.getElementById('detail-modal').classList.remove('is-visible');
+    }
+
+    Object.assign(window, {
+      goPage,
+      updateStatus,
+      deleteCustomer,
+      showDetail,
+      closeModal,
+      toggleDateSort,
+      syncIdentityFormVisibility,
+      updateCustomerIdentity,
+      restoreLocalCustomerSamples,
+    });
+
+    // Export CSV
+    document.getElementById('export-btn').addEventListener('click', async () => {
+      if (currentTotal === 0) return showToast('Tidak ada data untuk di-export.', 'error');
+
+      try {
+        const result = await apiCall(buildCustomersEndpoint({
+          page: 1,
+          limit: Math.max(currentTotal, limit),
+        }));
+        if (!result?.data?.length) {
+          return showToast('Tidak ada data untuk di-export.', 'error');
+        }
+
+        const headers = ['Tanggal', 'Nama', 'Telepon', 'Status', 'Keluhan', 'Email', 'Gender'];
+        const rows = result.data.map(c => [
+          formatDateTime(c.created_at),
+          c.full_name,
+          c.phone,
+          c.status,
+          (c.concerns || []).join('; '),
+          c.email || '',
+          c.gender || '',
+        ]);
+
+        let csv = headers.join(',') + '\n';
+        rows.forEach(r => { csv += r.map(v => `"${v}"`).join(',') + '\n'; });
+
+        const period = document.getElementById('period-filter').value || 'semua';
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `pelanggan_deoksi_${period}_${new Date().toISOString().slice(0,10)}.csv`;
+        link.click();
+
+        showToast('CSV laporan berhasil di-download!');
+      } catch (error) {
+        showToast(error.message || 'Gagal mengunduh CSV laporan.', 'error');
+      }
+    });
+
+    let hasInitializedCustomersPage = false;
+
+    // Search & Filter listeners
+    let searchTimeout;
+    function resetCustomerFiltersToDefault() {
+      const searchInput = document.getElementById('search-input');
+      const statusFilter = document.getElementById('status-filter');
+      const periodFilter = document.getElementById('period-filter');
+      const customerTypeFilter = document.getElementById('customer-type-filter');
+
+      if (searchInput) searchInput.value = '';
+      if (statusFilter) statusFilter.value = '';
+      if (periodFilter) periodFilter.value = '';
+      if (customerTypeFilter) customerTypeFilter.value = '';
+    }
+
+    function initCustomersPage(forceReload = false) {
+      if (hasInitializedCustomersPage && !forceReload) return;
+      hasInitializedCustomersPage = true;
+      currentPage = 1;
+      resetCustomerFiltersToDefault();
+      updateDateSortLabel();
+      loadCustomers();
+    }
+
+    document.getElementById('search-input').addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => { currentPage = 1; loadCustomers(); }, 400);
+    });
+
+    document.getElementById('status-filter').addEventListener('change', () => {
+      currentPage = 1;
+      loadCustomers();
+    });
+
+    document.getElementById('period-filter').addEventListener('change', () => {
+      currentPage = 1;
+      loadCustomers();
+    });
+
+    document.getElementById('customer-type-filter').addEventListener('change', () => {
+      currentPage = 1;
+      loadCustomers();
+    });
+
+    window.addEventListener('pageshow', () => {
+      initCustomersPage(true);
+    });
+
+    requestAnimationFrame(() => {
+      initCustomersPage();
+    });
+  </script>
+</body>
+</html>

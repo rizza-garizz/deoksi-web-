@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pengaturan | Deoksi Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css" />
+  <style>
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .settings-card {
+      background: var(--admin-surface);
+      border: 1px solid var(--admin-border);
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+      overflow: hidden;
+    }
+
+    .settings-card__head {
+      padding: 22px 24px 14px;
+      border-bottom: 1px solid var(--admin-border);
+    }
+
+    .settings-card__head h2,
+    .settings-card__head p {
+      margin: 0;
+    }
+
+    .settings-card__head p {
+      margin-top: 8px;
+      color: var(--admin-text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    .settings-card__body {
+      padding: 24px;
+    }
+
+    .settings-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .settings-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .settings-field label {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+
+    .settings-field input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--admin-border);
+      border-radius: 12px;
+      font: inherit;
+      background: #fff;
+    }
+
+    .settings-field input[readonly] {
+      background: #f8fafc;
+      color: #475569;
+    }
+
+    .settings-summary {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .summary-card {
+      padding: 18px 20px;
+      border: 1px solid var(--admin-border);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(249, 250, 251, 0.95));
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    }
+
+    .summary-card--ok {
+      border-color: rgba(22, 163, 74, 0.22);
+      background: linear-gradient(135deg, rgba(240, 253, 244, 0.98), rgba(236, 253, 245, 0.95));
+    }
+
+    .summary-card--warn {
+      border-color: rgba(245, 158, 11, 0.24);
+      background: linear-gradient(135deg, rgba(255, 251, 235, 0.98), rgba(254, 249, 195, 0.88));
+    }
+
+    .summary-card--error {
+      border-color: rgba(239, 68, 68, 0.22);
+      background: linear-gradient(135deg, rgba(254, 242, 242, 0.98), rgba(254, 226, 226, 0.92));
+    }
+
+    .summary-card__label {
+      margin: 0 0 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--admin-text-muted);
+    }
+
+    .summary-card__value {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--admin-text);
+      line-height: 1.4;
+    }
+
+    .summary-card__meta {
+      margin: 8px 0 0;
+      font-size: 0.84rem;
+      color: var(--admin-text-muted);
+      line-height: 1.5;
+    }
+
+    .settings-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .status-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .status-section-title {
+      margin: 22px 0 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--admin-border);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .status-item__meta {
+      display: grid;
+      gap: 4px;
+    }
+
+    .status-item__label {
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+
+    .status-item__desc {
+      font-size: 0.84rem;
+      color: var(--admin-text-muted);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status-pill--ok {
+      background: rgba(22, 163, 74, 0.12);
+      color: #166534;
+    }
+
+    .status-pill--warn {
+      background: rgba(245, 158, 11, 0.14);
+      color: #92400e;
+    }
+
+    .status-pill--admin {
+      background: rgba(59, 130, 246, 0.12);
+      color: #1d4ed8;
+    }
+
+    .settings-links {
+      display: grid;
+      gap: 12px;
+    }
+
+    .settings-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 18px;
+      border: 1px solid var(--admin-border);
+      border-radius: 14px;
+      background: #fff;
+      color: inherit;
+      text-decoration: none;
+      transition: 0.2s ease;
+    }
+
+    .settings-link:hover {
+      border-color: var(--admin-primary);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(249, 115, 22, 0.10);
+    }
+
+    .settings-link__copy {
+      display: grid;
+      gap: 4px;
+    }
+
+    .settings-link__title {
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+
+    .settings-link__desc {
+      font-size: 0.84rem;
+      color: var(--admin-text-muted);
+      line-height: 1.5;
+    }
+
+    .settings-note {
+      padding: 16px 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.10), rgba(251, 191, 36, 0.12));
+      color: var(--admin-text);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .settings-note--warn {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(251, 191, 36, 0.16));
+    }
+
+    .settings-note h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .settings-note ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+
+    .soft-intro {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--admin-border);
+      color: var(--admin-text-muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .qa-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .qa-item {
+      padding: 16px 18px;
+      border: 1px solid var(--admin-border);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .qa-item__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .qa-item__title {
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+
+    .qa-item__text {
+      margin: 0;
+      color: var(--admin-text-muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .qa-item__text + .qa-item__text {
+      margin-top: 6px;
+    }
+
+    .qa-item__actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .diag-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .diagnostics-intro {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.92));
+      border: 1px solid var(--admin-border);
+      color: var(--admin-text-muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .advanced-panel {
+      margin-bottom: 16px;
+      border: 1px solid var(--admin-border);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.94);
+      overflow: hidden;
+    }
+
+    .advanced-panel summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+
+    .advanced-panel summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .advanced-panel[open] summary {
+      border-bottom: 1px solid var(--admin-border);
+      background: rgba(249, 250, 251, 0.92);
+    }
+
+    .advanced-panel__meta {
+      color: var(--admin-text-muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .advanced-panel__body {
+      padding: 14px 16px 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .diag-item {
+      padding: 14px 16px;
+      border: 1px solid var(--admin-border);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .diag-item__head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+      align-items: center;
+    }
+
+    .diag-item__title {
+      font-weight: 700;
+      color: var(--admin-text);
+      font-size: 0.9rem;
+    }
+
+    .diag-item__meta {
+      margin: 0;
+      color: var(--admin-text-muted);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .toggle-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 4px;
+      min-height: 38px;
+      color: var(--admin-text);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .toggle-row input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--admin-primary);
+    }
+
+    .inline-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: rgba(239, 68, 68, 0.12);
+      color: #b91c1c;
+      font-size: 0.76rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .mini-link-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid var(--admin-border);
+      background: #fff;
+      color: var(--admin-text);
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .mini-link-btn:hover {
+      border-color: var(--admin-primary);
+      color: var(--admin-primary);
+      box-shadow: 0 8px 18px rgba(249, 115, 22, 0.10);
+    }
+
+    .mini-link-btn--preview {
+      background: rgba(249, 115, 22, 0.08);
+      border-color: rgba(249, 115, 22, 0.22);
+      color: #c2410c;
+    }
+
+    @media (max-width: 1024px) {
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .settings-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+  <main class="admin-main">
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+        <div>
+          <h1 class="page-title">Pengaturan Sistem</h1>
+          <p style="margin: 6px 0 0; color: var(--admin-text-muted);">Pusat akun admin dan status sistem tanpa menduplikasi pengaturan konten website.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <div class="settings-grid">
+        <section class="settings-summary" aria-label="Ringkasan status">
+          <div class="summary-card">
+            <p class="summary-card__label">Status Sinkronisasi</p>
+            <p class="summary-card__value" id="sync-overall-value">Memeriksa...</p>
+            <p class="summary-card__meta" id="sync-overall-meta">Ringkasan hasil QA akan tampil di sini.</p>
+          </div>
+          <div class="summary-card">
+            <p class="summary-card__label">Pengecekan Terakhir</p>
+            <p class="summary-card__value" id="last-checked-value">Belum dicek</p>
+            <p class="summary-card__meta" id="last-checked-meta">Update saat status sistem dan diagnostics selesai dimuat.</p>
+          </div>
+          <div class="summary-card">
+            <p class="summary-card__label">Kondisi Bridge</p>
+            <p class="summary-card__value" id="bridge-runtime-value">Memeriksa...</p>
+            <p class="summary-card__meta" id="bridge-runtime-meta">Akan menandai apakah request terakhir bridge sehat atau gagal.</p>
+          </div>
+        </section>
+
+        <section class="settings-card">
+          <div class="settings-card__head">
+            <h2>Profil Admin</h2>
+            <p>Nama admin dapat diperbarui di sini. Username dan role ditampilkan sebagai referensi akun aktif.</p>
+          </div>
+          <div class="settings-card__body">
+            <form class="settings-form" id="profile-form">
+              <div class="settings-field">
+                <label for="settings-full-name">Nama Lengkap</label>
+                <input id="settings-full-name" type="text" placeholder="Nama admin">
+              </div>
+              <div class="settings-field">
+                <label for="settings-username">Username</label>
+                <input id="settings-username" type="text" readonly>
+              </div>
+              <div class="settings-field">
+                <label for="settings-role">Role</label>
+                <input id="settings-role" type="text" readonly>
+              </div>
+              <div class="settings-actions">
+                <button class="btn-admin" type="submit" id="save-profile-btn">Simpan Profil</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section class="settings-card">
+          <div class="settings-card__head">
+            <h2>Ubah Password</h2>
+            <p>Password baru minimal 8 karakter. Setelah berhasil diubah, login berikutnya akan memakai password baru.</p>
+          </div>
+          <div class="settings-card__body">
+            <form class="settings-form" id="password-form">
+              <div class="settings-field">
+                <label for="current-password">Password Saat Ini</label>
+                <input id="current-password" type="password" autocomplete="current-password">
+              </div>
+              <div class="settings-field">
+                <label for="new-password">Password Baru</label>
+                <input id="new-password" type="password" autocomplete="new-password">
+              </div>
+              <div class="settings-field">
+                <label for="confirm-password">Konfirmasi Password Baru</label>
+                <input id="confirm-password" type="password" autocomplete="new-password">
+              </div>
+              <div class="settings-actions">
+                <button class="btn-admin" type="submit" id="save-password-btn">Perbarui Password</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section class="settings-card">
+          <div class="settings-card__head">
+            <h2>Status Sistem</h2>
+            <p>Status koneksi dan strategi media aktif agar admin tahu sistem sedang berjalan di mode apa.</p>
+          </div>
+          <div class="settings-card__body">
+            <div class="settings-actions" style="margin-bottom: 16px;">
+              <button class="btn-admin btn-admin--secondary" type="button" id="refresh-status-btn">Refresh Status</button>
+            </div>
+            <div class="settings-note settings-note--warn" id="deploy-readiness-box" style="margin-bottom: 16px;">
+              <h3>Kesiapan Deploy</h3>
+              <div id="deploy-readiness-text">Memeriksa kesiapan deploy...</div>
+            </div>
+            <div class="status-list" id="system-status-list">
+              <div class="status-item">
+                <div class="status-item__meta">
+                  <div class="status-item__label">Memuat status sistem...</div>
+                  <div class="status-item__desc">Mohon tunggu beberapa detik.</div>
+                </div>
+              </div>
+            </div>
+            <details class="advanced-panel" style="margin-top: 16px;">
+              <summary>
+                <span>Detail Jalur Penting Sistem</span>
+                <span class="advanced-panel__meta">Lihat jalur website dan admin yang sedang dipantau sistem</span>
+              </summary>
+              <div class="advanced-panel__body">
+                <div class="soft-intro" style="margin-bottom: 0;">
+                  Bagian ini lebih teknis. Untuk penggunaan harian, cukup lihat ringkasan status dan checklist QA. Buka detail ini saat ingin mengecek endpoint mana yang sehat atau bermasalah.
+                </div>
+                <h3 class="status-section-title" style="margin-top: 0;">Jalur Penting yang Dipantau</h3>
+                <div class="status-list" id="endpoint-health-list">
+                  <div class="status-item">
+                    <div class="status-item__meta">
+                      <div class="status-item__label">Memuat jalur penting sistem...</div>
+                      <div class="status-item__desc">Alur website dan admin sedang diperiksa.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <section class="settings-card">
+          <div class="settings-card__head">
+            <h2>Checklist QA Cepat</h2>
+            <p>Ringkasan kesiapan uji sinkronisasi admin ke website untuk teks, foto, video, dan persistensi sesudah refresh.</p>
+          </div>
+          <div class="settings-card__body">
+            <div class="soft-intro">
+              Mulailah dari status `Siap Uji` atau `Perlu Cek` tanpa perlu membaca semua detail. Jika perlu tindakan, buka langkah cepat di tiap kartu untuk menuju halaman yang relevan.
+            </div>
+            <div class="qa-list" id="qa-checklist">
+              <div class="qa-item">
+                <div class="qa-item__head">
+                  <div class="qa-item__title">Memuat checklist QA...</div>
+                </div>
+                <p class="qa-item__text">Status kesiapan sinkronisasi sedang diperiksa.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="settings-card">
+          <div class="settings-card__head">
+            <h2>Shortcut Pengaturan</h2>
+            <p>Pengaturan konten publik tetap dikelola di halaman yang sudah ada agar tidak terjadi duplikasi form.</p>
+          </div>
+          <div class="settings-card__body">
+            <div class="settings-links">
+              <a class="settings-link" href="/admin/content.html?tab=global#card-global_footer">
+                <div class="settings-link__copy">
+                  <div class="settings-link__title">Global/Footer</div>
+                  <div class="settings-link__desc">Edit nama klinik, WhatsApp, Instagram, jam buka, dan footer website di Kelola Website.</div>
+                </div>
+                <span>↗</span>
+              </a>
+              <a class="settings-link" href="/admin/content.html?tab=seo#card-seo_homepage">
+                <div class="settings-link__copy">
+                  <div class="settings-link__title">SEO Meta</div>
+                  <div class="settings-link__desc">Meta title, meta description, dan OG image tetap dikelola dari Kelola Website.</div>
+                </div>
+                <span>↗</span>
+              </a>
+              <a class="settings-link" href="/admin/media.html">
+                <div class="settings-link__copy">
+                  <div class="settings-link__title">Media</div>
+                  <div class="settings-link__desc">Kelola foto Google Drive, video Cloudinary, dan slot media website dari halaman Media.</div>
+                </div>
+                <span>↗</span>
+              </a>
+            </div>
+            <div class="settings-note" style="margin-top: 16px;">
+              Foto website saat ini menggunakan Google Drive publik, sedangkan video website tetap menggunakan URL Cloudinary.
+            </div>
+          </div>
+        </section>
+
+        <section class="settings-card">
+          <div class="settings-card__head">
+            <h2>Bridge Diagnostics</h2>
+            <p>Menampilkan aktivitas terakhir yang lewat bridge lokal agar masalah runtime lebih mudah dilacak tanpa harus terus melihat terminal.</p>
+          </div>
+          <div class="settings-card__body">
+            <div class="settings-actions" style="margin-bottom: 16px;">
+              <button class="btn-admin btn-admin--secondary" type="button" id="refresh-diagnostics-btn">Refresh Diagnostics</button>
+            </div>
+            <div class="diagnostics-intro">
+              Untuk penggunaan harian, cukup lihat ringkasan status di atas dan daftar request terakhir di bawah. Buka mode lanjutan hanya saat sedang melacak error atau ingin menyalin log teknis.
+            </div>
+            <details class="advanced-panel">
+              <summary>
+                <span>Mode Lanjutan Diagnostics</span>
+                <span class="advanced-panel__meta">Filter, auto-refresh, copy, dan clear log</span>
+              </summary>
+              <div class="advanced-panel__body">
+                <div class="settings-actions" style="margin-top: 0;">
+                  <button class="btn-admin btn-admin--secondary" type="button" id="copy-diagnostics-btn">Copy Diagnostics</button>
+                  <button class="btn-admin btn-admin--secondary" type="button" id="clear-diagnostics-btn">Clear Diagnostics</button>
+                </div>
+                <div class="settings-actions" style="margin-top: 0;">
+                  <label class="toggle-row" for="auto-refresh-diagnostics">
+                    <input type="checkbox" id="auto-refresh-diagnostics">
+                    Auto-refresh 5 detik
+                  </label>
+                  <label class="toggle-row" for="diagnostics-errors-only">
+                    <input type="checkbox" id="diagnostics-errors-only">
+                    Hanya error
+                    <span class="inline-badge" id="diagnostics-error-count">0</span>
+                  </label>
+                </div>
+              </div>
+            </details>
+            <div class="diag-list" id="bridge-diagnostics-list">
+              <div class="diag-item">
+                <div class="diag-item__head">
+                  <div class="diag-item__title">Memuat bridge diagnostics...</div>
+                </div>
+                <p class="diag-item__meta">Request terakhir dari bridge akan tampil di sini.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="/admin/js/settings-manager.js"></script>
+</body>
+</html>
